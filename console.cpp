@@ -39,20 +39,9 @@
 #include <QtCore/QDebug>
 
 Console::Console(QWidget *parent)
-    : QPlainTextEdit(parent)
-    , localEchoEnabled(false)
+    : QPlainTextEdit(parent), localEchoEnabled(false)
 {
     document()->setMaximumBlockCount(100);
-    QPalette p = palette();
-    p.setColor(QPalette::Base, Qt::darkBlue);
-    p.setColor(QPalette::Text, Qt::white);
-    setPalette(p);
-
-    QFont font("Monospace");
-    font.setStyleHint(QFont::TypeWriter);
-    font.setFixedPitch(true);
-    font.setPointSize(12);
-    setFont(font);
 }
 
 void Console::putData(const QByteArray &data)

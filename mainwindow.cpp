@@ -41,17 +41,13 @@
 #include <QSerialPort>
 #include <QDebug>
 
-//! [0]
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-//! [0]
     ui->setupUi(this);
     ui->console->setEnabled(false);
-//! [1]
     serial = new QSerialPort(this);
-//! [1]
     settings = new SettingsDialog;
 
     ui->actionConnect->setEnabled(true);
@@ -64,13 +60,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
             SLOT(handleError(QSerialPort::SerialPortError)));
 
-//! [2]
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-//! [2]
     connect(ui->console, SIGNAL(getData(QByteArray)), this, SLOT(writeData(QByteArray)));
-//! [3]
 }
-//! [3]
 
 MainWindow::~MainWindow()
 {
@@ -78,18 +70,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//! [4]
 void MainWindow::openSerialPort()
 {
     SettingsDialog::Settings p = settings->settings();
     serial->setPortName(p.name);
+    serial->open(QIODevice::ReadWrite);
     serial->setBaudRate(p.baudRate);
     serial->setDataBits(p.dataBits);
     serial->setParity(p.parity);
     serial->setStopBits(p.stopBits);
     serial->setFlowControl(p.flowControl);
 
-    serial->open(QIODevice::ReadWrite);
     qDebug() << serial->error();
 
     ui->console->setEnabled(true);
@@ -101,9 +92,7 @@ void MainWindow::openSerialPort()
                                    .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                                    .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
 }
-//! [4]
 
-//! [5]
 void MainWindow::closeSerialPort()
 {
     serial->close();
@@ -113,32 +102,18 @@ void MainWindow::closeSerialPort()
     ui->actionConfigure->setEnabled(true);
     ui->statusBar->showMessage(tr("Disconnected"));
 }
-//! [5]
 
-void MainWindow::about()
-{
-    QMessageBox::about(this, tr("About Simple Terminal"),
-                       tr("The <b>Simple Terminal</b> example demonstrates how to "
-                          "use the Qt Serial Port module in modern GUI applications "
-                          "using Qt, with a menu bar, toolbars, and a status bar."));
-}
-
-//! [6]
 void MainWindow::writeData(const QByteArray &data)
 {
     serial->write(data);
 }
-//! [6]
 
-//! [7]
 void MainWindow::readData()
 {
     QByteArray data = serial->readAll();
     ui->console->putData(data);
 }
-//! [7]
 
-//! [8]
 void MainWindow::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::ResourceError) {
@@ -146,7 +121,6 @@ void MainWindow::handleError(QSerialPort::SerialPortError error)
         closeSerialPort();
     }
 }
-//! [8]
 
 void MainWindow::handleToggle(bool checked)
 {
@@ -163,8 +137,6 @@ void MainWindow::initActionsConnections()
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionConfigure, SIGNAL(triggered()), settings, SLOT(show()));
     connect(ui->actionClear, SIGNAL(triggered()), ui->console, SLOT(clear()));
-    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-    connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(ui->btnClear, SIGNAL(clicked()), ui->console, SLOT(clear()));
     connect(ui->btnOptions, SIGNAL(clicked()), settings, SLOT(show()));
     connect(ui->btnEnable, SIGNAL(toggled(bool)), this, SLOT(handleToggle(bool)));
