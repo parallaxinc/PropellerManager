@@ -15,8 +15,6 @@
 #endif
 
 // Processor constants
-int LFSR_REQUEST_LEN   = 250;
-int LFSR_REPLY_LEN     = 250;
 int EEPROM_SIZE        = 32768;
 
 void do_nothing(QString msg)
@@ -55,13 +53,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(VERSION);
     QCoreApplication::setApplicationName(QObject::tr("propload"));
 
-
     QCommandLineParser parser;
     parser.addHelpOption();
     parser.addVersionOption();
     parser.setApplicationDescription(
             QObject::tr("\nA modern Propeller loader"));
-
 
     parser.addPositionalArgument("file",  QObject::tr("Binary file to download"), "FILE");
 
@@ -69,11 +65,13 @@ int main(int argc, char *argv[])
 
     QStringList a = serial_ports();
 
-    Loader loader(a[1],-1);
+    Loader loader(a[0],-1);
     loader.open();
-    loader.close();
     loader.encode_long(3525);
     loader.encode_long(35353325);
+    loader.handshake();
+    loader.get_version();
+    loader.close();
 
     return 0;
 }
