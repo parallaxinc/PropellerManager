@@ -8,7 +8,8 @@ Loader::Loader(QString port, int reset_gpio, QObject * parent) :
     version = 0;
 
     serial.setPortName(port);
-    serial.setBaudRate(115200);
+    serial.setBaudRate(230400);
+//    serial.setBaudRate(115200);
 
     this->reset_gpio = reset_gpio;
 
@@ -46,12 +47,12 @@ Loader::~Loader()
 // high-level functions
 int Loader::get_version()
 {
-    open();
+//    open();
     handshake();
-    write_long(CMD_SHUTDOWN);
-    QThread::msleep(10);
-    reset();
-    close();
+    write_long(Command::ShutDown);
+//    QThread::msleep(10);
+//    reset();
+//    close();
     return version;
 }
 
@@ -97,19 +98,21 @@ void Loader::reset()
 {
     serial.clear(QSerialPort::Output);
 
+    int t1 = 25, t2 = 50;
+
     if (reset_gpio > -1) //and not self.GPIO == None:
     {
 //        self.GPIO.output(self.reset_gpio, self.GPIO.LOW)
-        QThread::msleep(25);
+        QThread::msleep(t1);
 //        self.GPIO.output(self.reset_gpio, self.GPIO.HIGH)
-        QThread::msleep(70);
+        QThread::msleep(t2);
     }
     else
     {
         serial.setDataTerminalReady(true);
-        QThread::msleep(25);
+        QThread::msleep(t1);
         serial.setDataTerminalReady(false);
-        QThread::msleep(70);
+        QThread::msleep(t2);
     }
 
     serial.clear(QSerialPort::Input);
@@ -192,7 +195,6 @@ int Loader::lfsr(int * seed)
     return ret;
 }
 
-
 QList<char> Loader::build_lfsr_sequence(int size)
 {
     int seed = 'P';
@@ -229,7 +231,10 @@ QByteArray Loader::build_reply(QList<char> seq, int size, int offset)
     return array;
 }
 
-
+void Loader::error()
+{
+    qDebug() << "Download has timed out!";
+}
 
 
 int Loader::handshake()
@@ -246,8 +251,14 @@ int Loader::handshake()
     serial.write(request);
     serial.write(header);
 
+
     QEventLoop loop;
+    QTimer timer;
+    timer.setSingleShot(true);
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(error()));
+    timer.start(100);
     loop.exec();
 
     disconnect(&serial, SIGNAL(readyRead()));

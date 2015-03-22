@@ -5,6 +5,16 @@
 #include <QThread>
 #include <QTimer>
 
+namespace Command {
+    enum Command {
+        ShutDown,
+        LoadRAM,
+        LoadEEPROM,
+        LoadEPPROMRun
+    };
+};
+
+
 class Loader : public QObject
 {
     Q_OBJECT
@@ -27,6 +37,7 @@ signals:
 
 private slots:
     void check_response();
+    void error();
 
 public:
     QSerialPort serial;
@@ -37,13 +48,6 @@ public:
     int handshake();
     QByteArray prepare_code(QByteArray code, bool eeprom=false);
     QByteArray send_code(QByteArray encoded_code, int size, bool eeprom=false, bool run=false);
-
-    enum Command {
-        CMD_SHUTDOWN,
-        CMD_LOADRAMRUN,
-        CMD_LOADEPPROM,
-        CMD_LOADEPPROMRUN
-    };
 
     enum Errors {
         Error_None,
