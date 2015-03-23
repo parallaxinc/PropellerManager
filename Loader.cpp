@@ -34,7 +34,6 @@ Loader::Loader(QString port, int reset_gpio, QObject * parent) :
 
 Loader::~Loader()
 {
-    // check if open
     serial.close();
 
     // cleanup gpio
@@ -44,44 +43,13 @@ Loader::~Loader()
     }
 }
 
-// high-level functions
 int Loader::get_version()
 {
-//    open();
     handshake();
     write_long(Command::ShutDown);
-//    QThread::msleep(10);
-//    reset();
-//    close();
     return version;
 }
 
-void Loader::upload(QByteArray code, bool eeprom, bool run, bool terminal)
-{
-    open();
-    code = prepare_code(code, eeprom);
-    int code_len = 0; // WHAT IS THAHITJ?!~?!?
-    int version = handshake();
-    qDebug() << "Connected (version=" << version << ")";
-    send_code(code, code_len, eeprom, run);
-
-    if (terminal)
-    {
-//        while (true)
-//        {
-//            ser = self.serial.read()
-//            if ser != None:
-//                sys.stdout.write(ser)
-//                sys.stdout.flush()
-//        }
-    }
-    else
-    {
-        close();
-    }
-}
-
-// low-level functions
 int Loader::open()
 {
     serial.open(QIODevice::ReadWrite);
@@ -135,7 +103,12 @@ void Loader::write_long(unsigned int value)
     QCoreApplication::processEvents();
 }
 
-void Loader::check_response()
+void Loader::read_acknowledge()
+{
+
+}
+
+void Loader::read_handshake()
 {
     qDebug() << "DATA" << serial.bytesAvailable();
     if (serial.bytesAvailable() == 258)
@@ -246,11 +219,10 @@ int Loader::handshake()
 
     QByteArray header(reply.size()+8,'\xf9');
 
-    connect(&serial, SIGNAL(readyRead()), this, SLOT(check_response()));
+    connect(&serial, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
     serial.write(request);
     serial.write(header);
-
 
     QEventLoop loop;
     QTimer timer;
@@ -261,7 +233,85 @@ int Loader::handshake()
     timer.start(100);
     loop.exec();
 
-    disconnect(&serial, SIGNAL(readyRead()));
+    disconnect(&serial);
 
     return version;
 }
+
+
+#include <QFile>
+#include <QTextStream>
+
+int Loader::checksum(QByteArray binary, bool isEEPROM)
+{
+    int checksum = 0;
+    for (int i = 0; i < binary.size(); i++)
+    {
+        checksum += (unsigned char) binary.at(i);
+    }
+
+    if (!isEEPROM)
+    {
+        checksum += 2 * (0xff + 0xff + 0xf9 + 0xff);
+    }
+    checksum &= 0xff;
+
+    return checksum;
+}
+
+QByteArray Loader::convert_binary_to_eeprom(QByteArray binary)
+{
+    int EEPROM_SIZE = 32768;
+
+    if (binary.size() > EEPROM_SIZE - 8)
+    {
+        qDebug() << "Code too long for EEPROM (max" << EEPROM_SIZE - 8 << "bytes)";
+        return QByteArray();
+    }
+
+    int dbase =  (unsigned char) binary.at(0x0a) + 
+                ((unsigned char) binary.at(0x0b) << 8);
+
+    if (dbase > EEPROM_SIZE)
+    {
+        qDebug() << "Binary size greater than EEPROM_SIZE";
+        return QByteArray();
+    }
+
+//    qDebug() << "DBASE" << dbase 
+//        << QString::number((unsigned char) binary.at(0x0a)) 
+//        << QString::number((unsigned char) binary.at(0x0b));
+
+    binary.append(QByteArray(dbase - 8 - binary.size(),0x00));
+    binary.append(QByteArray::fromHex("fffff9fffffff9ff"));
+    binary.append(QByteArray(EEPROM_SIZE - binary.size(),0x00));
+
+    return binary;
+}
+
+void Loader::upload_binary(QByteArray binary, bool isEEPROM)
+{
+
+    if (checksum(binary, false))
+    {
+        qDebug() << "Code checksum error:"
+            << QString::number(checksum(binary, false),16);
+        return;
+    }
+
+    if (isEEPROM)
+        binary = convert_binary_to_eeprom(binary);
+
+    if (binary.isEmpty())
+    {
+        qDebug() << "Image empty!";
+        return;
+    }
+
+    QFile file("superfile.txt.2");
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream out(&file);
+    out << binary.toHex().data();
+    file.close();
+}
+

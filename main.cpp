@@ -14,14 +14,6 @@
 #define VERSION "0.0.0"
 #endif
 
-// Processor constants
-int EEPROM_SIZE        = 32768;
-
-void do_nothing(QString msg)
-{
-    return;
-}
-
 QStringList serial_ports()
 {
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
@@ -70,7 +62,8 @@ int main(int argc, char *argv[])
     loader.encode_long(3525);
     loader.encode_long(35353325);
     loader.handshake();
-    loader.get_version();
+//    loader.get_version();
+    loader.upload_binary(readFile("Brettris.binary"),true);
     loader.close();
 
     return 0;

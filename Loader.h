@@ -32,11 +32,15 @@ private:
     QByteArray build_reply(  QList<char> seq, int size, int offset);
     int version;
 
+    int checksum(QByteArray binary, bool isEEPROM);
+    QByteArray convert_binary_to_eeprom(QByteArray binary);
+
 signals:
     void finished();
 
 private slots:
-    void check_response();
+    void read_handshake();
+    void read_acknowledge();
     void error();
 
 public:
@@ -68,10 +72,10 @@ public:
     int get_version();
     void reset();
     QByteArray encode_long(unsigned int value);
-    void upload(QByteArray code, bool eeprom=false, bool run=true, bool terminal=false);
+    void upload_binary(QByteArray binary, bool isEEPROM);
     void list();
 
+    void open_terminal();
+    void close_terminal();
 };
-
-
 
