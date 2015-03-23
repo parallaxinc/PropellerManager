@@ -7,10 +7,10 @@
 
 namespace Command {
     enum Command {
-        ShutDown,
-        LoadRAM,
-        LoadEEPROM,
-        LoadEPPROMRun
+        Shutdown,
+        Run,
+        Write,
+        WriteRun
     };
 };
 
@@ -31,10 +31,14 @@ private:
     QByteArray build_request(QList<char> seq, int size);
     QByteArray build_reply(  QList<char> seq, int size, int offset);
     int version;
+    int ack;
 
     int checksum(QByteArray binary, bool isEEPROM);
     QByteArray convert_binary_to_eeprom(QByteArray binary);
     QByteArray encode_binary(QByteArray binary);
+    int send_application_image(QByteArray encoded_binary, int image_size, Command::Command command);
+
+    QTimer poll;
 
 signals:
     void finished();
@@ -43,16 +47,16 @@ private slots:
     void read_handshake();
     void read_acknowledge();
     void error();
+    void calibrate();
+    void writeEmpty();
 
 public:
     QSerialPort serial;
     int reset_gpio;
     void write_byte(char value);
     void write_long(unsigned int value);
-    void calibrate();
     int handshake();
     QByteArray prepare_code(QByteArray code, bool eeprom=false);
-    QByteArray send_code(QByteArray encoded_code, int size, bool eeprom=false, bool run=false);
 
     enum Errors {
         Error_None,

@@ -8,6 +8,8 @@ TEMPLATE = app
 TARGET = propman
 INCLUDEPATH += .
 
+CONFIG += debug
+
 # Input
 SOURCES += \
     main.cpp \

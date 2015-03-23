@@ -57,13 +57,15 @@ int main(int argc, char *argv[])
 
     QStringList a = serial_ports();
 
+    qDebug() << parser.positionalArguments();
+
     Loader loader(a[0],-1);
     loader.open();
     loader.encode_long(3525);
     loader.encode_long(35353325);
     loader.handshake();
 //    loader.get_version();
-    loader.upload_binary(readFile("Brettris.binary"),false);
+    loader.upload_binary(readFile(parser.positionalArguments()[0]),false);
     loader.close();
 
     return 0;

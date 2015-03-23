@@ -46,7 +46,7 @@ Loader::~Loader()
 int Loader::get_version()
 {
     handshake();
-    write_long(Command::ShutDown);
+    write_long(Command::Shutdown);
     return version;
 }
 
@@ -103,11 +103,6 @@ void Loader::write_long(unsigned int value)
     QCoreApplication::processEvents();
 }
 
-void Loader::read_acknowledge()
-{
-
-}
-
 void Loader::read_handshake()
 {
     qDebug() << "DATA" << serial.bytesAvailable();
@@ -147,18 +142,13 @@ QByteArray Loader::encode_long(unsigned int value)
         value >>= 3;
     }
     result.append(0xf2 | (value & 0x01) | ((value & 2) << 2));
-    qDebug() << result.toHex();
+//    qDebug() << result.toHex().data();
     return result;
 }
 
 QByteArray Loader::prepare_code(QByteArray code, bool eeprom)
 {
     return QByteArray();
-}
-
-QByteArray Loader::send_code(QByteArray encoded_code, int size, bool eeprom, bool run)
-{
-
 }
 
 int Loader::lfsr(int * seed)
@@ -238,10 +228,6 @@ int Loader::handshake()
     return version;
 }
 
-
-#include <QFile>
-#include <QTextStream>
-
 int Loader::checksum(QByteArray binary, bool isEEPROM)
 {
     int checksum = 0;
@@ -295,13 +281,14 @@ QByteArray Loader::encode_binary(QByteArray binary)
     QByteArray encoded_binary;
     for (int i = 0 ; i < binary.size() ; i += 4)
     {
-        encoded_binary += encode_long(
+        encoded_binary.append(encode_long(
                 ((unsigned char) binary.at(i)) | 
                 ((unsigned char) binary.at(i + 1) << 8)  | 
                 ((unsigned char) binary.at(i + 2) << 16) |
                 ((unsigned char) binary.at(i + 3) << 24)
-                );
+                ));
     }
+    return encoded_binary;
 }
 
 
@@ -332,15 +319,64 @@ void Loader::upload_binary(QByteArray binary, bool isEEPROM)
         return;
     }
 
-//    int size = binary.size();
-
     QByteArray encoded_binary = encode_binary(binary);
 
+    send_application_image(encoded_binary, binary.size(), Command::Run);
+}
 
-    QFile file("superfile.txt.2");
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
-    QTextStream out(&file);
-    out << binary.toHex().data();
-    file.close();
+void Loader::writeEmpty()
+{
+    qDebug() << "EMPTY";
+    if (serial.bytesToWrite())
+        emit finished();
+}
+
+void Loader::read_acknowledge()
+{
+    qDebug() << "GOT ACK" << serial.bytesAvailable();
+    if (serial.bytesAvailable())
+    {
+        qDebug() << serial.readAll().data();
+        qDebug() << "ACK" << ack;
+        poll.stop();
+        emit finished();
+    }
+}
+
+int Loader::send_application_image(QByteArray encoded_binary, int image_size, Command::Command command)
+{
+    qDebug() << "SENDING DATA";
+
+    connect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
+    connect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
+    bool write = false, run = false;
+
+    write_long(1);
+    write_long(image_size / 4);
+    serial.write(encoded_binary);
+
+    QEventLoop loop;
+//    QTimer timer;
+//    timer.setSingleShot(true);
+    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+//    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+//    connect(&timer, SIGNAL(timeout()), this, SLOT(error()));
+//    timer.start(2000);
+    loop.exec();
+
+    disconnect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
+
+    qDebug() << "STARTING POLLING";
+
+    connect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
+    poll.setInterval(20);
+    poll.start();
+
+    loop.exec();
+
+    disconnect(&poll);
+    disconnect(&serial);
+
+    return 0;
 }
 
