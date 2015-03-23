@@ -14,6 +14,17 @@ namespace Command {
     };
 };
 
+namespace Error {
+    enum Error {
+        None,
+        Timeout,
+        BadReply,
+        Program,
+        Verification,
+        Checksum,
+        NotFound
+    };
+};
 
 class Loader : public QObject
 {
@@ -32,11 +43,13 @@ private:
     QByteArray build_reply(  QList<char> seq, int size, int offset);
     int version;
     int ack;
+    int error;
 
     int checksum(QByteArray binary, bool isEEPROM);
     QByteArray convert_binary_to_eeprom(QByteArray binary);
     QByteArray encode_binary(QByteArray binary);
-    int send_application_image(QByteArray encoded_binary, int image_size, Command::Command command);
+    int send_application_image(QByteArray encoded_binary, int image_size);
+    int poll_acknowledge();
 
     QTimer poll;
 
@@ -46,7 +59,8 @@ signals:
 private slots:
     void read_handshake();
     void read_acknowledge();
-    void error();
+    void loader_error();
+    void download_error();
     void calibrate();
     void writeEmpty();
 
@@ -58,15 +72,6 @@ public:
     int handshake();
     QByteArray prepare_code(QByteArray code, bool eeprom=false);
 
-    enum Errors {
-        Error_None,
-        Error_Timeout,
-        Error_BadReply,
-        Error_Program,
-        Error_Verification,
-        Error_Checksum,
-        Error_NotFound
-    };
 
 public:
     Loader(QString port, int reset_gpio=-1, QObject * parent = 0);
@@ -77,7 +82,7 @@ public:
     int get_version();
     void reset();
     QByteArray encode_long(unsigned int value);
-    void upload_binary(QByteArray binary, bool isEEPROM);
+    void upload_binary(QByteArray binary, bool eeprom=false, bool run=true);
     void list();
 
     void open_terminal();

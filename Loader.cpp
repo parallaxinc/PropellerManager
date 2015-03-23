@@ -22,6 +22,7 @@ Loader::Loader(QString port, int reset_gpio, QObject * parent) :
 
 
 
+
 //    try:
 //        import RPi.GPIO as GPIO
 //        self.GPIO = GPIO
@@ -194,9 +195,15 @@ QByteArray Loader::build_reply(QList<char> seq, int size, int offset)
     return array;
 }
 
-void Loader::error()
+void Loader::loader_error()
 {
     qDebug() << "Download has timed out!";
+    error = Error::Timeout;
+}
+
+void Loader::download_error()
+{
+    qDebug() << "IO error!";
 }
 
 
@@ -219,7 +226,7 @@ int Loader::handshake()
     timer.setSingleShot(true);
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-    connect(&timer, SIGNAL(timeout()), this, SLOT(error()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(loader_error()));
     timer.start(100);
     loop.exec();
 
@@ -292,9 +299,8 @@ QByteArray Loader::encode_binary(QByteArray binary)
 }
 
 
-void Loader::upload_binary(QByteArray binary, bool isEEPROM)
+void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
 {
-
     if (binary.isEmpty())
     {
         qDebug() << "Image empty!";
@@ -307,12 +313,12 @@ void Loader::upload_binary(QByteArray binary, bool isEEPROM)
         return;
     }
 
-    if (isEEPROM)
+    if (eeprom)
     {
         binary = convert_binary_to_eeprom(binary);
     }
 
-    if (checksum(binary, isEEPROM))
+    if (checksum(binary, eeprom))
     {
         qDebug() << "Code checksum error:"
             << QString::number(checksum(binary, false),16);
@@ -321,13 +327,36 @@ void Loader::upload_binary(QByteArray binary, bool isEEPROM)
 
     QByteArray encoded_binary = encode_binary(binary);
 
-    send_application_image(encoded_binary, binary.size(), Command::Run);
+    if (!handshake())
+        return;
+
+    int command = 2*eeprom + run;
+    write_long(command);
+
+    qDebug() << "LOAD RAM";
+    if (send_application_image(encoded_binary, binary.size()) != 0)
+        return;
+
+    if (poll_acknowledge() != 0 || !eeprom)
+        return;
+    
+    qDebug() << "LOAD EEPROM";
+    if (poll_acknowledge() != 0)
+        return;
+
+    qDebug() << "VERIFY ROM";
+    if (poll_acknowledge() != 0)
+        return;
+
+    if (run)
+        reset();
 }
 
 void Loader::writeEmpty()
 {
     qDebug() << "EMPTY";
     if (serial.bytesToWrite())
+        error = 0;
         emit finished();
 }
 
@@ -336,47 +365,61 @@ void Loader::read_acknowledge()
     qDebug() << "GOT ACK" << serial.bytesAvailable();
     if (serial.bytesAvailable())
     {
-        qDebug() << serial.readAll().data();
+        ack = QString(serial.readAll().data()).toInt();
         qDebug() << "ACK" << ack;
         poll.stop();
+        error = 0;
         emit finished();
     }
 }
 
-int Loader::send_application_image(QByteArray encoded_binary, int image_size, Command::Command command)
+int Loader::send_application_image(QByteArray encoded_binary, int image_size)
 {
+    connect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
+    connect(&serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(download_error()));
+
     qDebug() << "SENDING DATA";
 
-    connect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
-    connect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
-    bool write = false, run = false;
-
-    write_long(1);
     write_long(image_size / 4);
     serial.write(encoded_binary);
 
     QEventLoop loop;
-//    QTimer timer;
-//    timer.setSingleShot(true);
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
-//    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-//    connect(&timer, SIGNAL(timeout()), this, SLOT(error()));
-//    timer.start(2000);
     loop.exec();
 
+    disconnect(&serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(download_error()));
     disconnect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
+    disconnect(&serial);
+
+    return error;
+}
+
+int Loader::poll_acknowledge()
+{
+    connect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
+    connect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
 
     qDebug() << "STARTING POLLING";
 
-    connect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
     poll.setInterval(20);
     poll.start();
+
+    QEventLoop loop;
+    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+
+    QTimer timeout;
+    timeout.setSingleShot(true);
+    connect(&timeout, SIGNAL(timeout()), &loop, SLOT(quit()));
+    connect(&timeout, SIGNAL(timeout()), this, SLOT(loader_error()));
+    timeout.start(5000);
 
     loop.exec();
 
     disconnect(&poll);
     disconnect(&serial);
+    disconnect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
+    disconnect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
 
-    return 0;
+    return error;
 }
 
