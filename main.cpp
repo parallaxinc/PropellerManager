@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     loader.encode_long(35353325);
     loader.handshake();
 //    loader.get_version();
-    loader.upload_binary(readFile("Brettris.binary"),true);
+    loader.upload_binary(readFile("Brettris.binary"),false);
     loader.close();
 
     return 0;

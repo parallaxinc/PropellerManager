@@ -289,24 +289,53 @@ QByteArray Loader::convert_binary_to_eeprom(QByteArray binary)
     return binary;
 }
 
+
+QByteArray Loader::encode_binary(QByteArray binary)
+{
+    QByteArray encoded_binary;
+    for (int i = 0 ; i < binary.size() ; i += 4)
+    {
+        encoded_binary += encode_long(
+                ((unsigned char) binary.at(i)) | 
+                ((unsigned char) binary.at(i + 1) << 8)  | 
+                ((unsigned char) binary.at(i + 2) << 16) |
+                ((unsigned char) binary.at(i + 3) << 24)
+                );
+    }
+}
+
+
 void Loader::upload_binary(QByteArray binary, bool isEEPROM)
 {
-
-    if (checksum(binary, false))
-    {
-        qDebug() << "Code checksum error:"
-            << QString::number(checksum(binary, false),16);
-        return;
-    }
-
-    if (isEEPROM)
-        binary = convert_binary_to_eeprom(binary);
 
     if (binary.isEmpty())
     {
         qDebug() << "Image empty!";
         return;
     }
+
+    if (binary.size() % 4 != 0)
+    {
+        qDebug() << "Invalid code size; must be multiple of 4!";
+        return;
+    }
+
+    if (isEEPROM)
+    {
+        binary = convert_binary_to_eeprom(binary);
+    }
+
+    if (checksum(binary, isEEPROM))
+    {
+        qDebug() << "Code checksum error:"
+            << QString::number(checksum(binary, false),16);
+        return;
+    }
+
+//    int size = binary.size();
+
+    QByteArray encoded_binary = encode_binary(binary);
+
 
     QFile file("superfile.txt.2");
     file.open(QIODevice::WriteOnly | QIODevice::Text);
