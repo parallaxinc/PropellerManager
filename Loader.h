@@ -1,8 +1,4 @@
-#include <QCoreApplication>
 #include <QSerialPort>
-#include <QSerialPortInfo>
-#include <QDebug>
-#include <QThread>
 #include <QTimer>
 
 namespace Command {
@@ -85,5 +81,7 @@ public:
 
     void open_terminal();
     void close_terminal();
+
+    static QStringList list_devices();
 };
 

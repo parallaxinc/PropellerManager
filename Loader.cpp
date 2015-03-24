@@ -1,6 +1,10 @@
 #include "Loader.h"
 
+#include <QCoreApplication>
 #include <QEventLoop>
+#include <QSerialPortInfo>
+#include <QDebug>
+#include <QThread>
 
 #include "GPIO.h"
 
@@ -397,5 +401,18 @@ int Loader::poll_acknowledge()
     disconnect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
 
     return error;
+}
+
+
+QStringList Loader::list_devices()
+{
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    QStringList result;
+
+    foreach (QSerialPortInfo port, ports)
+    {
+        result.append(port.systemLocation());
+    }
+    return result;
 }
 

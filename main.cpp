@@ -1,10 +1,7 @@
 #include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QObject>
-#include <QSerialPort>
-#include <QSerialPortInfo>
 #include <QDebug>
-#include <QMap>
 #include <QFile>
 #include <QByteArray>
 
@@ -13,18 +10,6 @@
 #ifndef VERSION
 #define VERSION "0.0.0"
 #endif
-
-QStringList serial_ports()
-{
-    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-    QStringList result;
-
-    foreach (QSerialPortInfo port, ports)
-    {
-        result.append(port.systemLocation());
-    }
-    return result;
-}
 
 QByteArray readFile(QString filename)
 {
@@ -64,7 +49,7 @@ int main(int argc, char *argv[])
 
     parser.process(app);
 
-    QStringList device_list = serial_ports();
+    QStringList device_list = Loader::list_devices();
     if (parser.isSet(argList))
     {
         for (int i = 0; i < device_list.size(); i++)
