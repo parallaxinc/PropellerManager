@@ -8,7 +8,8 @@ TEMPLATE = app
 TARGET = propman
 INCLUDEPATH += .
 
-CONFIG += debug
+CONFIG += debug console
+CONFIG -= debug_and_release
 
 # Input
 SOURCES += \

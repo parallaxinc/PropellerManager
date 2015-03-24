@@ -48,6 +48,7 @@ int Loader::get_version()
 {
     handshake();
     write_long(Command::Shutdown);
+    QCoreApplication::processEvents();
     return version;
 }
 
@@ -79,7 +80,6 @@ void Loader::reset()
     else
     {
         serial.setDataTerminalReady(true);
-        QThread::msleep(t1);
         serial.setDataTerminalReady(false);
         QThread::msleep(t2);
     }
@@ -95,13 +95,11 @@ void Loader::calibrate()
 void Loader::write_byte(char value)
 {
     serial.putChar(value);
-    QCoreApplication::processEvents();
 }
 
 void Loader::write_long(unsigned int value)
 {
     serial.write(encode_long(value));
-    QCoreApplication::processEvents();
 }
 
 void Loader::read_handshake()
@@ -210,7 +208,6 @@ void Loader::download_error()
 int Loader::handshake()
 {
     reset();
-    calibrate();
 
     real_reply.clear();
 
@@ -218,6 +215,7 @@ int Loader::handshake()
 
     connect(&serial, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
+    calibrate();
     serial.write(request);
     serial.write(header);
 

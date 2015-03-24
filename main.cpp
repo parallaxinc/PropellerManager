@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
 
     Loader loader(device_list[0],-1);
     loader.open();
+//    loader.get_version();
     loader.upload_binary(readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));
     loader.close();
 
