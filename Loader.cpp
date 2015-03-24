@@ -2,6 +2,8 @@
 
 #include <QEventLoop>
 
+#include "GPIO.h"
+
 Loader::Loader(QString port, int reset_gpio, QObject * parent) :
     QObject(parent)
 {
@@ -20,14 +22,6 @@ Loader::Loader(QString port, int reset_gpio, QObject * parent) :
     request = build_request(sequence, request_length);
     reply = build_reply(sequence, reply_length, request_length);
 
-//    try:
-//        import RPi.GPIO as GPIO
-//        self.GPIO = GPIO
-//        self.GPIO.setmode(self.GPIO.BCM)
-//        self.GPIO.setwarnings(False)
-//        self.GPIO.setup(self.reset_gpio, self.GPIO.OUT, initial=self.GPIO.HIGH)
-//    except ImportError:
-//        print("RPi.GPIO library required for GPIO reset.")
 }
 
 Loader::~Loader()
@@ -65,10 +59,11 @@ void Loader::reset()
 {
     serial.clear(QSerialPort::Output);
 
-    if (reset_gpio > -1) //and not self.GPIO == None:
+    if (reset_gpio > -1)
     {
-//        self.GPIO.output(self.reset_gpio, self.GPIO.LOW)
-//        self.GPIO.output(self.reset_gpio, self.GPIO.HIGH)
+        GPIO gpio(reset_gpio, GPIO::Out);
+        gpio.Write(GPIO::Low);
+        gpio.Write(GPIO::High);
     }
     else
     {
@@ -136,11 +131,6 @@ QByteArray Loader::encode_long(unsigned int value)
     result.append(0xf2 | (value & 0x01) | ((value & 2) << 2));
 //    qDebug() << result.toHex().data();
     return result;
-}
-
-QByteArray Loader::prepare_code(QByteArray code, bool eeprom)
-{
-    return QByteArray();
 }
 
 int Loader::lfsr(int * seed)

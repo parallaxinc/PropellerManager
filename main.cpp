@@ -50,13 +50,15 @@ int main(int argc, char *argv[])
             QObject::tr("\nA command-line wrapper to the Propeller Manager API"
                 "\nCopyright 2015 by %1").arg(QCoreApplication::organizationName()));
 
-    QCommandLineOption argList( QStringList() << "l" << "list",  QObject::tr("List available devices"));
-    QCommandLineOption argWrite(QStringList() << "w" << "write", QObject::tr("Write program to EEPROM"));
-    QCommandLineOption argDevice(QStringList() << "d" << "device", QObject::tr("Device to program (default: first system device)"), "DEV");
+    QCommandLineOption argList(  QStringList() << "l" << "list",  QObject::tr("List available devices"));
+    QCommandLineOption argWrite( QStringList() << "w" << "write", QObject::tr("Write program to EEPROM"));
+    QCommandLineOption argDevice(QStringList() << "d" << "device",QObject::tr("Device to program (default: first system device)"), "DEV");
+    QCommandLineOption argPin(   QStringList() << "p" << "pin",   QObject::tr("Pin for GPIO reset"), "PIN");
 
     parser.addOption(argList);
     parser.addOption(argWrite);
     parser.addOption(argDevice);
+    parser.addOption(argPin);
 
     parser.addPositionalArgument("file",  QObject::tr("Binary file to download"), "FILE");
 
@@ -89,6 +91,13 @@ int main(int argc, char *argv[])
         }
     }
 
+    int reset_pin = -1;
+    if (!parser.value(argPin).isEmpty())
+    {
+        reset_pin = parser.value(argPin).toInt();
+        qDebug() << "Using GPIO pin" << reset_pin << "for hardware reset";
+    }
+
     qDebug() << "Selecting" << device;
 
     if (parser.positionalArguments().isEmpty())
@@ -97,7 +106,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    Loader loader(device_list[0],-1);
+    Loader loader(device_list[0],reset_pin);
     loader.open();
 //    loader.get_version();
     loader.upload_binary(readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));

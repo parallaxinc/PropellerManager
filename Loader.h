@@ -70,8 +70,6 @@ public:
     void write_byte(char value);
     void write_long(unsigned int value);
     int handshake();
-    QByteArray prepare_code(QByteArray code, bool eeprom=false);
-
 
 public:
     Loader(QString port, int reset_gpio=-1, QObject * parent = 0);

@@ -8,6 +8,16 @@ public:
     GPIO(int pin, int dir);
     ~GPIO();
 
+    enum Direction {
+        In,
+        Out
+    };
+
+    enum Level {
+        Low,
+        High
+    };
+
     int Read();
     int Write(int value);
 

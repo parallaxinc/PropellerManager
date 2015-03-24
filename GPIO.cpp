@@ -19,16 +19,6 @@ extern "C"
 #include <unistd.h>
 }
 
-#define IN   0
-#define OUT  1
-
-#define LOW  0
-#define HIGH 1
-
-#define PIN  24 /* P1-18 */
-#define POUT 4  /* P1-07 */
-
-
 GPIO::GPIO(int pin, int dir)
 {
     this->pin = pin;
@@ -44,7 +34,7 @@ GPIO::~GPIO()
 
 int GPIO::Read()
 {
-    GPIO::Read(pin);
+    return GPIO::Read(pin);
 }
 
 int GPIO::Write(int value)
@@ -104,7 +94,7 @@ int GPIO::Direction(int pin, int dir)
         return(-1);
     }
 
-    if (-1 == write(fd, &s_directions_str[IN == dir ? 0 : 3], IN == dir ? 2 : 3)) {
+    if (-1 == write(fd, &s_directions_str[GPIO::In == dir ? 0 : 3], GPIO::In == dir ? 2 : 3)) {
         fprintf(stderr, "Failed to set direction!\n");
         return(-1);
     }
@@ -151,7 +141,7 @@ int GPIO::Write(int pin, int value)
         return(-1);
     }
 
-    if (1 != write(fd, &s_values_str[LOW == value ? 0 : 1], 1)) {
+    if (1 != write(fd, &s_values_str[GPIO::Low == value ? 0 : 1], 1)) {
         fprintf(stderr, "Failed to write value!\n");
         return(-1);
     }
@@ -159,45 +149,3 @@ int GPIO::Write(int pin, int value)
     close(fd);
     return(0);
 }
-
-int main(int argc, char *argv[])
-{
-    int repeat = 9;
-
-    /*
-     * Enable GPIO pins
-     */
-    if (-1 == GPIO::Export(POUT) || -1 == GPIO::Export(PIN))
-        return(1);
-
-    /*
-     * Set GPIO directions
-     */
-    if (-1 == GPIO::Direction(POUT, OUT) || -1 == GPIO::Direction(PIN, IN))
-        return(2);
-
-    do {
-        /*
-         * Write GPIO value
-         */
-        if (-1 == GPIO::Write(POUT, repeat % 2))
-            return(3);
-
-        /*
-         * Read GPIO value
-         */
-        printf("I'm reading %d in GPIO %d\n", GPIO::Read(PIN), PIN);
-
-        usleep(500 * 1000);
-    }
-    while (repeat--);
-
-    /*
-     * Disable GPIO pins
-     */
-    if (-1 == GPIO::Unexport(POUT) || -1 == GPIO::Unexport(PIN))
-        return(4);
-
-    return(0);
-}
-

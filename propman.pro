@@ -15,6 +15,8 @@ CONFIG -= debug_and_release
 SOURCES += \
     main.cpp \
     Loader.cpp \
+    GPIO.cpp \
 
 HEADERS += \
-    Loader.h
+    Loader.h \
+    GPIO.h \
