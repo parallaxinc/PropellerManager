@@ -27,12 +27,6 @@ Loader::Loader(QString port, int reset_gpio, QObject * parent) :
 Loader::~Loader()
 {
     serial.close();
-
-    // cleanup gpio
-    if (reset_gpio > -1)
-    {
-//            self.GPIO.cleanup()
-    }
 }
 
 int Loader::get_version()
@@ -69,8 +63,9 @@ void Loader::reset()
     {
         serial.setDataTerminalReady(true);
         serial.setDataTerminalReady(false);
-        QThread::msleep(50);
     }
+
+    QThread::msleep(60);
 
     serial.clear(QSerialPort::Input);
 }
