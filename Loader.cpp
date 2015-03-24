@@ -20,9 +20,6 @@ Loader::Loader(QString port, int reset_gpio, QObject * parent) :
     request = build_request(sequence, request_length);
     reply = build_reply(sequence, reply_length, request_length);
 
-
-
-
 //    try:
 //        import RPi.GPIO as GPIO
 //        self.GPIO = GPIO
@@ -77,6 +74,7 @@ void Loader::reset()
     {
         serial.setDataTerminalReady(true);
         serial.setDataTerminalReady(false);
+        QThread::msleep(50);
     }
 
     serial.clear(QSerialPort::Input);
