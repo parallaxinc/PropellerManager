@@ -68,20 +68,15 @@ void Loader::reset()
 {
     serial.clear(QSerialPort::Output);
 
-    int t1 = 25, t2 = 50;
-
     if (reset_gpio > -1) //and not self.GPIO == None:
     {
 //        self.GPIO.output(self.reset_gpio, self.GPIO.LOW)
-        QThread::msleep(t1);
 //        self.GPIO.output(self.reset_gpio, self.GPIO.HIGH)
-        QThread::msleep(t2);
     }
     else
     {
         serial.setDataTerminalReady(true);
         serial.setDataTerminalReady(false);
-        QThread::msleep(t2);
     }
 
     serial.clear(QSerialPort::Input);
