@@ -13,6 +13,7 @@ Loader::Loader(QString port, int reset_gpio, QObject * parent) :
 {
     version = 0;
 
+    serial.setSettingsRestoredOnClose(false);
     serial.setPortName(port);
     serial.setBaudRate(230400);
 //    serial.setBaudRate(115200);
@@ -317,16 +318,26 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
     if (send_application_image(encoded_binary, binary.size()) != 0)
         return;
 
-    if (poll_acknowledge() != 0 || !eeprom)
+    if (poll_acknowledge() != 0)
         return;
+
+    if (!eeprom)
+    {
+        qDebug() << "RAM DOWNLOAD COMPLETE";
+
+    }
     
     qDebug() << "LOAD EEPROM";
+
     if (poll_acknowledge() != 0)
         return;
 
     qDebug() << "VERIFY ROM";
+
     if (poll_acknowledge() != 0)
         return;
+
+    qDebug() << "EEPROM WRITE FINISHED";
 
     if (run)
         reset();
@@ -355,6 +366,7 @@ void Loader::read_acknowledge()
 
 int Loader::send_application_image(QByteArray encoded_binary, int image_size)
 {
+    error = 0;
     connect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
     connect(&serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(download_error()));
 
@@ -370,6 +382,8 @@ int Loader::send_application_image(QByteArray encoded_binary, int image_size)
     disconnect(&serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(download_error()));
     disconnect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
     disconnect(&serial);
+
+    qDebug() << "ERROR" << error;
 
     return error;
 }
