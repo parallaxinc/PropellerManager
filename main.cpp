@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     {
         for (int i = 0; i < device_list.size(); i++)
         {
-            qDebug() << device_list[i];
+            qDebug() << qPrintable(device_list[i]);
         }
         return 0;
     }
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         qDebug() << "Using GPIO pin" << reset_pin << "for hardware reset";
     }
 
-    qDebug() << "Selecting" << device;
+//    qDebug() << "Selecting" << device;
 
     if (parser.positionalArguments().isEmpty())
     {
