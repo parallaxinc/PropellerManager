@@ -22,20 +22,6 @@ namespace Error {
     };
 };
 
-namespace Escape {
-    enum Escape {
-       ENDC = 0,
-       BOLD = 1,
-       UNDERLINE = 4,
-       FAIL = 91,
-       OKGREEN = 92,
-       WARNING = 93,
-       OKBLUE = 94,
-       HEADER = 95
-    };
-};
-
-
 class Loader : public QObject
 {
     Q_OBJECT
@@ -101,12 +87,11 @@ public:
 
 signals:
     void requestPrint(QString text);
-    void requestPrint_color(QString text, Escape::Escape key = Escape::ENDC);
+    void requestPrint_color(QString text);
 
 public slots:
     void print(const QString & text);
     void print_task(const QString & text);
-    void print_color(const QString & text, Escape::Escape key = Escape::ENDC);
-    void print_status(const QString & text, Escape::Escape key = Escape::ENDC);
+    void print_status(const QString & text);
 };
 

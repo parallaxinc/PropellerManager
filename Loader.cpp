@@ -107,30 +107,11 @@ void Loader::print_task(const QString & text)
     fflush(stderr);
 }
 
-void Loader::print_status(const QString & text, Escape::Escape key)
+void Loader::print_status(const QString & text)
 {
     print("[ ");
-    print_color(text, key);
+    print(text);
     print(" ]\n");
-}
-
-void Loader::print_color(const QString & text, Escape::Escape key)
-{
-    QString escape, escape_end;
-    if (key)
-    {
-        escape = "\033[" + QString::number(key) +"m";
-        escape +="\033[1m";
-        escape_end = "\033[0m";
-    }
-    else
-    {
-        escape = "";
-        escape_end = "";
-    }
-
-    fprintf(stderr, "%s%s%s",qPrintable(escape), qPrintable(text), qPrintable(escape_end));
-    fflush(stderr);
 }
 
 void Loader::print(const QString & text)
@@ -327,13 +308,13 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
 {
     if (binary.isEmpty())
     {
-        print_status("EMPTY IMAGE",Escape::FAIL);
+        print_status("EMPTY IMAGE");
         return;
     }
 
     if (binary.size() % 4 != 0)
     {
-        print_status("INVALID IMAGE SIZE",Escape::FAIL);
+        print_status("INVALID IMAGE SIZE");
         return;
     }
 
@@ -344,7 +325,7 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
 
     if (checksum(binary, eeprom))
     {
-        print_status("BAD CHECKSUM",Escape::FAIL);
+        print_status("BAD CHECKSUM");
         return;
     }
     QByteArray encoded_binary = encode_binary(binary);
@@ -352,10 +333,10 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
     print_task("Connecting to '"+serial.portName()+"'...");
     if (!handshake())
     {
-        print_status("NOT FOUND",Escape::FAIL);
+        print_status("NOT FOUND");
         return;
     }
-    print_status("DONE",Escape::OKGREEN);
+    print_status("DONE");
 
     int command = 2*eeprom + run;
     write_long(command);
@@ -364,16 +345,16 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
     if (send_application_image(encoded_binary, binary.size()) != 0)
         return;
 
-    print_status("DONE",Escape::OKGREEN);
+    print_status("DONE");
 
     print_task("Verifying RAM...");
     if (poll_acknowledge() != 0)
     {
-        print_status("BAD CHECKSUM",Escape::FAIL);
+        print_status("BAD CHECKSUM");
         return;
     }
 
-    print_status("DONE",Escape::OKGREEN);
+    print_status("DONE");
 
     if (!eeprom)
         return;
@@ -382,19 +363,19 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
 
     if (poll_acknowledge() != 0)
     {
-        print_status("FAIL",Escape::FAIL);
+        print_status("FAIL");
         return;
     }
-    print_status("DONE",Escape::OKGREEN);
+    print_status("DONE");
 
     print_task("Verifying EEPROM...");
 
     if (poll_acknowledge() != 0)
     {
-        print_status("FAIL",Escape::FAIL);
+        print_status("FAIL");
         return;
     }
-    print_status("DONE",Escape::OKGREEN);
+    print_status("DONE");
 
     if (run)
         reset();
