@@ -76,12 +76,18 @@ int main(int argc, char *argv[])
         }
     }
 
+#if defined(Q_PROCESSOR_ARM_V7) && defined(Q_OS_LINUX)
+    int reset_pin = 17;
+#else
     int reset_pin = -1;
+#endif
+
     if (!parser.value(argPin).isEmpty())
     {
         reset_pin = parser.value(argPin).toInt();
-        qDebug() << "Using GPIO pin" << reset_pin << "for hardware reset";
     }
+    if (reset_pin > -1)
+        qDebug() << "Using GPIO pin" << reset_pin << "for hardware reset";
 
 //    qDebug() << "Selecting" << device;
 
