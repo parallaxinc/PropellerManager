@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    Loader loader(device_list[0],reset_pin);
+    Loader loader(device,reset_pin);
     loader.open();
 //    loader.get_version();
     loader.upload_binary(readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));
