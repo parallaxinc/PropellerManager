@@ -81,7 +81,6 @@ void PropTerm::readData()
 void PropTerm::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::ResourceError) {
-        QMessageBox::critical(this, tr("Critical Error"), serial.errorString());
         closeSerialPort();
     }
 }
