@@ -1,64 +1,231 @@
-/****************************************************************************
-**
-** Copyright (C) 2012 Denis Shienkov <denis.shienkov@gmail.com>
-** Copyright (C) 2012 Laszlo Papp <lpapp@kde.org>
-** Contact: http://www.qt-project.org/legal
-**
-** This file is part of the QtSerialPort module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Digia. For licensing terms and
-** conditions see http://qt.digia.com/licensing. For further information
-** use the contact form at http://qt.digia.com/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 or version 3 as published by the Free
-** Software Foundation and appearing in the file LICENSE.LGPLv21 and
-** LICENSE.LGPLv3 included in the packaging of this file. Please review the
-** following information to ensure the GNU Lesser General Public License
-** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Digia gives you certain additional
-** rights. These rights are described in the Digia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 #include "console.h"
 
 #include <QScrollBar>
+#include <QTextBlock>
 
-#include <QtCore/QDebug>
+#include <QDebug>
 
 Console::Console(QWidget *parent)
-    : QPlainTextEdit(parent), localEchoEnabled(false)
+    : QPlainTextEdit(parent)
 {
+    setEchoEnabled(false);
     document()->setMaximumBlockCount(100);
+    enable(false);
+
+    paused = false;
+    pstMode = true;
+    lastChar = 0;
+    lastChar2 = 0;
+    lastCursor = textCursor();
 }
+
+int Console::cursorX(QTextCursor cursor)
+{
+    int position = cursor.position();
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    int anchor = cursor.position();
+    return position-anchor;
+}
+
+int Console::cursorY(QTextCursor cursor)
+{
+    return cursor.block().firstLineNumber();
+}
+
+int Console::lineW(QTextCursor cursor)
+{
+    cursor.movePosition(QTextCursor::EndOfLine);
+    return cursorX(cursor);
+}
+
+QTextCursor Console::moveRight(QTextCursor cursor)
+{
+    if (cursorX(cursor) == lineW(cursor))
+    {
+        insertPlainText(" ");
+        cursor.movePosition(QTextCursor::EndOfLine);
+    }
+    else
+    {
+        cursor.movePosition(QTextCursor::Right);
+    }
+    return cursor;
+
+}
+
+QTextCursor Console::moveDown(QTextCursor cursor)
+{
+    int x = cursorX(cursor);
+    if (!cursor.movePosition(QTextCursor::Down))
+    {
+        cursor.movePosition(QTextCursor::End);
+        insertPlainText("\n");
+        while (cursorX(cursor) < x)
+        {
+            insertPlainText(" ");
+            cursor.movePosition(QTextCursor::End);
+        }
+    }
+    return cursor;
+}
+
+QTextCursor Console::moveUp(QTextCursor cursor)
+{
+    int x = cursorX(cursor);
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    cursor.movePosition(QTextCursor::Up);
+    cursor = positionX(cursor, x);
+    return cursor;
+}
+
+QTextCursor Console::positionX(QTextCursor cursor, int x)
+{
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    for (int i = 0; i < x; i++)
+    {
+        cursor = moveRight(cursor);
+    }
+    return cursor;
+}
+
+
+QTextCursor Console::positionY(QTextCursor cursor, int y)
+{
+    int x = cursorX(cursor);
+    cursor.movePosition(QTextCursor::Start);
+    for (int i = 0; i < y; i++)
+        cursor = moveDown(cursor);
+
+    for (int i = 0; i < x; i++)
+        cursor = moveRight(cursor);
+    return cursor;
+}
+
 
 void Console::putData(const QByteArray &data)
 {
-    insertPlainText(QString(data));
+    paused = true;
+    setTextCursor(lastCursor);
+    foreach(char c, data)
+    {
+        if (pstMode)
+        {
+            QTextCursor cursor = textCursor();
+
+            // backspace, tab, new line, and line feed
+            // do not require special implementations
+            // beep speaker is no longer a relevant operation
+            if (lastChar == 14 || lastChar == 2)
+            {
+                cursor = positionX(cursor, c);
+            }
+            else if (lastChar == 15 || lastChar2 == 2)
+            {
+                cursor = positionY(cursor, c);
+            }
+            else
+            {
+                switch (c) {
+
+                case 16:    // clear screen
+                            clear();
+                            break;
+
+                case 11:    // clear to end of line
+                            cursor.movePosition(QTextCursor::EndOfLine,
+                                    QTextCursor::KeepAnchor);
+                            cursor.removeSelectedText();
+                            break;
+
+                case 12:    // clear lines below
+                            cursor.movePosition(QTextCursor::End,
+                                    QTextCursor::KeepAnchor);
+                            cursor.removeSelectedText();
+                            break;
+
+                case  1:    // home cursor
+                            cursor.movePosition(QTextCursor::Start);
+                            break;
+
+                case 10:    // line feed
+                case 13:    // new line
+                            insertPlainText("\n");
+                            break;
+
+                case  2:    // position x, y
+                case 14:    // position x cursor
+                case 15:    // position y cursor
+                            break;
+                case  3:    
+                            cursor.movePosition(QTextCursor::Left);
+                            break;
+                case  4:    
+                            cursor = moveRight(cursor);
+                            break;
+                case  5:
+                            cursor = moveUp(cursor);
+                            break;
+                case  6:
+                            cursor = moveDown(cursor);
+                            break;
+                default:
+                    insertPlainText(QString(c));
+                }
+            }
+            setTextCursor(cursor);
+        }
+        else
+        {
+            insertPlainText(QString(c));
+        }
+
+        lastChar2 = lastChar;
+        lastChar = c;
+        lastCursor = textCursor();
+    }
 
     QScrollBar *bar = verticalScrollBar();
     bar->setValue(bar->maximum());
+    paused = false;
 }
 
-void Console::setLocalEchoEnabled(bool set)
+void Console::enable(bool set)
 {
-    localEchoEnabled = set;
+    if (set)
+    {
+        setStyleSheet("Console {"
+                      "  background-image: url(:/icons/propterm/term-bg-blue.png);"
+                      "  background-repeat: no-repeat;"
+                      "  background-position: center;"
+                      "  background-color: #000030;"
+                      "}");
+    }
+    else
+    {
+        setStyleSheet("Console {"
+                      "  background-image: url(:/icons/propterm/term-bg-grey.png);"
+                      "  background-repeat: no-repeat;"
+                      "  background-position: center;"
+                      "  background-color: #000000;"
+                      "}");
+    }
+}
+
+void Console::setEchoEnabled(bool set)
+{
+    echoEnabled = set;
+}
+
+void Console::setPstMode(bool enable)
+{
+    pstMode = enable;
 }
 
 void Console::keyPressEvent(QKeyEvent *e)
 {
+    paused = true;
+    setTextCursor(lastCursor);
+
     switch (e->key()) {
     case Qt::Key_Backspace:
     case Qt::Key_Left:
@@ -67,24 +234,18 @@ void Console::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Down:
         break;
     default:
-        if (localEchoEnabled)
+        if (echoEnabled)
             QPlainTextEdit::keyPressEvent(e);
         emit getData(e->text().toLocal8Bit());
     }
+
+    paused = false;
 }
 
 void Console::mousePressEvent(QMouseEvent *e)
 {
-    Q_UNUSED(e)
-    setFocus();
-}
-
-void Console::mouseDoubleClickEvent(QMouseEvent *e)
-{
-    Q_UNUSED(e)
-}
-
-void Console::contextMenuEvent(QContextMenuEvent *e)
-{
-    Q_UNUSED(e)
+    if (!paused)
+    {
+        QPlainTextEdit::mousePressEvent(e);
+    }
 }

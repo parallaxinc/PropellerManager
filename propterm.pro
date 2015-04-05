@@ -5,15 +5,15 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    settingsdialog.cpp \
+    propterm.cpp \
     console.cpp
 
 HEADERS += \
-    mainwindow.h \
-    settingsdialog.h \
+    propterm.h \
     console.h
 
 FORMS += \
-    forms/mainwindow.ui \
-    forms/settingsdialog.ui
+    propterm.ui \
+
+RESOURCES += \
+    icons/propterm/propterm.qrc \
