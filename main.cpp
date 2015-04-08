@@ -35,15 +35,19 @@ int main(int argc, char *argv[])
             QObject::tr("\nA command-line wrapper to the Propeller Manager API"
                 "\nCopyright 2015 by %1").arg(QCoreApplication::organizationName()));
 
-    QCommandLineOption argList(  QStringList() << "l" << "list",  QObject::tr("List available devices"));
-    QCommandLineOption argWrite( QStringList() << "w" << "write", QObject::tr("Write program to EEPROM"));
-    QCommandLineOption argDevice(QStringList() << "d" << "device",QObject::tr("Device to program (default: first system device)"), "DEV");
-    QCommandLineOption argPin(   QStringList() << "p" << "pin",   QObject::tr("Pin for GPIO reset"), "PIN");
+    QCommandLineOption argList(     QStringList() << "l" << "list",  QObject::tr("List available devices"));
+    QCommandLineOption argWrite(    QStringList() << "w" << "write", QObject::tr("Write program to EEPROM"));
+    QCommandLineOption argDevice(   QStringList() << "d" << "device",QObject::tr("Device to program (default: first system device)"), "DEV");
+    QCommandLineOption argPin(      QStringList() << "p" << "pin",   QObject::tr("Pin for GPIO reset"), "PIN");
+    QCommandLineOption argTerm(     QStringList() << "t" << "terminal",   QObject::tr("Drop into terminal after download"));
+    QCommandLineOption argIdentify( QStringList() << "i" << "identify",   QObject::tr("Identify device connected at port"));
 
     parser.addOption(argList);
     parser.addOption(argWrite);
     parser.addOption(argDevice);
     parser.addOption(argPin);
+    parser.addOption(argTerm);
+    parser.addOption(argIdentify);
 
     parser.addPositionalArgument("file",  QObject::tr("Binary file to download"), "FILE");
 
@@ -89,19 +93,53 @@ int main(int argc, char *argv[])
     if (reset_pin > -1)
         qDebug() << "Using GPIO pin" << reset_pin << "for hardware reset";
 
-//    qDebug() << "Selecting" << device;
 
-    if (parser.positionalArguments().isEmpty())
+    if (parser.isSet(argIdentify))
     {
-        qDebug() << "Error: Must provide name of binary";
-        return 1;
-    }
+        foreach (QString d, device_list)
+        {
+            Loader loader(d,reset_pin);
+            loader.open();
 
-    Loader loader(device,reset_pin);
-    loader.open();
-//    loader.get_version();
-    loader.upload_binary(readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));
-    loader.close();
+            switch (loader.get_version())
+            {
+                case 1:
+                    qDebug("[ %-16s ] %s", qPrintable(d), "Propeller P8X32A");
+                    break;
+                case 0:
+                default:
+                    qDebug("[ %-16s ] %-9s",qPrintable(d), "NOT FOUND");
+                    break;
+            }
+
+            loader.close();
+        }
+    }
+    else
+    {
+        Loader loader(device,reset_pin);
+        loader.open();
+
+        if (parser.positionalArguments().isEmpty())
+        {
+            qDebug() << "Error: Must provide name of binary";
+            return 1;
+        }
+
+        if (!parser.positionalArguments()[0].contains("*.binary$"))
+        {
+            loader.upload_binary(readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));
+        }
+        else
+        {
+            qDebug() << "Invalid file specified";
+        }
+
+        if (parser.isSet(argTerm))
+            loader.terminal();
+
+        loader.close();
+    }
 
     return 0;
 }
