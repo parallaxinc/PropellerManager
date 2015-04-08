@@ -52,7 +52,11 @@ int Loader::get_version()
 
 int Loader::open()
 {
-    serial.open(QIODevice::ReadWrite);
+    if (!serial.open(QIODevice::ReadWrite))
+    {
+        qDebug() << serial.errorString();
+        return 1;
+    }
     return 0;
 }
 

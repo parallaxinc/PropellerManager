@@ -118,7 +118,8 @@ int main(int argc, char *argv[])
     else
     {
         Loader loader(device,reset_pin);
-        loader.open();
+        if (loader.open())
+            return 1;
 
         if (parser.positionalArguments().isEmpty())
         {
