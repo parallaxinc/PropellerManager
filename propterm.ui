@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Terminal</string>
   </property>
-  <property name="windowOpacity">
-   <double>0.300000000000000</double>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
