@@ -75,6 +75,7 @@ private:
     int ack;
     int error;
     bool useRtsReset;
+    int resourceErrorCount;
 
     int checksum(QByteArray binary, bool isEEPROM);
     QByteArray convert_binary_to_eeprom(QByteArray binary);

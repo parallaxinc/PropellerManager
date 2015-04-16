@@ -14,6 +14,7 @@ Loader::Loader(QString port, int reset_gpio, bool useRtsReset, QObject * parent)
 {
     this->useRtsReset = useRtsReset;
     version = 0;
+    resourceErrorCount = 0;
 
     serial.setSettingsRestoredOnClose(false);
     serial.setPortName(port);
@@ -52,6 +53,8 @@ int Loader::get_version()
 
 int Loader::open()
 {
+    resourceErrorCount = 0;
+
     if (!serial.open(QIODevice::ReadWrite))
     {
         qDebug() << serial.errorString();
@@ -238,10 +241,14 @@ void Loader::device_error(QSerialPort::SerialPortError e)
         case QSerialPort::TimeoutError:
         case QSerialPort::UnknownError:
         case QSerialPort::ResourceError: // SUPER IMPORTANT
-            qDebug() << "ERROR: " << e;
-            close();
-            emit finished();
-            emit sendError(e,"Device unexpectedly disconnected!"); 
+            resourceErrorCount++;
+            if (resourceErrorCount > 1)
+            {
+                qDebug() << "ERROR: " << e;
+                close();
+                emit finished();
+                emit sendError(e,"Device unexpectedly disconnected!"); 
+            }
             break;
         default:
             break;
