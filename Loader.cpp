@@ -7,16 +7,25 @@
 #include <QThread>
 
 #include "GPIO.h"
+#include <stdio.h>
 
-Loader::Loader(QString port, int reset_gpio, QObject * parent) :
+Loader::Loader(QString port, int reset_gpio, bool useRtsReset, QObject * parent) :
     QObject(parent)
 {
+    this->useRtsReset = useRtsReset;
     version = 0;
+    resourceErrorCount = 0;
 
     serial.setSettingsRestoredOnClose(false);
     serial.setPortName(port);
     serial.setBaudRate(230400);
 //    serial.setBaudRate(115200);
+
+    connect(&serial,    SIGNAL(error(QSerialPort::SerialPortError)),
+            this,       SLOT(device_error(QSerialPort::SerialPortError))); 
+
+    connect(this,    SIGNAL(sendError(int, const QString &)),
+            this,   SLOT(print_error(int, const QString &)));
 
     this->reset_gpio = reset_gpio;
 
@@ -44,7 +53,13 @@ int Loader::get_version()
 
 int Loader::open()
 {
-    serial.open(QIODevice::ReadWrite);
+    resourceErrorCount = 0;
+
+    if (!serial.open(QIODevice::ReadWrite))
+    {
+        qDebug() << serial.errorString();
+        return 1;
+    }
     return 0;
 }
 
@@ -66,8 +81,16 @@ void Loader::reset()
     }
     else
     {
-        serial.setDataTerminalReady(true);
-        serial.setDataTerminalReady(false);
+        if (useRtsReset)
+        {
+            serial.setRequestToSend(true);
+            serial.setRequestToSend(false);
+        }
+        else
+        {
+            serial.setDataTerminalReady(true);
+            serial.setDataTerminalReady(false);
+        }
     }
 
     QThread::msleep(60);
@@ -90,23 +113,36 @@ void Loader::write_long(unsigned int value)
     serial.write(encode_long(value));
 }
 
+
+void Loader::print_task(const QString & text)
+{
+    fprintf(stderr, "%-30s",qPrintable(text));
+    fflush(stderr);
+}
+
+void Loader::print_status(const QString & text)
+{
+    print("[ ");
+    print(text);
+    print(" ]\n");
+}
+
+void Loader::print(const QString & text)
+{
+    fprintf(stderr, "%s",qPrintable(text));
+    fflush(stderr);
+}
+
 void Loader::read_handshake()
 {
-    qDebug() << "DATA" << serial.bytesAvailable();
     if (serial.bytesAvailable() == 258)
     {
         real_reply = serial.read(reply.size());
-        qDebug() << "GOT THE DATA" << real_reply.size() << real_reply.data();
 
-        qDebug() << reply.size() << real_reply.size();
         if (real_reply != reply)
         {
-            qDebug() << "DATA IS WRONG";
             emit finished();
         }
-
-        qDebug() << "DATA IS RIGHT";
-        qDebug() << "GET VERSION";
 
         QByteArray versiondata = serial.read(8);
 
@@ -115,7 +151,7 @@ void Loader::read_handshake()
         {
             version = ((version >> 1) & 0x7f) | ((versiondata.at(i) & 0x1) << 7);
         }
-        qDebug() << QString::number(version);
+//        qDebug() << QString::number(version);
         emit finished();
     }
 }
@@ -178,13 +214,47 @@ QByteArray Loader::build_reply(QList<char> seq, int size, int offset)
 
 void Loader::loader_error()
 {
-    qDebug() << "Download has timed out!";
     error = Error::Timeout;
 }
 
-void Loader::download_error()
+void Loader::print_error(int code, const QString & message)
 {
-    qDebug() << "IO error!";
+    qDebug("[ ERROR %2i ]: %s",code,qPrintable(message));
+}
+
+void Loader::device_error(QSerialPort::SerialPortError e)
+{
+    switch (e)
+    {
+        case QSerialPort::NoError:
+            break;
+        case QSerialPort::DeviceNotFoundError:
+        case QSerialPort::PermissionError:
+        case QSerialPort::NotOpenError:
+            break;
+        case QSerialPort::ParityError:
+        case QSerialPort::FramingError:
+        case QSerialPort::BreakConditionError:
+        case QSerialPort::WriteError:
+        case QSerialPort::ReadError:
+        case QSerialPort::UnsupportedOperationError:
+        case QSerialPort::TimeoutError:
+        case QSerialPort::UnknownError:
+        case QSerialPort::ResourceError: // SUPER IMPORTANT
+            resourceErrorCount++;
+            if (resourceErrorCount > 1)
+            {
+                qDebug() << "ERROR: " << e;
+                close();
+                emit finished();
+                emit sendError(e,"Device unexpectedly disconnected!"); 
+            }
+            break;
+        default:
+            break;
+    }
+    
+    error = Error::Timeout;
 }
 
 
@@ -208,10 +278,10 @@ int Loader::handshake()
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(loader_error()));
-    timer.start(100);
+    timer.start(500);
     loop.exec();
 
-    disconnect(&serial);
+    disconnect(&serial, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
     return version;
 }
@@ -279,18 +349,58 @@ QByteArray Loader::encode_binary(QByteArray binary)
     return encoded_binary;
 }
 
+void Loader::write_terminal(const QString & text)
+{
+    serial.write(qPrintable(text));
+    serial.write("\r");
+}
+
+void Loader::read_terminal()
+{
+    foreach (char c, serial.readAll())
+    {
+        switch (c)
+        {
+            case 10:
+            case 13:
+                fprintf(stdout,"\n");
+                break;
+            default:
+                fprintf(stdout,"%c",c);
+        }
+    }
+    fflush(stdout);
+}
+
+void Loader::terminal()
+{
+    serial.setBaudRate(115200);
+    connect(&serial, SIGNAL(readyRead()), this, SLOT(read_terminal()));
+    connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
+
+
+
+    QEventLoop loop;
+    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    disconnect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
+    disconnect(&serial, SIGNAL(readyRead()), this, SLOT(read_terminal()));
+
+    return;
+}
 
 void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
 {
     if (binary.isEmpty())
     {
-        qDebug() << "Image empty!";
+        print_status("EMPTY IMAGE");
         return;
     }
 
     if (binary.size() % 4 != 0)
     {
-        qDebug() << "Invalid code size; must be multiple of 4!";
+        print_status("INVALID IMAGE SIZE");
         return;
     }
 
@@ -301,43 +411,58 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
 
     if (checksum(binary, eeprom))
     {
-        qDebug() << "Code checksum error:"
-            << QString::number(checksum(binary, false),16);
+        print_status("BAD CHECKSUM");
         return;
     }
 
     QByteArray encoded_binary = encode_binary(binary);
 
+    print_task("Connecting to '"+serial.portName()+"'...");
     if (!handshake())
+    {
+        print_status("NOT FOUND");
         return;
+    }
+    print_status("DONE");
 
     int command = 2*eeprom + run;
     write_long(command);
 
-    qDebug() << "LOAD RAM";
+    print_task("Downloading to RAM...");
     if (send_application_image(encoded_binary, binary.size()) != 0)
         return;
 
+    print_status("DONE");
+
+    print_task("Verifying RAM...");
     if (poll_acknowledge() != 0)
+    {
+        print_status("BAD CHECKSUM");
         return;
+    }
+
+    print_status("DONE");
 
     if (!eeprom)
-    {
-        qDebug() << "RAM DOWNLOAD COMPLETE";
-
-    }
+        return;
     
-    qDebug() << "LOAD EEPROM";
+    print_task("Writing EEPROM...");
 
     if (poll_acknowledge() != 0)
+    {
+        print_status("FAIL");
         return;
+    }
+    print_status("DONE");
 
-    qDebug() << "VERIFY ROM";
+    print_task("Verifying EEPROM...");
 
     if (poll_acknowledge() != 0)
+    {
+        print_status("FAIL");
         return;
-
-    qDebug() << "EEPROM WRITE FINISHED";
+    }
+    print_status("DONE");
 
     if (run)
         reset();
@@ -345,7 +470,6 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
 
 void Loader::writeEmpty()
 {
-    qDebug() << "EMPTY";
     if (serial.bytesToWrite())
         error = 0;
         emit finished();
@@ -353,11 +477,11 @@ void Loader::writeEmpty()
 
 void Loader::read_acknowledge()
 {
-    qDebug() << "GOT ACK" << serial.bytesAvailable();
+//    qDebug() << "GOT ACK" << serial.bytesAvailable();
     if (serial.bytesAvailable())
     {
         ack = QString(serial.readAll().data()).toInt();
-        qDebug() << "ACK" << ack;
+//        qDebug() << "ACK" << ack;
         poll.stop();
         error = 0;
         emit finished();
@@ -368,9 +492,6 @@ int Loader::send_application_image(QByteArray encoded_binary, int image_size)
 {
     error = 0;
     connect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
-    connect(&serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(download_error()));
-
-    qDebug() << "SENDING DATA";
 
     write_long(image_size / 4);
     serial.write(encoded_binary);
@@ -379,11 +500,7 @@ int Loader::send_application_image(QByteArray encoded_binary, int image_size)
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
-    disconnect(&serial, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(download_error()));
     disconnect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
-    disconnect(&serial);
-
-    qDebug() << "ERROR" << error;
 
     return error;
 }
@@ -392,8 +509,6 @@ int Loader::poll_acknowledge()
 {
     connect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
     connect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
-
-    qDebug() << "STARTING POLLING";
 
     poll.setInterval(20);
     poll.start();
@@ -410,9 +525,9 @@ int Loader::poll_acknowledge()
     loop.exec();
 
     disconnect(&poll);
-    disconnect(&serial);
-    disconnect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
     disconnect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
+
+    disconnect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
 
     return error;
 }

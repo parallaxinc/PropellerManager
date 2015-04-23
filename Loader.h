@@ -22,6 +22,40 @@ namespace Error {
     };
 };
 
+
+#include <QObject>
+#include <QSocketNotifier>
+#include <QTextStream>
+#include <unistd.h> //Provides STDIN_FILENO
+
+
+class ConsoleReader : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ConsoleReader(QObject *parent = 0) : 
+        QObject(parent),
+        notifier(STDIN_FILENO, QSocketNotifier::Read)
+    {
+        connect(&notifier, SIGNAL(activated(int)), this, SLOT(text()));
+    }
+
+signals:
+    void textReceived(QString message);
+
+public slots:
+    void text()
+    {
+        QTextStream qin(stdin);
+        QString line = qin.readLine();
+        emit textReceived(line);
+    }
+    private:
+    QSocketNotifier notifier;
+};
+
+
+
 class Loader : public QObject
 {
     Q_OBJECT
@@ -40,6 +74,8 @@ private:
     int version;
     int ack;
     int error;
+    bool useRtsReset;
+    int resourceErrorCount;
 
     int checksum(QByteArray binary, bool isEEPROM);
     QByteArray convert_binary_to_eeprom(QByteArray binary);
@@ -48,15 +84,21 @@ private:
     int poll_acknowledge();
 
     QTimer poll;
+    ConsoleReader console;
 
 signals:
     void finished();
+    void sendError(int code, const QString & message);
 
 private slots:
     void read_handshake();
     void read_acknowledge();
+    void read_terminal();
+    void write_terminal(const QString & text);
+
     void loader_error();
-    void download_error();
+    void device_error(QSerialPort::SerialPortError e);
+    void print_error(int code, const QString & message);
     void calibrate();
     void writeEmpty();
 
@@ -68,7 +110,7 @@ public:
     int handshake();
 
 public:
-    Loader(QString port, int reset_gpio=-1, QObject * parent = 0);
+    Loader(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
     ~Loader();
 
     int open();
@@ -79,9 +121,17 @@ public:
     void upload_binary(QByteArray binary, bool eeprom=false, bool run=true);
     void list();
 
-    void open_terminal();
-    void close_terminal();
+    void terminal();
 
     static QStringList list_devices();
+
+signals:
+    void requestPrint(QString text);
+    void requestPrint_color(QString text);
+
+public slots:
+    void print(const QString & text);
+    void print_task(const QString & text);
+    void print_status(const QString & text);
 };
 
