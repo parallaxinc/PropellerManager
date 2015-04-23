@@ -18,8 +18,12 @@ Loader::Loader(QString port, int reset_gpio, bool useRtsReset, QObject * parent)
 
     serial.setSettingsRestoredOnClose(false);
     serial.setPortName(port);
+
+#if defined(Q_PROCESSOR_ARM_V7) && defined(Q_OS_LINUX)
+    serial.setBaudRate(115200);
+#else
     serial.setBaudRate(230400);
-//    serial.setBaudRate(115200);
+#endif
 
     connect(&serial,    SIGNAL(error(QSerialPort::SerialPortError)),
             this,       SLOT(device_error(QSerialPort::SerialPortError))); 
@@ -93,7 +97,12 @@ void Loader::reset()
         }
     }
 
+
+#if defined(Q_PROCESSOR_ARM_V7) && defined(Q_OS_LINUX)
+    QThread::msleep(80);
+#else
     QThread::msleep(60);
+#endif
 
     serial.clear(QSerialPort::Input);
 }
