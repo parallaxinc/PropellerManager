@@ -32,3 +32,4 @@ Makefile*
 *.qmlproject.user.*
 
 propman
+propman.exe
