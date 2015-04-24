@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         }
     }
 
-#if defined(Q_PROCESSOR_ARM_V7) && defined(Q_OS_LINUX)
+#if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     int reset_pin = 17;
 #else
     int reset_pin = -1;
