@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QByteArray>
 
-#include "Loader.h"
+#include "loader.h"
 
 #ifndef VERSION
 #define VERSION "0.0.0"

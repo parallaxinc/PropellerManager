@@ -1,4 +1,5 @@
-#include "Loader.h"
+#include "loader.h"
+#include "gpio.h"
 
 #include <QCoreApplication>
 #include <QEventLoop>
@@ -6,7 +7,6 @@
 #include <QDebug>
 #include <QThread>
 
-#include "GPIO.h"
 #include <stdio.h>
 
 Loader::Loader(QString port, int reset_gpio, bool useRtsReset, QObject * parent) :

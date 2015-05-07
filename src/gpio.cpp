@@ -7,7 +7,7 @@
 * Guillermo A. Amaral B. <g@maral.me>
 */
 
-#include "GPIO.h"
+#include "gpio.h"
 
 extern "C"
 {
