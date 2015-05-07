@@ -11,7 +11,9 @@ SOURCES += \
     main.cpp \
     propellerdevice.cpp \
     gpio.cpp \
+    utility.cpp \
 
 HEADERS += \
     propellerdevice.h \
     gpio.h \
+    utility.h \

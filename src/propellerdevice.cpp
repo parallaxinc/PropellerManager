@@ -1,5 +1,6 @@
 #include "propellerdevice.h"
 #include "gpio.h"
+#include "utility.h"
 
 #include <QCoreApplication>
 #include <QEventLoop>
@@ -23,11 +24,11 @@ PropellerDevice::PropellerDevice(QString port, int reset_gpio, bool useRtsReset,
     serial.setBaudRate(230400);
 #endif
 
-    connect(&serial,    SIGNAL(error(QSerialPort::SerialPortError)),
-            this,       SLOT(device_error(QSerialPort::SerialPortError))); 
+    connect(&serial,SIGNAL(error(QSerialPort::SerialPortError)),
+            this,   SLOT(device_error(QSerialPort::SerialPortError))); 
 
-    connect(this,    SIGNAL(sendError(int, const QString &)),
-            this,   SLOT(print_error(int, const QString &)));
+    connect(this,   &PropellerDevice::sendError,
+            this,   &Utility::print_error);
 
     this->reset_gpio = reset_gpio;
 
@@ -124,25 +125,6 @@ void PropellerDevice::write_long(unsigned int value)
 }
 
 
-void PropellerDevice::print_task(const QString & text)
-{
-    fprintf(stderr, "%-30s",qPrintable(text));
-    fflush(stderr);
-}
-
-void PropellerDevice::print_status(const QString & text)
-{
-    print("[ ");
-    print(text);
-    print(" ]\n");
-}
-
-void PropellerDevice::print(const QString & text)
-{
-    fprintf(stderr, "%s",qPrintable(text));
-    fflush(stderr);
-}
-
 void PropellerDevice::read_handshake()
 {
     if (serial.bytesAvailable() == 258)
@@ -225,11 +207,6 @@ QByteArray PropellerDevice::build_reply(QList<char> seq, int size, int offset)
 void PropellerDevice::loader_error()
 {
     error = Error::Timeout;
-}
-
-void PropellerDevice::print_error(int code, const QString & message)
-{
-    qDebug("[ ERROR %2i ]: %s",code,qPrintable(message));
 }
 
 void PropellerDevice::device_error(QSerialPort::SerialPortError e)
@@ -404,13 +381,13 @@ void PropellerDevice::upload_binary(QByteArray binary, bool eeprom, bool run)
 {
     if (binary.isEmpty())
     {
-        print_status("EMPTY IMAGE");
+        Utility::print_status("EMPTY IMAGE");
         return;
     }
 
     if (binary.size() % 4 != 0)
     {
-        print_status("INVALID IMAGE SIZE");
+        Utility::print_status("INVALID IMAGE SIZE");
         return;
     }
 
@@ -421,58 +398,58 @@ void PropellerDevice::upload_binary(QByteArray binary, bool eeprom, bool run)
 
     if (checksum(binary, eeprom))
     {
-        print_status("BAD CHECKSUM");
+        Utility::print_status("BAD CHECKSUM");
         return;
     }
 
     QByteArray encoded_binary = encode_binary(binary);
 
-    print_task("Connecting to '"+serial.portName()+"'...");
+    Utility::print_task("Connecting to '"+serial.portName()+"'...");
     if (!handshake())
     {
-        print_status("NOT FOUND");
+        Utility::print_status("NOT FOUND");
         return;
     }
-    print_status("DONE");
+    Utility::print_status("DONE");
 
     int command = 2*eeprom + run;
     write_long(command);
 
-    print_task("Downloading to RAM...");
+    Utility::print_task("Downloading to RAM...");
     if (send_application_image(encoded_binary, binary.size()) != 0)
         return;
 
-    print_status("DONE");
+    Utility::print_status("DONE");
 
-    print_task("Verifying RAM...");
+    Utility::print_task("Verifying RAM...");
     if (poll_acknowledge() != 0)
     {
-        print_status("BAD CHECKSUM");
+        Utility::print_status("BAD CHECKSUM");
         return;
     }
 
-    print_status("DONE");
+    Utility::print_status("DONE");
 
     if (!eeprom)
         return;
     
-    print_task("Writing EEPROM...");
+    Utility::print_task("Writing EEPROM...");
 
     if (poll_acknowledge() != 0)
     {
-        print_status("FAIL");
+        Utility::print_status("FAIL");
         return;
     }
-    print_status("DONE");
+    Utility::print_status("DONE");
 
-    print_task("Verifying EEPROM...");
+    Utility::print_task("Verifying EEPROM...");
 
     if (poll_acknowledge() != 0)
     {
-        print_status("FAIL");
+        Utility::print_status("FAIL");
         return;
     }
-    print_status("DONE");
+    Utility::print_status("DONE");
 
     if (run)
         reset();

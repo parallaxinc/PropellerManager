@@ -2,22 +2,13 @@
 #include <QCommandLineParser>
 #include <QObject>
 #include <QDebug>
-#include <QFile>
-#include <QByteArray>
 
+#include "utility.h"
 #include "propellerdevice.h"
 
 #ifndef VERSION
 #define VERSION "0.0.0"
 #endif
-
-QByteArray readFile(QString filename)
-{
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly)) return QByteArray();
-    QByteArray blob = file.readAll();
-    return blob;
-}
 
 int main(int argc, char *argv[])
 {
@@ -129,7 +120,7 @@ int main(int argc, char *argv[])
 
         if (!parser.positionalArguments()[0].contains("*.binary$"))
         {
-            loader.upload_binary(readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));
+            loader.upload_binary(Utility::readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));
         }
         else
         {

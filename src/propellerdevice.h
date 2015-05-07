@@ -105,7 +105,6 @@ private slots:
 
     void loader_error();
     void device_error(QSerialPort::SerialPortError e);
-    void print_error(int code, const QString & message);
     void calibrate();
     void writeEmpty();
 
@@ -135,10 +134,5 @@ public:
 signals:
     void requestPrint(QString text);
     void requestPrint_color(QString text);
-
-public slots:
-    void print(const QString & text);
-    void print_task(const QString & text);
-    void print_status(const QString & text);
 };
 
