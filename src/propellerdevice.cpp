@@ -424,6 +424,7 @@ void PropellerDevice::upload_binary(QByteArray binary, bool eeprom, bool run)
     Utility::print_task("Verifying RAM...");
     if (poll_acknowledge() != 0)
     {
+        // THIS NEEDS MORE DETAILED INFORMATION
         Utility::print_status("BAD CHECKSUM");
         return;
     }

@@ -1,3 +1,5 @@
+#include "input_console.h"
+
 #include <QSerialPort>
 #include <QTimer>
 
@@ -21,47 +23,6 @@ namespace Error {
         NotFound
     };
 };
-
-
-#include <QObject>
-#include <QSocketNotifier>
-#include <QTextStream>
-#include <unistd.h> //Provides STDIN_FILENO
-
-/**
-  \class ConsoleReader
-
-  This class provides some stuff for doing things.
-
-
-  */
-
-class ConsoleReader : public QObject
-{
-    Q_OBJECT
-public:
-    explicit ConsoleReader(QObject *parent = 0) : 
-        QObject(parent),
-        notifier(STDIN_FILENO, QSocketNotifier::Read)
-    {
-        connect(&notifier, SIGNAL(activated(int)), this, SLOT(text()));
-    }
-
-signals:
-    void textReceived(QString message);
-
-public slots:
-    void text()
-    {
-        QTextStream qin(stdin);
-        QString line = qin.readLine();
-        emit textReceived(line);
-    }
-    private:
-    QSocketNotifier notifier;
-};
-
-
 
 class PropellerDevice : public QObject
 {
@@ -91,7 +52,7 @@ private:
     int poll_acknowledge();
 
     QTimer poll;
-    ConsoleReader console;
+    Input::Console console;
 
 signals:
     void finished();

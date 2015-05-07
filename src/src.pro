@@ -17,3 +17,4 @@ HEADERS += \
     propellerdevice.h \
     gpio.h \
     utility.h \
+    input_console.h \
