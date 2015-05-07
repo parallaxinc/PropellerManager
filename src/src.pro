@@ -9,9 +9,9 @@ CONFIG -= debug_and_release
 
 SOURCES += \
     main.cpp \
-    loader.cpp \
+    propellerdevice.cpp \
     gpio.cpp \
 
 HEADERS += \
-    loader.h \
+    propellerdevice.h \
     gpio.h \

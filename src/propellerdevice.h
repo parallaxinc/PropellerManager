@@ -63,7 +63,7 @@ public slots:
 
 
 
-class Loader : public QObject
+class PropellerDevice : public QObject
 {
     Q_OBJECT
 
@@ -117,8 +117,8 @@ public:
     int handshake();
 
 public:
-    Loader(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
-    ~Loader();
+    PropellerDevice(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
+    ~PropellerDevice();
 
     int open();
     int close();

@@ -1,4 +1,4 @@
-#include "loader.h"
+#include "propellerdevice.h"
 #include "gpio.h"
 
 #include <QCoreApplication>
@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 
-Loader::Loader(QString port, int reset_gpio, bool useRtsReset, QObject * parent) :
+PropellerDevice::PropellerDevice(QString port, int reset_gpio, bool useRtsReset, QObject * parent) :
     QObject(parent)
 {
     this->useRtsReset = useRtsReset;
@@ -40,12 +40,12 @@ Loader::Loader(QString port, int reset_gpio, bool useRtsReset, QObject * parent)
 
 }
 
-Loader::~Loader()
+PropellerDevice::~PropellerDevice()
 {
     serial.close();
 }
 
-int Loader::get_version()
+int PropellerDevice::get_version()
 {
     handshake();
     write_long(Command::Shutdown);
@@ -53,7 +53,7 @@ int Loader::get_version()
     return version;
 }
 
-int Loader::open()
+int PropellerDevice::open()
 {
     resourceErrorCount = 0;
 
@@ -68,13 +68,13 @@ int Loader::open()
     return 0;
 }
 
-int Loader::close()
+int PropellerDevice::close()
 {
     serial.close();
     return 0;
 }
 
-void Loader::reset()
+void PropellerDevice::reset()
 {
     serial.clear(QSerialPort::Output);
 
@@ -108,42 +108,42 @@ void Loader::reset()
     serial.clear(QSerialPort::Input);
 }
 
-void Loader::calibrate()
+void PropellerDevice::calibrate()
 {
     write_byte(0xf9);
 }
 
-void Loader::write_byte(char value)
+void PropellerDevice::write_byte(char value)
 {
     serial.putChar(value);
 }
 
-void Loader::write_long(unsigned int value)
+void PropellerDevice::write_long(unsigned int value)
 {
     serial.write(encode_long(value));
 }
 
 
-void Loader::print_task(const QString & text)
+void PropellerDevice::print_task(const QString & text)
 {
     fprintf(stderr, "%-30s",qPrintable(text));
     fflush(stderr);
 }
 
-void Loader::print_status(const QString & text)
+void PropellerDevice::print_status(const QString & text)
 {
     print("[ ");
     print(text);
     print(" ]\n");
 }
 
-void Loader::print(const QString & text)
+void PropellerDevice::print(const QString & text)
 {
     fprintf(stderr, "%s",qPrintable(text));
     fflush(stderr);
 }
 
-void Loader::read_handshake()
+void PropellerDevice::read_handshake()
 {
     if (serial.bytesAvailable() == 258)
     {
@@ -166,7 +166,7 @@ void Loader::read_handshake()
     }
 }
 
-QByteArray Loader::encode_long(unsigned int value)
+QByteArray PropellerDevice::encode_long(unsigned int value)
 {
     QByteArray result;
     for (int i = 0; i < 10; i++)
@@ -179,14 +179,14 @@ QByteArray Loader::encode_long(unsigned int value)
     return result;
 }
 
-int Loader::lfsr(int * seed)
+int PropellerDevice::lfsr(int * seed)
 {
     char ret = *seed & 0x01;
     *seed = ((*seed << 1) & 0xfe) | (((*seed >> 7) ^ (*seed >> 5) ^ (*seed >> 4) ^ (*seed >> 1)) & 1);
     return ret;
 }
 
-QList<char> Loader::build_lfsr_sequence(int size)
+QList<char> PropellerDevice::build_lfsr_sequence(int size)
 {
     int seed = 'P';
     
@@ -199,7 +199,7 @@ QList<char> Loader::build_lfsr_sequence(int size)
     return seq;
 }
 
-QByteArray Loader::build_request(QList<char> seq, int size)
+QByteArray PropellerDevice::build_request(QList<char> seq, int size)
 {
     QByteArray array;
     for (int i = 0; i < size; i++)
@@ -210,7 +210,7 @@ QByteArray Loader::build_request(QList<char> seq, int size)
 }
 
 
-QByteArray Loader::build_reply(QList<char> seq, int size, int offset)
+QByteArray PropellerDevice::build_reply(QList<char> seq, int size, int offset)
 {
     QByteArray array;
     for (int i = offset;
@@ -222,17 +222,17 @@ QByteArray Loader::build_reply(QList<char> seq, int size, int offset)
     return array;
 }
 
-void Loader::loader_error()
+void PropellerDevice::loader_error()
 {
     error = Error::Timeout;
 }
 
-void Loader::print_error(int code, const QString & message)
+void PropellerDevice::print_error(int code, const QString & message)
 {
     qDebug("[ ERROR %2i ]: %s",code,qPrintable(message));
 }
 
-void Loader::device_error(QSerialPort::SerialPortError e)
+void PropellerDevice::device_error(QSerialPort::SerialPortError e)
 {
     switch (e)
     {
@@ -268,7 +268,7 @@ void Loader::device_error(QSerialPort::SerialPortError e)
 }
 
 
-int Loader::handshake()
+int PropellerDevice::handshake()
 {
     reset();
 
@@ -296,7 +296,7 @@ int Loader::handshake()
     return version;
 }
 
-int Loader::checksum(QByteArray binary, bool isEEPROM)
+int PropellerDevice::checksum(QByteArray binary, bool isEEPROM)
 {
     int checksum = 0;
     for (int i = 0; i < binary.size(); i++)
@@ -313,7 +313,7 @@ int Loader::checksum(QByteArray binary, bool isEEPROM)
     return checksum;
 }
 
-QByteArray Loader::convert_binary_to_eeprom(QByteArray binary)
+QByteArray PropellerDevice::convert_binary_to_eeprom(QByteArray binary)
 {
     int EEPROM_SIZE = 32768;
 
@@ -344,7 +344,7 @@ QByteArray Loader::convert_binary_to_eeprom(QByteArray binary)
 }
 
 
-QByteArray Loader::encode_binary(QByteArray binary)
+QByteArray PropellerDevice::encode_binary(QByteArray binary)
 {
     QByteArray encoded_binary;
     for (int i = 0 ; i < binary.size() ; i += 4)
@@ -359,13 +359,13 @@ QByteArray Loader::encode_binary(QByteArray binary)
     return encoded_binary;
 }
 
-void Loader::write_terminal(const QString & text)
+void PropellerDevice::write_terminal(const QString & text)
 {
     serial.write(qPrintable(text));
     serial.write("\r");
 }
 
-void Loader::read_terminal()
+void PropellerDevice::read_terminal()
 {
     foreach (char c, serial.readAll())
     {
@@ -382,7 +382,7 @@ void Loader::read_terminal()
     fflush(stdout);
 }
 
-void Loader::terminal()
+void PropellerDevice::terminal()
 {
     serial.setBaudRate(115200);
     connect(&serial, SIGNAL(readyRead()), this, SLOT(read_terminal()));
@@ -400,7 +400,7 @@ void Loader::terminal()
     return;
 }
 
-void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
+void PropellerDevice::upload_binary(QByteArray binary, bool eeprom, bool run)
 {
     if (binary.isEmpty())
     {
@@ -478,14 +478,14 @@ void Loader::upload_binary(QByteArray binary, bool eeprom, bool run)
         reset();
 }
 
-void Loader::writeEmpty()
+void PropellerDevice::writeEmpty()
 {
     if (serial.bytesToWrite())
         error = 0;
         emit finished();
 }
 
-void Loader::read_acknowledge()
+void PropellerDevice::read_acknowledge()
 {
 //    qDebug() << "GOT ACK" << serial.bytesAvailable();
     if (serial.bytesAvailable())
@@ -498,7 +498,7 @@ void Loader::read_acknowledge()
     }
 }
 
-int Loader::send_application_image(QByteArray encoded_binary, int image_size)
+int PropellerDevice::send_application_image(QByteArray encoded_binary, int image_size)
 {
     error = 0;
     connect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
@@ -515,7 +515,7 @@ int Loader::send_application_image(QByteArray encoded_binary, int image_size)
     return error;
 }
 
-int Loader::poll_acknowledge()
+int PropellerDevice::poll_acknowledge()
 {
     connect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
     connect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
@@ -543,7 +543,7 @@ int Loader::poll_acknowledge()
 }
 
 
-QStringList Loader::list_devices()
+QStringList PropellerDevice::list_devices()
 {
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
     QStringList result;

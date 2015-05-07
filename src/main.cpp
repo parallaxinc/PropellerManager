@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QByteArray>
 
-#include "loader.h"
+#include "propellerdevice.h"
 
 #ifndef VERSION
 #define VERSION "0.0.0"
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     parser.process(app);
 
-    QStringList device_list = Loader::list_devices();
+    QStringList device_list = PropellerDevice::list_devices();
     if (parser.isSet(argList))
     {
         for (int i = 0; i < device_list.size(); i++)
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     {
         foreach (QString d, device_list)
         {
-            Loader loader(d,reset_pin);
+            PropellerDevice loader(d,reset_pin);
             loader.open();
 
             switch (loader.get_version())
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        Loader loader(device,reset_pin);
+        PropellerDevice loader(device,reset_pin);
         if (loader.open())
             return 1;
 

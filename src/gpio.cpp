@@ -19,6 +19,8 @@ extern "C"
 #include <unistd.h>
 }
 
+#define BUFFER_MAX 3
+
 GPIO::GPIO(int pin, int dir)
 {
     this->pin = pin;
@@ -44,7 +46,6 @@ int GPIO::Write(int value)
 
 int GPIO::Export(int pin)
 {
-#define BUFFER_MAX 3
     char buffer[BUFFER_MAX];
     ssize_t bytes_written;
     int fd;
@@ -56,7 +57,11 @@ int GPIO::Export(int pin)
     }
 
     bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
-    write(fd, buffer, bytes_written);
+    if (1 != write(fd, buffer, bytes_written))
+    {
+        fprintf(stderr, "Failed to write value!\n");
+        return(-1);
+    }
     close(fd);
     return(0);
 }
@@ -74,7 +79,11 @@ int GPIO::Unexport(int pin)
     }
 
     bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
-    write(fd, buffer, bytes_written);
+    if (1 != write(fd, buffer, bytes_written))
+    {
+        fprintf(stderr, "Failed to write value!\n");
+        return(-1);
+    }
     close(fd);
     return(0);
 }
