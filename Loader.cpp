@@ -64,7 +64,7 @@ int Loader::open()
     }
 #if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     serial.setBaudRate(115200);
-#else
+#endif
     return 0;
 }
 

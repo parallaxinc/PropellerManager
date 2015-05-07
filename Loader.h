@@ -28,6 +28,13 @@ namespace Error {
 #include <QTextStream>
 #include <unistd.h> //Provides STDIN_FILENO
 
+/**
+  \class ConsoleReader
+
+  This class provides some stuff for doing things.
+
+
+  */
 
 class ConsoleReader : public QObject
 {
