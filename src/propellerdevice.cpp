@@ -10,8 +10,11 @@
 
 #include <stdio.h>
 
-PropellerDevice::PropellerDevice(QString port, int reset_gpio, bool useRtsReset, QObject * parent) :
-    QObject(parent)
+PropellerDevice::PropellerDevice(   QString port,
+                                    int reset_gpio,
+                                    bool useRtsReset,
+                                    QObject * parent)
+    : QObject(parent)
 {
     this->useRtsReset = useRtsReset;
     version = 0;
@@ -44,14 +47,6 @@ PropellerDevice::PropellerDevice(QString port, int reset_gpio, bool useRtsReset,
 PropellerDevice::~PropellerDevice()
 {
     serial.close();
-}
-
-int PropellerDevice::get_version()
-{
-    handshake();
-    write_long(Command::Shutdown);
-    QCoreApplication::processEvents();
-    return version;
 }
 
 int PropellerDevice::open()
@@ -99,7 +94,6 @@ void PropellerDevice::reset()
         }
     }
 
-
 #if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     QThread::msleep(80);
 #else
@@ -146,6 +140,14 @@ void PropellerDevice::read_handshake()
 //        qDebug() << QString::number(version);
         emit finished();
     }
+}
+
+int PropellerDevice::get_version()
+{
+    handshake();
+    write_long(Command::Shutdown);
+    QCoreApplication::processEvents();
+    return version;
 }
 
 QByteArray PropellerDevice::encode_long(unsigned int value)

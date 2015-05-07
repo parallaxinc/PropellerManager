@@ -4,16 +4,16 @@
 
 #include <unistd.h> //Provides STDIN_FILENO
 
-/**
-  \class ConsoleReader
-
-  This class provides some stuff for doing things.
-
-
-  */
-
 namespace Input
 {
+    /**
+      @class Console
+      
+      The Console class receives input from stdin, useful for using `propman`
+      from the command-line.
+
+      */
+
     class Console : public QObject
     {
         Q_OBJECT
@@ -22,7 +22,7 @@ namespace Input
             QObject(parent),
             notifier(STDIN_FILENO, QSocketNotifier::Read)
         {
-            connect(&notifier, SIGNAL(activated(int)), this, SLOT(text()));
+            connect(&notifier, &QSocketNotifier::activated, this, &Console::text);
         }
 
     signals:

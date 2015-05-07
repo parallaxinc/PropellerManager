@@ -24,11 +24,24 @@ namespace Error {
     };
 };
 
+/**
+  @class PropellerDevice 
+  
+  PropellerDevice provides an interface for connecting and managing
+  a single Propeller device.
+
+  */
 class PropellerDevice : public QObject
 {
     Q_OBJECT
 
 private:
+    QSerialPort serial;
+    int reset_gpio;
+    void write_byte(char value);
+    void write_long(unsigned int value);
+    int handshake();
+
     int lfsr(int * seed);
     QList<char> sequence;
     QList<char> build_lfsr_sequence(int size);
@@ -51,12 +64,16 @@ private:
     int send_application_image(QByteArray encoded_binary, int image_size);
     int poll_acknowledge();
 
+    QByteArray encode_long(unsigned int value);
+
     QTimer poll;
     Input::Console console;
 
 signals:
     void finished();
     void sendError(int code, const QString & message);
+    void requestPrint(QString text);
+    void requestPrint_color(QString text);
 
 private slots:
     void read_handshake();
@@ -70,30 +87,68 @@ private slots:
     void writeEmpty();
 
 public:
-    QSerialPort serial;
-    int reset_gpio;
-    void write_byte(char value);
-    void write_long(unsigned int value);
-    int handshake();
 
-public:
+    /**
+      \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
+      \param reset_gpio Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset.
+      \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
+      */
     PropellerDevice(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
     ~PropellerDevice();
 
+    /**
+      Open the PropellerDevice for use.
+      */
+
     int open();
+
+    /**
+      Close the PropellerDevice; this function is called when the PropellerDevice is destroyed.
+    */
+
     int close();
+
+    /**
+      Get the version of the connected device.
+      
+      \return The version number, or 0 if not found.
+      */
+
     int get_version();
+
+    /**
+      This function sends a reset to the connected device using
+      whatever method is available.
+
+      Methods supported:
+
+      - Serial
+        - Data Terminal Ready (DTR)
+        - Request To Send (RTS)
+        - GPIO (Linux only)
+
+      - Wireless
+        - TBD
+
+      */
     void reset();
-    QByteArray encode_long(unsigned int value);
+
+    /**
+      Upload a PropellerImage object to the target.
+      */
+
     void upload_binary(QByteArray binary, bool eeprom=false, bool run=true);
-    void list();
+
+    /**
+      Open a serial terminal on this device.
+      */
 
     void terminal();
 
-    static QStringList list_devices();
+    /**
+      \deprecated This command will be moved to PropellerManager when it is under way.
+      */
 
-signals:
-    void requestPrint(QString text);
-    void requestPrint_color(QString text);
+    static QStringList list_devices();
 };
 
