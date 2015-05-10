@@ -5,7 +5,7 @@
 #include <QRegularExpression>
 
 #include "utility.h"
-#include "propellerdevice.h"
+#include "propellersession.h"
 #include "propellerimage.h"
 
 #ifndef VERSION
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
     parser.process(app);
 
-    QStringList device_list = PropellerDevice::list_devices();
+    QStringList device_list = PropellerSession::list_devices();
     if (parser.isSet(argList))
     {
         for (int i = 0; i < device_list.size(); i++)
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     {
         foreach (QString d, device_list)
         {
-            PropellerDevice loader(d,reset_pin);
+            PropellerSession loader(d,reset_pin);
             loader.open();
 
             switch (loader.get_version())
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        PropellerDevice loader(device,reset_pin);
+        PropellerSession loader(device,reset_pin);
         if (loader.open())
             return 1;
 

@@ -28,13 +28,13 @@ namespace Error {
 };
 
 /**
-  @class PropellerDevice 
+  @class PropellerSession 
   
-  PropellerDevice provides an interface for connecting and managing
+  PropellerSession provides an interface for connecting and managing
   a single Propeller device.
 
   */
-class PropellerDevice : public QObject
+class PropellerSession : public QObject
 {
     Q_OBJECT
 
@@ -94,17 +94,17 @@ public:
       \param reset_gpio Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset.
       \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
       */
-    PropellerDevice(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
-    ~PropellerDevice();
+    PropellerSession(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
+    ~PropellerSession();
 
     /**
-      Open the PropellerDevice for use.
+      Open the PropellerSession for use.
       */
 
     int open();
 
     /**
-      Close the PropellerDevice; this function is called when the PropellerDevice is destroyed.
+      Close the PropellerSession; this function is called when the PropellerSession is destroyed.
     */
 
     int close();

@@ -1,4 +1,4 @@
-#include "propellerdevice.h"
+#include "propellersession.h"
 #include "gpio.h"
 #include "utility.h"
 
@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-PropellerDevice::PropellerDevice(   QString port,
+PropellerSession::PropellerSession(   QString port,
                                     int reset_gpio,
                                     bool useRtsReset,
                                     QObject * parent)
@@ -30,7 +30,7 @@ PropellerDevice::PropellerDevice(   QString port,
     connect(&serial,SIGNAL(error(QSerialPort::SerialPortError)),
             this,   SLOT(device_error(QSerialPort::SerialPortError))); 
 
-    connect(this,   &PropellerDevice::sendError,
+    connect(this,   &PropellerSession::sendError,
             this,   &Utility::print_error);
 
     this->reset_gpio = reset_gpio;
@@ -44,12 +44,12 @@ PropellerDevice::PropellerDevice(   QString port,
 
 }
 
-PropellerDevice::~PropellerDevice()
+PropellerSession::~PropellerSession()
 {
     serial.close();
 }
 
-int PropellerDevice::open()
+int PropellerSession::open()
 {
     resourceErrorCount = 0;
 
@@ -64,13 +64,13 @@ int PropellerDevice::open()
     return 0;
 }
 
-int PropellerDevice::close()
+int PropellerSession::close()
 {
     serial.close();
     return 0;
 }
 
-void PropellerDevice::reset()
+void PropellerSession::reset()
 {
     serial.clear(QSerialPort::Output);
 
@@ -103,23 +103,23 @@ void PropellerDevice::reset()
     serial.clear(QSerialPort::Input);
 }
 
-void PropellerDevice::calibrate()
+void PropellerSession::calibrate()
 {
     write_byte(0xf9);
 }
 
-void PropellerDevice::write_byte(char value)
+void PropellerSession::write_byte(char value)
 {
     serial.putChar(value);
 }
 
-void PropellerDevice::write_long(unsigned int value)
+void PropellerSession::write_long(unsigned int value)
 {
     serial.write(encode_long(value));
 }
 
 
-void PropellerDevice::read_handshake()
+void PropellerSession::read_handshake()
 {
     if (serial.bytesAvailable() == 258)
     {
@@ -142,7 +142,7 @@ void PropellerDevice::read_handshake()
     }
 }
 
-int PropellerDevice::get_version()
+int PropellerSession::get_version()
 {
     handshake();
     write_long(Command::Shutdown);
@@ -150,7 +150,7 @@ int PropellerDevice::get_version()
     return version;
 }
 
-QByteArray PropellerDevice::encode_long(unsigned int value)
+QByteArray PropellerSession::encode_long(unsigned int value)
 {
     QByteArray result;
     for (int i = 0; i < 10; i++)
@@ -163,14 +163,14 @@ QByteArray PropellerDevice::encode_long(unsigned int value)
     return result;
 }
 
-int PropellerDevice::lfsr(int * seed)
+int PropellerSession::lfsr(int * seed)
 {
     char ret = *seed & 0x01;
     *seed = ((*seed << 1) & 0xfe) | (((*seed >> 7) ^ (*seed >> 5) ^ (*seed >> 4) ^ (*seed >> 1)) & 1);
     return ret;
 }
 
-QList<char> PropellerDevice::build_lfsr_sequence(int size)
+QList<char> PropellerSession::build_lfsr_sequence(int size)
 {
     int seed = 'P';
     
@@ -183,7 +183,7 @@ QList<char> PropellerDevice::build_lfsr_sequence(int size)
     return seq;
 }
 
-QByteArray PropellerDevice::build_request(QList<char> seq, int size)
+QByteArray PropellerSession::build_request(QList<char> seq, int size)
 {
     QByteArray array;
     for (int i = 0; i < size; i++)
@@ -194,7 +194,7 @@ QByteArray PropellerDevice::build_request(QList<char> seq, int size)
 }
 
 
-QByteArray PropellerDevice::build_reply(QList<char> seq, int size, int offset)
+QByteArray PropellerSession::build_reply(QList<char> seq, int size, int offset)
 {
     QByteArray array;
     for (int i = offset;
@@ -206,12 +206,12 @@ QByteArray PropellerDevice::build_reply(QList<char> seq, int size, int offset)
     return array;
 }
 
-void PropellerDevice::loader_error()
+void PropellerSession::loader_error()
 {
     error = Error::Timeout;
 }
 
-void PropellerDevice::device_error(QSerialPort::SerialPortError e)
+void PropellerSession::device_error(QSerialPort::SerialPortError e)
 {
     switch (e)
     {
@@ -247,7 +247,7 @@ void PropellerDevice::device_error(QSerialPort::SerialPortError e)
 }
 
 
-int PropellerDevice::handshake()
+int PropellerSession::handshake()
 {
     reset();
 
@@ -275,7 +275,7 @@ int PropellerDevice::handshake()
     return version;
 }
 
-QByteArray PropellerDevice::encode_binary(QByteArray binary)
+QByteArray PropellerSession::encode_binary(QByteArray binary)
 {
     QByteArray encoded_binary;
     for (int i = 0 ; i < binary.size() ; i += 4)
@@ -290,13 +290,13 @@ QByteArray PropellerDevice::encode_binary(QByteArray binary)
     return encoded_binary;
 }
 
-void PropellerDevice::write_terminal(const QString & text)
+void PropellerSession::write_terminal(const QString & text)
 {
     serial.write(qPrintable(text));
     serial.write("\r");
 }
 
-void PropellerDevice::read_terminal()
+void PropellerSession::read_terminal()
 {
     foreach (char c, serial.readAll())
     {
@@ -313,7 +313,7 @@ void PropellerDevice::read_terminal()
     fflush(stdout);
 }
 
-void PropellerDevice::terminal()
+void PropellerSession::terminal()
 {
     serial.setBaudRate(115200);
     connect(&serial, SIGNAL(readyRead()), this, SLOT(read_terminal()));
@@ -331,7 +331,7 @@ void PropellerDevice::terminal()
     return;
 }
 
-void PropellerDevice::upload_binary(PropellerImage binary, bool write, bool run)
+void PropellerSession::upload_binary(PropellerImage binary, bool write, bool run)
 {
     if (!binary.isValid())
         return;
@@ -389,14 +389,14 @@ void PropellerDevice::upload_binary(PropellerImage binary, bool write, bool run)
         reset();
 }
 
-void PropellerDevice::writeEmpty()
+void PropellerSession::writeEmpty()
 {
     if (serial.bytesToWrite())
         error = 0;
         emit finished();
 }
 
-void PropellerDevice::read_acknowledge()
+void PropellerSession::read_acknowledge()
 {
 //    qDebug() << "GOT ACK" << serial.bytesAvailable();
     if (serial.bytesAvailable())
@@ -409,7 +409,7 @@ void PropellerDevice::read_acknowledge()
     }
 }
 
-int PropellerDevice::send_application_image(QByteArray encoded_binary, int image_size)
+int PropellerSession::send_application_image(QByteArray encoded_binary, int image_size)
 {
     error = 0;
     connect(&serial, SIGNAL(bytesWritten(qint64)), this, SLOT(writeEmpty()));
@@ -426,7 +426,7 @@ int PropellerDevice::send_application_image(QByteArray encoded_binary, int image
     return error;
 }
 
-int PropellerDevice::poll_acknowledge()
+int PropellerSession::poll_acknowledge()
 {
     connect(&serial, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
     connect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
@@ -454,7 +454,7 @@ int PropellerDevice::poll_acknowledge()
 }
 
 
-QStringList PropellerDevice::list_devices()
+QStringList PropellerSession::list_devices()
 {
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
     QStringList result;
