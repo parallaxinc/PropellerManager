@@ -1,4 +1,7 @@
+#pragma once
+
 #include "input_console.h"
+#include "propellerimage.h"
 
 #include <QSerialPort>
 #include <QTimer>
@@ -58,8 +61,6 @@ private:
     bool useRtsReset;
     int resourceErrorCount;
 
-    int checksum(QByteArray binary, bool isEEPROM);
-    QByteArray convert_binary_to_eeprom(QByteArray binary);
     QByteArray encode_binary(QByteArray binary);
     int send_application_image(QByteArray encoded_binary, int image_size);
     int poll_acknowledge();
@@ -137,7 +138,7 @@ public:
       Upload a PropellerImage object to the target.
       */
 
-    void upload_binary(QByteArray binary, bool eeprom=false, bool run=true);
+    void upload_binary(PropellerImage binary, bool write=false, bool run=true);
 
     /**
       Open a serial terminal on this device.

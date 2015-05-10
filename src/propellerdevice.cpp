@@ -275,54 +275,6 @@ int PropellerDevice::handshake()
     return version;
 }
 
-int PropellerDevice::checksum(QByteArray binary, bool isEEPROM)
-{
-    int checksum = 0;
-    for (int i = 0; i < binary.size(); i++)
-    {
-        checksum += (unsigned char) binary.at(i);
-    }
-
-    if (!isEEPROM)
-    {
-        checksum += 2 * (0xff + 0xff + 0xf9 + 0xff);
-    }
-    checksum &= 0xff;
-
-    return checksum;
-}
-
-QByteArray PropellerDevice::convert_binary_to_eeprom(QByteArray binary)
-{
-    int EEPROM_SIZE = 32768;
-
-    if (binary.size() > EEPROM_SIZE - 8)
-    {
-        qDebug() << "Code too long for EEPROM (max" << EEPROM_SIZE - 8 << "bytes)";
-        return QByteArray();
-    }
-
-    int dbase =  (unsigned char) binary.at(0x0a) + 
-                ((unsigned char) binary.at(0x0b) << 8);
-
-    if (dbase > EEPROM_SIZE)
-    {
-        qDebug() << "Binary size greater than EEPROM_SIZE";
-        return QByteArray();
-    }
-
-//    qDebug() << "DBASE" << dbase 
-//        << QString::number((unsigned char) binary.at(0x0a)) 
-//        << QString::number((unsigned char) binary.at(0x0b));
-
-    binary.append(QByteArray(dbase - 8 - binary.size(),0x00));
-    binary.append(QByteArray::fromHex("fffff9fffffff9ff"));
-    binary.append(QByteArray(EEPROM_SIZE - binary.size(),0x00));
-
-    return binary;
-}
-
-
 QByteArray PropellerDevice::encode_binary(QByteArray binary)
 {
     QByteArray encoded_binary;
@@ -379,32 +331,12 @@ void PropellerDevice::terminal()
     return;
 }
 
-void PropellerDevice::upload_binary(QByteArray binary, bool eeprom, bool run)
+void PropellerDevice::upload_binary(PropellerImage binary, bool write, bool run)
 {
-    if (binary.isEmpty())
-    {
-        Utility::print_status("EMPTY IMAGE");
+    if (!binary.isValid())
         return;
-    }
 
-    if (binary.size() % 4 != 0)
-    {
-        Utility::print_status("INVALID IMAGE SIZE");
-        return;
-    }
-
-    if (eeprom)
-    {
-        binary = convert_binary_to_eeprom(binary);
-    }
-
-    if (checksum(binary, eeprom))
-    {
-        Utility::print_status("BAD CHECKSUM");
-        return;
-    }
-
-    QByteArray encoded_binary = encode_binary(binary);
+    QByteArray encoded_binary = encode_binary(binary.data());
 
     Utility::print_task("Connecting to '"+serial.portName()+"'...");
     if (!handshake())
@@ -414,11 +346,11 @@ void PropellerDevice::upload_binary(QByteArray binary, bool eeprom, bool run)
     }
     Utility::print_status("DONE");
 
-    int command = 2*eeprom + run;
+    int command = 2*write + run;
     write_long(command);
 
     Utility::print_task("Downloading to RAM...");
-    if (send_application_image(encoded_binary, binary.size()) != 0)
+    if (send_application_image(encoded_binary, binary.imageSize()) != 0)
         return;
 
     Utility::print_status("DONE");
@@ -426,14 +358,13 @@ void PropellerDevice::upload_binary(QByteArray binary, bool eeprom, bool run)
     Utility::print_task("Verifying RAM...");
     if (poll_acknowledge() != 0)
     {
-        // THIS NEEDS MORE DETAILED INFORMATION
-        Utility::print_status("BAD CHECKSUM");
+        Utility::print_status("RAM CHECKSUM INVALID");
         return;
     }
 
     Utility::print_status("DONE");
 
-    if (!eeprom)
+    if (!write)
         return;
     
     Utility::print_task("Writing EEPROM...");

@@ -2,9 +2,11 @@
 #include <QCommandLineParser>
 #include <QObject>
 #include <QDebug>
+#include <QRegularExpression>
 
 #include "utility.h"
 #include "propellerdevice.h"
+#include "propellerimage.h"
 
 #ifndef VERSION
 #define VERSION "0.0.0"
@@ -118,9 +120,22 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        if (!parser.positionalArguments()[0].contains("*.binary$"))
+        QRegularExpression re_binary(".*\\.binary$");
+        QRegularExpression re_eeprom(".*\\.eeprom$");
+
+        if (parser.positionalArguments()[0].contains(re_binary))
         {
-            loader.upload_binary(Utility::readFile(parser.positionalArguments()[0]),parser.isSet(argWrite));
+            PropellerImage image(Utility::readFile(parser.positionalArguments()[0]),PropellerImage::Binary);
+            qDebug() << image.imageSize() << image.programSize();
+            qDebug() << image.clockFrequency() << image.clockModeText();
+            loader.upload_binary(image, parser.isSet(argWrite));
+        }
+        else if (parser.positionalArguments()[0].contains(re_eeprom))
+        {
+            PropellerImage image(Utility::readFile(parser.positionalArguments()[0]),PropellerImage::Eeprom);
+            qDebug() << image.imageSize() << image.programSize();
+            qDebug() << image.clockFrequency() << image.clockModeText();
+            loader.upload_binary(image, parser.isSet(argWrite));
         }
         else
         {
