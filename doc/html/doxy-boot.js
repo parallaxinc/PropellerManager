@@ -27,8 +27,7 @@ $( document ).ready(function() {
 
     $("table.params").addClass("table");
     $("div.ingroups").wrapInner("<small></small>");
-    $("div.levels").css("margin", "0.5em");
-    $("div.levels > span").css("margin-right", "0.25em");
+    $("div.levels").remove();
 
     $("table.directory").addClass("table table-striped");
     $("table.fieldtable").addClass("table");
@@ -51,6 +50,7 @@ $( document ).ready(function() {
     $("div.ttdef,div.ttdoc,div.ttdeci").addClass("panel-body");
 
     $('#MSearchBox').parent().remove();
+    $('td.memSeparator').parent().remove();
 
     $('div.fragment.well div.line:first').css('margin-top', '15px');
     $('div.fragment.well div.line:last').css('margin-bottom', '15px');
@@ -71,11 +71,6 @@ $( document ).ready(function() {
         $('div.fragment.well div.line:first').parent().removeClass('fragment well');
     }
 
-    $('table.memberdecls').find('.memItemRight').each(function(){
-        $(this).contents().appendTo($(this).siblings('.memItemLeft'));
-        $(this).siblings('.memItemLeft').attr('align', 'left');
-    });
-	
 	function getOriginalWidthOfImg(img_element) {
 		var t = new Image();
 		t.src = (img_element.getAttribute ? img_element.getAttribute("src") : false) || img_element.src;

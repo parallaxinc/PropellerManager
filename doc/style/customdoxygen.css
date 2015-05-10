@@ -7,25 +7,12 @@ h1, .h1, h2, .h2, h3, .h3{
 }
 
 .adjust-right {
-margin-left: 30px !important;
-font-size: 1.15em !important;
+    margin-left: 30px !important;
+    font-size: 1.15em !important;
 }
 .navbar{
- border: 0px solid #222 !important;
+    border: 0px solid #222 !important;
 }
-
-
-/* Sticky footer styles
--------------------------------------------------- */
-html,
-body {
-    height: 100%;
-    /* The html and body elements cannot have any padding or margin. */
-}
-
-/* DOXYGEN Code Styles
------------------------------------ */
-
 
 a.qindex {
     font-weight: bold;
@@ -188,7 +175,7 @@ span.icona {
 
 span.icon {
     width: 16px;
-    height: 14px;
+    height: 19px;
     display: inline-block;
     background-color: #728DC1;
     color: #FFFFFF;
@@ -203,3 +190,16 @@ blockquote {
     padding: 0 12px 0 16px;
 }
 
+.arrow {
+    color: #9CAFD4;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    font-size: 80%;
+    display: inline-block;
+    width: 16px;
+    height: 22px;
+}
