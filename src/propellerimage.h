@@ -52,7 +52,7 @@ public:
 
 private:
 
-    int EEPROM_SIZE;                                /
+    int EEPROM_SIZE;
     QByteArray  _image;
     QString     _filename;
     bool        _valid;
