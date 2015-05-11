@@ -23,22 +23,23 @@ class PropellerImage
 
 public:
 
-    enum Type {
+    enum ImageType {
         Binary,
         Eeprom
     };
 
 private:
 
-    Type        _type;
+    int EEPROM_SIZE;
     QByteArray  _image;
+    QString     _filename;
     bool        _valid;
     QHash<quint8, QString> _clkmodesettings;
     QHash<quint8, QString> initClockModeSettings();
 
 public:
 
-    PropellerImage(QByteArray image, Type type);
+    PropellerImage(QByteArray image, QString filename = "");
 
     /**
         @name Image Validation
@@ -58,11 +59,15 @@ public:
       */
 
     /**@{*/
+    QString     fileName();
+    ImageType   imageType();
     int         imageSize();
-    int         stackSize();
     int         programSize();
     int         variableSize();
-    int         freeSpace();
+    int         stackSize();
+    int         startOfCode();
+    int         startOfVariables();
+    int         startOfStackSpace();
     /**@}*/
 
     /**

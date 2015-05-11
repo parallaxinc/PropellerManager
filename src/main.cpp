@@ -12,6 +12,24 @@
 #define VERSION "0.0.0"
 #endif
 
+void info(PropellerImage image)
+{
+    qDebug() << "-------------------------------------------";
+    qDebug() << "           Image:" << qPrintable(image.fileName());
+    qDebug() << "            Type:" << (image.imageType() ? "EEPROM" : "Binary");
+    qDebug() << "            Size:" << image.imageSize();
+    qDebug() << "        Checksum:" << (image.checksum() ? "INVALID" : "PASS");
+    qDebug() << "";
+    qDebug() << "    Program size:" << image.programSize();
+    qDebug() << "   Variable size:" << image.variableSize();
+    qDebug() << " Free/stack size:" << image.stackSize();
+    qDebug() << "";
+    qDebug() << "      Clock mode:" << qPrintable(image.clockModeText());
+    if (image.clockMode() != 0x00 && image.clockMode() != 0x01)
+        qDebug() << " Clock frequency:" << image.clockFrequency();
+    qDebug() << "-------------------------------------------";
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
@@ -120,21 +138,20 @@ int main(int argc, char *argv[])
             return 1;
         }
 
+        QString filename = parser.positionalArguments()[0];
         QRegularExpression re_binary(".*\\.binary$");
         QRegularExpression re_eeprom(".*\\.eeprom$");
 
-        if (parser.positionalArguments()[0].contains(re_binary))
+        if (filename.contains(re_binary))
         {
-            PropellerImage image(Utility::readFile(parser.positionalArguments()[0]),PropellerImage::Binary);
-            qDebug() << image.imageSize() << image.programSize();
-            qDebug() << image.clockFrequency() << image.clockModeText();
+            PropellerImage image(Utility::readFile(filename),filename);
+            info(image);
             loader.upload_binary(image, parser.isSet(argWrite));
         }
-        else if (parser.positionalArguments()[0].contains(re_eeprom))
+        else if (filename.contains(re_eeprom))
         {
-            PropellerImage image(Utility::readFile(parser.positionalArguments()[0]),PropellerImage::Eeprom);
-            qDebug() << image.imageSize() << image.programSize();
-            qDebug() << image.clockFrequency() << image.clockModeText();
+            PropellerImage image(Utility::readFile(filename),filename);
+            info(image);
             loader.upload_binary(image, parser.isSet(argWrite));
         }
         else
@@ -150,5 +167,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
 

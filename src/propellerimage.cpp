@@ -1,10 +1,11 @@
 #include "propellerimage.h"
 
-PropellerImage::PropellerImage(QByteArray image, Type type)
+PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
-    int EEPROM_SIZE = 32768;
+    EEPROM_SIZE = 32768;
 
     _image  = image;
+    _filename = filename;
     _clkmodesettings = initClockModeSettings();
 
     if (_image.isEmpty())
@@ -25,12 +26,10 @@ PropellerImage::PropellerImage(QByteArray image, Type type)
     else if (checksum())
     {
         Utility::print_status("BAD CHECKSUM");
-        _valid = true;
-    //    _valid = false;
+        _valid = false;
     }
     else
     {
-        _type   = type;
         _valid = true;
     }
 }
@@ -38,20 +37,16 @@ PropellerImage::PropellerImage(QByteArray image, Type type)
 int PropellerImage::checksum()
 {
     int checksum = 0;
-    for (int i = 0; i < _image.size(); i++)
+    foreach (unsigned char c, _image)
     {
-        checksum += (unsigned char) _image.at(i);
+        checksum += c;
     }
 
-    qDebug() << "CHECKSUM:" << checksum;
-
-    if (_type == Binary)
-    {
-        checksum += 2 * (0xff + 0xff + 0xf9 + 0xff);
-    }
+    // Add value of initial call frame
+    if (imageType() == Binary)
+        checksum += 2 * (0xff + 0xff + 0xff + 0xf9);
 
     checksum &= 0xff;
-    qDebug() << "CHECKSUM:" << checksum;
 
     return checksum;
 }
@@ -75,26 +70,39 @@ int PropellerImage::imageSize()
     return _image.size();
 }
 
-int PropellerImage::stackSize()
+int PropellerImage::programSize()   /** start of stack space pointer (DBASE) */
 {
-    return 0;
-}
-
-int PropellerImage::programSize()
-{
-    int dbase =  (unsigned char) _image.at(0x0a) + 
-                ((unsigned char) _image.at(0x0b) << 8);
-    return dbase;
+    return startOfStackSpace();
 }
 
 int PropellerImage::variableSize()
 {
-    return 0;
+    return startOfStackSpace() - 8 - startOfVariables();
 }
 
-int PropellerImage::freeSpace()
+int PropellerImage::stackSize()
 {
-    return 0;
+    return EEPROM_SIZE - startOfStackSpace();
+}
+
+int PropellerImage::startOfCode()
+{
+    int start = readWord(6);
+
+    if (start != 0x0010)
+        qDebug() << "Code start is invalid!";
+
+    return start;
+}
+
+int PropellerImage::startOfVariables()
+{
+    return readWord(8);
+}
+
+int PropellerImage::startOfStackSpace() // (DBASE)
+{
+    return readWord(10);
 }
 
 void PropellerImage::setClockFrequency(int frequency)
@@ -110,15 +118,15 @@ quint8  PropellerImage::readByte(int pos)
 quint16 PropellerImage::readWord(int pos)
 {
     return  (readByte(pos)) +
-            (readByte(pos+1) << 8);
+        (readByte(pos+1) << 8);
 }
 
 quint32 PropellerImage::readLong(int pos)
 {
     return  (readByte(pos)) +
-            (readByte(pos+1) << 8) +
-            (readByte(pos+2) << 16) +
-            (readByte(pos+3) << 24);
+        (readByte(pos+1) << 8) +
+        (readByte(pos+2) << 16) +
+        (readByte(pos+3) << 24);
 }
 
 quint32 PropellerImage::clockFrequency()
@@ -143,43 +151,52 @@ QString PropellerImage::clockModeText()
 QHash<quint8, QString> PropellerImage::initClockModeSettings()
 {
     QHash<quint8, QString> clkmode;
-    clkmode[0x00] = "rcfast";
-    clkmode[0x01] = "rcslow";
-    clkmode[0x22] = "xinput";
-    clkmode[0x2A] = "xtal1";
-    clkmode[0x32] = "xtal2";
-    clkmode[0x3A] = "xtal3";
 
-    clkmode[0x63] = "xinput+pll1x";
-    clkmode[0x64] = "xinput+pll2x";
-    clkmode[0x65] = "xinput+pll4x";
-    clkmode[0x66] = "xinput+pll8x";
-    clkmode[0x67] = "xinput+pll16x";
+    clkmode[0x00] = "RCFAST";
+    clkmode[0x01] = "RCSLOW";
+    clkmode[0x22] = "XINPUT";
+    clkmode[0x2A] = "XTAL1";
+    clkmode[0x32] = "XTAL2";
+    clkmode[0x3A] = "XTAL3";
 
-    clkmode[0x6B] = "xtal1+pll1x";
-    clkmode[0x6C] = "xtal1+pll2x";
-    clkmode[0x6D] = "xtal1+pll4x";
-    clkmode[0x6E] = "xtal1+pll8x";
-    clkmode[0x6F] = "xtal1+pll16x";
+    clkmode[0x63] = "XINPUT+PLL1X";
+    clkmode[0x64] = "XINPUT+PLL2X";
+    clkmode[0x65] = "XINPUT+PLL4X";
+    clkmode[0x66] = "XINPUT+PLL8X";
+    clkmode[0x67] = "XINPUT+PLL16X";
 
-    clkmode[0x73] = "xtal2+pll1x";
-    clkmode[0x74] = "xtal2+pll2x";
-    clkmode[0x75] = "xtal2+pll4x";
-    clkmode[0x76] = "xtal2+pll8x";
-    clkmode[0x77] = "xtal2+pll16x";
+    clkmode[0x6B] = "XTAL1+PLL1X";
+    clkmode[0x6C] = "XTAL1+PLL2X";
+    clkmode[0x6D] = "XTAL1+PLL4X";
+    clkmode[0x6E] = "XTAL1+PLL8X";
+    clkmode[0x6F] = "XTAL1+PLL16X";
 
-    clkmode[0x7B] = "xtal3+pll1x";
-    clkmode[0x7C] = "xtal3+pll2x";
-    clkmode[0x7D] = "xtal3+pll4x";
-    clkmode[0x7E] = "xtal3+pll8x";
-    clkmode[0x7F] = "xtal3+pll16x";
+    clkmode[0x73] = "XTAL2+PLL1X";
+    clkmode[0x74] = "XTAL2+PLL2X";
+    clkmode[0x75] = "XTAL2+PLL4X";
+    clkmode[0x76] = "XTAL2+PLL8X";
+    clkmode[0x77] = "XTAL2+PLL16X";
+
+    clkmode[0x7B] = "XTAL3+PLL1X";
+    clkmode[0x7C] = "XTAL3+PLL2X";
+    clkmode[0x7D] = "XTAL3+PLL4X";
+    clkmode[0x7E] = "XTAL3+PLL8X";
+    clkmode[0x7F] = "XTAL3+PLL16X";
 
     clkmode[0x80] = "INVALID";
 
     return clkmode;
 }
 
-//void PropellerImage::setType(PropellerImage::Type type)
-//{
-//    _type = type;
-//}
+QString PropellerImage::fileName()
+{
+    return _filename;
+}
+
+PropellerImage::ImageType PropellerImage::imageType()
+{
+    if (imageSize() > programSize())
+        return Eeprom;
+    else
+        return Binary;
+}
