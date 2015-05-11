@@ -48,7 +48,7 @@ public:
       */
 
     /**@{*/
-    int         checksum();
+    quint8      checksum();
     bool        isValid();
     /**@}*/
 
@@ -61,13 +61,15 @@ public:
     /**@{*/
     QString     fileName();
     ImageType   imageType();
+
     int         imageSize();
     int         programSize();
     int         variableSize();
     int         stackSize();
-    int         startOfCode();
-    int         startOfVariables();
-    int         startOfStackSpace();
+
+    quint16     startOfCode();
+    quint16     startOfVariables();
+    quint16     startOfStackSpace();
     /**@}*/
 
     /**
@@ -95,7 +97,7 @@ public:
     quint32     clockFrequency();
 
     /** Assign a new clock frequency to the image. */
-    void        setClockFrequency(int frequency);
+    void        setClockFrequency(quint32 frequency);
 
     /** Get an 8-bit integer containing the current clock mode. */
     quint8      clockMode();

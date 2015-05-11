@@ -1,5 +1,28 @@
 #include "propellerimage.h"
 
+/**
+@class PropellerImage
+
+### Propeller Application Format
+
+The Propeller Application image consists of data blocks for initialization, program, variables, and data/stack space. The first block, initialization, describes the application's startup parameters, including the position of the other blocks within the image, as shown below.
+
+| data size | address  | description      |
+|-----------|----------|------------------|
+| long      | 0        | Clock Frequency |
+| byte      | 4        | Clock Mode |
+| byte      | 5        | Checksum (this value causes additive checksum of bytes 0 to ImageLimit-1 to equal 0) |
+| word      | 6        | Start of Code pointer (must always be $0010) |
+| word      | 8        | Start of Variables pointer |
+| word      | 10       | Start of Stack Space pointer |
+| word      | 12       | Current Program pointer (points to first public method of object) |
+| word      | 14       | Current Stack Space pointer (points to first run-time usable space of stack) |
+
+### What Gets Downloaded
+
+To save time, the Propeller Tool does not download the entire Propeller Application Image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the Propeller chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well.
+*/
+
 PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
     EEPROM_SIZE = 32768;
@@ -34,7 +57,7 @@ PropellerImage::PropellerImage(QByteArray image, QString filename)
     }
 }
 
-int PropellerImage::checksum()
+quint8 PropellerImage::checksum()
 {
     int checksum = 0;
     foreach (unsigned char c, _image)
@@ -65,10 +88,18 @@ bool PropellerImage::isValid()
     return _valid;
 }
 
+/**
+Total size of stored image file on disk.
+*/
+
 int PropellerImage::imageSize()
 {
     return _image.size();
 }
+
+/**
+Size of the application code. This value will be larger than the total file size for Binary images.
+*/
 
 int PropellerImage::programSize()   /** start of stack space pointer (DBASE) */
 {
@@ -85,7 +116,11 @@ int PropellerImage::stackSize()
     return EEPROM_SIZE - startOfStackSpace();
 }
 
-int PropellerImage::startOfCode()
+/**
+Start of Code pointer (address 0x06). This value must always be equal to $0010.
+*/
+
+quint16 PropellerImage::startOfCode()
 {
     int start = readWord(6);
 
@@ -95,31 +130,73 @@ int PropellerImage::startOfCode()
     return start;
 }
 
-int PropellerImage::startOfVariables()
+/**
+Start of Variables pointer (address 0x08).
+*/
+
+quint16 PropellerImage::startOfVariables()
 {
     return readWord(8);
 }
 
-int PropellerImage::startOfStackSpace() // (DBASE)
+/**
+Start of Stack Space pointer (address 0x0A). Otherwise known as DBase.
+*/
+
+quint16 PropellerImage::startOfStackSpace()
 {
     return readWord(10);
 }
 
-void PropellerImage::setClockFrequency(int frequency)
+/**
+**NOT YET IMPLEMENTED**
+
+Replace the current clock frequency with another value and recalculate the checksum.
+*/
+
+void PropellerImage::setClockFrequency(quint32 frequency)
 {
     Q_UNUSED(frequency);
 }
+
+/**
+Read a byte from address pos of the image.
+
+@param pos The address in bytes to read from.
+
+@return an 8-bit unsigned value.
+*/
 
 quint8  PropellerImage::readByte(int pos)
 {
     return (quint8) _image.at(pos);
 }
 
+/**
+Read a word from address pos of the image.
+
+@param pos The address in bytes to read from.
+
+@return a 16-bit unsigned value.
+
+*This function does not perform word-align on the address passed.*
+*/
+
 quint16 PropellerImage::readWord(int pos)
 {
     return  (readByte(pos)) +
         (readByte(pos+1) << 8);
 }
+
+/**
+Read a long from address pos of the image.
+
+@param pos The address in bytes to read from.
+
+@return a 32-bit unsigned value.
+
+*This function does not perform long-align on the address passed.*
+*/
 
 quint32 PropellerImage::readLong(int pos)
 {
@@ -128,6 +205,12 @@ quint32 PropellerImage::readLong(int pos)
         (readByte(pos+2) << 16) +
         (readByte(pos+3) << 24);
 }
+
+/**
+Get the clock frequency.
+
+@return a 32-bit unsigned value containing the clock frequency in Hertz.
+*/
 
 quint32 PropellerImage::clockFrequency()
 {
