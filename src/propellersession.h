@@ -100,14 +100,17 @@ public:
     /**
       Open the PropellerSession for use.
       */
+    bool open();
 
-    int open();
+    /**
+      Return whether the PropellerSession is now open.
+      */
+    bool isOpen();
 
     /**
       Close the PropellerSession; this function is called when the PropellerSession is destroyed.
     */
-
-    int close();
+    void close();
 
     /**
       Get the version of the connected device.

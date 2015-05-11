@@ -46,6 +46,7 @@ public:
       An enumeration containing all Propeller image types that PropellerManager supports.
       */
     enum ImageType {
+        Invalid,        ///< Not a valid image file
         Binary,         ///< Program data-only image files (usually have a `.binary` extension)
         Eeprom          ///< Complete EEPROM images        (usually have a `.eeprom` extension)
     };
@@ -55,13 +56,14 @@ private:
     int EEPROM_SIZE;
     QByteArray  _image;
     QString     _filename;
-    bool        _valid;
+    ImageType   _type;
+    QHash<ImageType, QString> _typenames;
     QHash<quint8, QString> _clkmodesettings;
     QHash<quint8, QString> initClockModeSettings();
 
 public:
 
-    PropellerImage(QByteArray image, QString filename = "");
+    PropellerImage(QByteArray image = QByteArray(), QString filename = "");
 
     /**
         @name Image Validation
@@ -83,6 +85,7 @@ public:
     /**@{*/
     QString     fileName();
     ImageType   imageType();
+    QString     imageTypeText();
 
     int         imageSize();
     int         programSize();

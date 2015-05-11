@@ -23,10 +23,6 @@ PropellerSession::PropellerSession(   QString port,
     serial.setSettingsRestoredOnClose(false);
     serial.setPortName(port);
 
-#if not defined(Q_PROCESSOR_ARM_V6)
-    serial.setBaudRate(230400);
-#endif
-
     connect(&serial,SIGNAL(error(QSerialPort::SerialPortError)),
             this,   SLOT(device_error(QSerialPort::SerialPortError))); 
 
@@ -49,25 +45,33 @@ PropellerSession::~PropellerSession()
     serial.close();
 }
 
-int PropellerSession::open()
+bool PropellerSession::open()
 {
     resourceErrorCount = 0;
 
     if (!serial.open(QIODevice::ReadWrite))
     {
-        qDebug() << serial.errorString();
-        return 1;
+        qDebug() << "Failed to open" << serial.portName()
+            << ":" << serial.errorString();
+        return false;
     }
+
 #if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     serial.setBaudRate(115200);
+#else
+    serial.setBaudRate(230400);
 #endif
-    return 0;
+    return true;
 }
 
-int PropellerSession::close()
+bool PropellerSession::isOpen()
+{
+    return serial.isOpen();
+}
+
+void PropellerSession::close()
 {
     serial.close();
-    return 0;
 }
 
 void PropellerSession::reset()
@@ -461,7 +465,9 @@ QStringList PropellerSession::list_devices()
 
     foreach (QSerialPortInfo port, ports)
     {
-        result.append(port.systemLocation());
+        if (!port.systemLocation().contains("ttyS") &&
+            !port.systemLocation().contains("Bluetooth"))
+            result.append(port.systemLocation());
     }
     return result;
 }

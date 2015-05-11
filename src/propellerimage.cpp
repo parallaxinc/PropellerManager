@@ -7,31 +7,11 @@ PropellerImage::PropellerImage(QByteArray image, QString filename)
     _image  = image;
     _filename = filename;
     _clkmodesettings = initClockModeSettings();
+    _type = imageType();
 
-    if (_image.isEmpty())
-    {
-        Utility::print_status("EMPTY IMAGE");
-        _valid = false;
-    }
-    else if (_image.size() % 4 != 0)
-    {
-        Utility::print_status("INVALID IMAGE SIZE");
-        _valid = false;
-    }
-    else if (_image.size() > EEPROM_SIZE)
-    {
-        Utility::print_status("Code too long for EEPROM (max "+QString::number(EEPROM_SIZE)+" bytes)");
-        _valid = false;
-    }
-    else if (checksum())
-    {
-        Utility::print_status("BAD CHECKSUM");
-        _valid = false;
-    }
-    else
-    {
-        _valid = true;
-    }
+    _typenames[Invalid] = "Invalid";
+    _typenames[Binary] = "Binary";
+    _typenames[Eeprom] = "EEPROM";
 }
 
 quint8 PropellerImage::checksum()
@@ -43,7 +23,7 @@ quint8 PropellerImage::checksum()
     }
 
     // Add value of initial call frame
-    if (imageType() == Binary)
+    if (_type == Binary)
         checksum += 2 * (0xff + 0xff + 0xff + 0xf9);
 
     checksum &= 0xff;
@@ -62,7 +42,7 @@ void PropellerImage::setData(QByteArray data) {
 
 bool PropellerImage::isValid()
 {
-    return _valid;
+    return (_type != Invalid);
 }
 
 /**
@@ -257,8 +237,34 @@ QString PropellerImage::fileName()
 
 PropellerImage::ImageType PropellerImage::imageType()
 {
-    if (imageSize() > programSize())
-        return Eeprom;
+    if (_image.isEmpty())
+    {
+        _type = Invalid;
+    }
+    else if (_image.size() % 4 != 0)
+    {
+        _type = Invalid;
+    }
+    else if (_image.size() > EEPROM_SIZE)
+    {
+        _type = Invalid;
+    }
     else
-        return Binary;
+    {
+        if (imageSize() > programSize())
+            _type = Eeprom;
+        else
+            _type = Binary;
+    }
+
+    if (checksum())
+    {
+        _type = Invalid;
+    }
+    return _type;
+}
+
+QString PropellerImage::imageTypeText()
+{
+    return _typenames[_type];
 }
