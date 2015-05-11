@@ -1,28 +1,5 @@
 #include "propellerimage.h"
 
-/**
-@class PropellerImage
-
-### Propeller Application Format
-
-The Propeller Application image consists of data blocks for initialization, program, variables, and data/stack space. The first block, initialization, describes the application's startup parameters, including the position of the other blocks within the image, as shown below.
-
-| data size | address  | description      |
-|-----------|----------|------------------|
-| long      | 0        | Clock Frequency |
-| byte      | 4        | Clock Mode |
-| byte      | 5        | Checksum (this value causes additive checksum of bytes 0 to ImageLimit-1 to equal 0) |
-| word      | 6        | Start of Code pointer (must always be $0010) |
-| word      | 8        | Start of Variables pointer |
-| word      | 10       | Start of Stack Space pointer |
-| word      | 12       | Current Program pointer (points to first public method of object) |
-| word      | 14       | Current Stack Space pointer (points to first run-time usable space of stack) |
-
-### What Gets Downloaded
-
-To save time, the Propeller Tool does not download the entire Propeller Application Image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the Propeller chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well.
-*/
-
 PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
     EEPROM_SIZE = 32768;
@@ -98,10 +75,12 @@ int PropellerImage::imageSize()
 }
 
 /**
-Size of the application code. This value will be larger than the total file size for Binary images.
+Size of the application code. This value will be larger than the total file size for PropellerImage::Binary images.
+
+This value is equivalent to startOfStackSpace().
 */
 
-int PropellerImage::programSize()   /** start of stack space pointer (DBASE) */
+int PropellerImage::programSize()
 {
     return startOfStackSpace();
 }

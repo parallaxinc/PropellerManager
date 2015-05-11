@@ -1,3 +1,11 @@
+#!/bin/bash
+
+pushd ../src
+doxygen
+popd
+
+pushd html
+
 for f in `find . -name _\* | sed -e 's/^\.\///'`
 do
     g=`echo $f | sed -e's/^_//'`
@@ -13,3 +21,4 @@ do
     mv $f $g
 done
 
+popd

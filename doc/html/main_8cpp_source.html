@@ -31,153 +31,197 @@ title: Propeller Manager  - main.cpp Source File
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;QCommandLineParser&gt;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;QObject&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QDebug&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="utility_8h.html">utility.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="propellerdevice_8h.html">propellerdevice.h</a>&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef VERSION</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="main_8cpp.html#a1c6d5de492ac61ad29aec7aa9a436bbf">   10</a></span>&#160;<span class="preprocessor">#define VERSION &quot;0.0.0&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">   13</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[])</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    QCoreApplication app(argc, argv);</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    QCoreApplication::setOrganizationName(<span class="stringliteral">&quot;Parallax Inc.&quot;</span>);</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    QCoreApplication::setOrganizationDomain(<span class="stringliteral">&quot;www.parallax.com&quot;</span>);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    QCoreApplication::setApplicationVersion(<a class="code" href="main_8cpp.html#a1c6d5de492ac61ad29aec7aa9a436bbf">VERSION</a>);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    QCoreApplication::setApplicationName(QObject::tr(<span class="stringliteral">&quot;Propeller Manager CLI&quot;</span>));</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    QCommandLineParser parser;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    parser.addHelpOption();</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    parser.addVersionOption();</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    parser.setApplicationDescription(</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            QObject::tr(<span class="stringliteral">&quot;\nA command-line wrapper to the Propeller Manager API&quot;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                <span class="stringliteral">&quot;\nCopyright 2015 by %1&quot;</span>).arg(QCoreApplication::organizationName()));</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    QCommandLineOption argList(     QStringList() &lt;&lt; <span class="stringliteral">&quot;l&quot;</span> &lt;&lt; <span class="stringliteral">&quot;list&quot;</span>,  QObject::tr(<span class="stringliteral">&quot;List available devices&quot;</span>));</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    QCommandLineOption argWrite(    QStringList() &lt;&lt; <span class="stringliteral">&quot;w&quot;</span> &lt;&lt; <span class="stringliteral">&quot;write&quot;</span>, QObject::tr(<span class="stringliteral">&quot;Write program to EEPROM&quot;</span>));</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    QCommandLineOption argDevice(   QStringList() &lt;&lt; <span class="stringliteral">&quot;d&quot;</span> &lt;&lt; <span class="stringliteral">&quot;device&quot;</span>,QObject::tr(<span class="stringliteral">&quot;Device to program (default: first system device)&quot;</span>), <span class="stringliteral">&quot;DEV&quot;</span>);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    QCommandLineOption argPin(      QStringList() &lt;&lt; <span class="stringliteral">&quot;p&quot;</span> &lt;&lt; <span class="stringliteral">&quot;pin&quot;</span>,   QObject::tr(<span class="stringliteral">&quot;Pin for GPIO reset&quot;</span>), <span class="stringliteral">&quot;PIN&quot;</span>);</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    QCommandLineOption argTerm(     QStringList() &lt;&lt; <span class="stringliteral">&quot;t&quot;</span> &lt;&lt; <span class="stringliteral">&quot;terminal&quot;</span>,   QObject::tr(<span class="stringliteral">&quot;Drop into terminal after download&quot;</span>));</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    QCommandLineOption argIdentify( QStringList() &lt;&lt; <span class="stringliteral">&quot;i&quot;</span> &lt;&lt; <span class="stringliteral">&quot;identify&quot;</span>,   QObject::tr(<span class="stringliteral">&quot;Identify device connected at port&quot;</span>));</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    parser.addOption(argList);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    parser.addOption(argWrite);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    parser.addOption(argDevice);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    parser.addOption(argPin);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    parser.addOption(argTerm);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    parser.addOption(argIdentify);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    parser.addPositionalArgument(<span class="stringliteral">&quot;file&quot;</span>,  QObject::tr(<span class="stringliteral">&quot;Binary file to download&quot;</span>), <span class="stringliteral">&quot;FILE&quot;</span>);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    parser.process(app);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    QStringList device_list = <a class="code" href="class_propeller_device.html#a6ff8fe03503b7382e069b7e13a830a88">PropellerDevice::list_devices</a>();</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">if</span> (parser.isSet(argList))</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; device_list.size(); i++)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            qDebug() &lt;&lt; qPrintable(device_list[i]);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">if</span> (device_list.isEmpty())</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    {</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        qDebug() &lt;&lt; <span class="stringliteral">&quot;No devices available for download!&quot;</span>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keywordflow">return</span> 1;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;QRegularExpression&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="utility_8h.html">utility.h</a>&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="propellersession_8h.html">propellersession.h</a>&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="propellerimage_8h.html">propellerimage.h</a>&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#ifndef VERSION</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="main_8cpp.html#a1c6d5de492ac61ad29aec7aa9a436bbf">   12</a></span>&#160;<span class="preprocessor">#define VERSION &quot;0.0.0&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="main_8cpp.html#acb3ca6d3819fd227c94ff88129fd186a">   15</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="main_8cpp.html#acb3ca6d3819fd227c94ff88129fd186a">info</a>(<a class="code" href="class_propeller_image.html">PropellerImage</a> image)</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;{</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;-------------------------------------------&quot;</span>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;           Image:&quot;</span> &lt;&lt; qPrintable(image.<a class="code" href="class_propeller_image.html#ad2a55c0ea938fc8eb5b7d5cbe43396be">fileName</a>());</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;            Type:&quot;</span> &lt;&lt; (image.<a class="code" href="class_propeller_image.html#acb1133d862d14e6f3c4021770112bd4c">imageType</a>() ? <span class="stringliteral">&quot;EEPROM&quot;</span> : <span class="stringliteral">&quot;Binary&quot;</span>);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;            Size:&quot;</span> &lt;&lt; image.<a class="code" href="class_propeller_image.html#a1883734ffee1a0b3ba7dcb4772fbd899">imageSize</a>();</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;        Checksum:&quot;</span> &lt;&lt; (image.<a class="code" href="class_propeller_image.html#aa40c90c26076b7d2887e09f4b2465c32">checksum</a>() ? <span class="stringliteral">&quot;INVALID&quot;</span> : <span class="stringliteral">&quot;PASS&quot;</span>);</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;    Program size:&quot;</span> &lt;&lt; image.<a class="code" href="class_propeller_image.html#a9c037c6151894dc5ea3bebc2c96d0afe">programSize</a>();</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;   Variable size:&quot;</span> &lt;&lt; image.<a class="code" href="class_propeller_image.html#a105e2cd3a92d1d93dcccc99c0ac20aa5">variableSize</a>();</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot; Free/stack size:&quot;</span> &lt;&lt; image.<a class="code" href="class_propeller_image.html#ad0ed50fb9002604db8a88e21e26b2927">stackSize</a>();</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;      Clock mode:&quot;</span> &lt;&lt; qPrintable(image.<a class="code" href="class_propeller_image.html#abf0c44fc3dca928b1864b5bc346ca1f9">clockModeText</a>());</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">if</span> (image.<a class="code" href="class_propeller_image.html#a02da6195e6a2aff3aff66ab75e1ce185">clockMode</a>() != 0x00 &amp;&amp; image.<a class="code" href="class_propeller_image.html#a02da6195e6a2aff3aff66ab75e1ce185">clockMode</a>() != 0x01)</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        qDebug() &lt;&lt; <span class="stringliteral">&quot; Clock frequency:&quot;</span> &lt;&lt; image.<a class="code" href="class_propeller_image.html#a6c564997c0969a159e67097fca000c1d">clockFrequency</a>();</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    qDebug() &lt;&lt; <span class="stringliteral">&quot;-------------------------------------------&quot;</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">   33</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[])</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    QCoreApplication app(argc, argv);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    QCoreApplication::setOrganizationName(<span class="stringliteral">&quot;Parallax Inc.&quot;</span>);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    QCoreApplication::setOrganizationDomain(<span class="stringliteral">&quot;www.parallax.com&quot;</span>);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    QCoreApplication::setApplicationVersion(<a class="code" href="main_8cpp.html#a1c6d5de492ac61ad29aec7aa9a436bbf">VERSION</a>);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    QCoreApplication::setApplicationName(QObject::tr(<span class="stringliteral">&quot;Propeller Manager CLI&quot;</span>));</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    QCommandLineParser parser;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    parser.addHelpOption();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    parser.addVersionOption();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    parser.setApplicationDescription(</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            QObject::tr(<span class="stringliteral">&quot;\nA command-line wrapper to the Propeller Manager API&quot;</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                <span class="stringliteral">&quot;\nCopyright 2015 by %1&quot;</span>).arg(QCoreApplication::organizationName()));</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    QCommandLineOption argList(     QStringList() &lt;&lt; <span class="stringliteral">&quot;l&quot;</span> &lt;&lt; <span class="stringliteral">&quot;list&quot;</span>,  QObject::tr(<span class="stringliteral">&quot;List available devices&quot;</span>));</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    QCommandLineOption argWrite(    QStringList() &lt;&lt; <span class="stringliteral">&quot;w&quot;</span> &lt;&lt; <span class="stringliteral">&quot;write&quot;</span>, QObject::tr(<span class="stringliteral">&quot;Write program to EEPROM&quot;</span>));</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    QCommandLineOption argDevice(   QStringList() &lt;&lt; <span class="stringliteral">&quot;d&quot;</span> &lt;&lt; <span class="stringliteral">&quot;device&quot;</span>,QObject::tr(<span class="stringliteral">&quot;Device to program (default: first system device)&quot;</span>), <span class="stringliteral">&quot;DEV&quot;</span>);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    QCommandLineOption argPin(      QStringList() &lt;&lt; <span class="stringliteral">&quot;p&quot;</span> &lt;&lt; <span class="stringliteral">&quot;pin&quot;</span>,   QObject::tr(<span class="stringliteral">&quot;Pin for GPIO reset&quot;</span>), <span class="stringliteral">&quot;PIN&quot;</span>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    QCommandLineOption argTerm(     QStringList() &lt;&lt; <span class="stringliteral">&quot;t&quot;</span> &lt;&lt; <span class="stringliteral">&quot;terminal&quot;</span>,   QObject::tr(<span class="stringliteral">&quot;Drop into terminal after download&quot;</span>));</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    QCommandLineOption argIdentify( QStringList() &lt;&lt; <span class="stringliteral">&quot;i&quot;</span> &lt;&lt; <span class="stringliteral">&quot;identify&quot;</span>,   QObject::tr(<span class="stringliteral">&quot;Identify device connected at port&quot;</span>));</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    parser.addOption(argList);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    parser.addOption(argWrite);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    parser.addOption(argDevice);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    parser.addOption(argPin);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    parser.addOption(argTerm);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    parser.addOption(argIdentify);</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    QString device = device_list[0];</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">if</span> (!parser.value(argDevice).isEmpty())</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    {</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        device = parser.value(argDevice);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordflow">if</span> (!device_list.contains(device))</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            qDebug() &lt;&lt; <span class="stringliteral">&quot;Device name not available&quot;</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">return</span> 1;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="preprocessor">#if defined(Q_PROCESSOR_ARM_V6) &amp;&amp; defined(Q_OS_LINUX)</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">int</span> reset_pin = 17;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">int</span> reset_pin = -1;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span> (!parser.value(argPin).isEmpty())</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    {</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        reset_pin = parser.value(argPin).toInt();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">if</span> (reset_pin &gt; -1)</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        qDebug() &lt;&lt; <span class="stringliteral">&quot;Using GPIO pin&quot;</span> &lt;&lt; reset_pin &lt;&lt; <span class="stringliteral">&quot;for hardware reset&quot;</span>;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">if</span> (parser.isSet(argIdentify))</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    {</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordflow">foreach</span> (QString d, device_list)</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <a class="code" href="class_propeller_device.html">PropellerDevice</a> loader(d,reset_pin);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            loader.<a class="code" href="class_propeller_device.html#a4bc98adc9e6e426b11694cdd2388a786">open</a>();</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            <span class="keywordflow">switch</span> (loader.<a class="code" href="class_propeller_device.html#acfaf7968a4626929300e41668e8faaf8">get_version</a>())</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            {</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                <span class="keywordflow">case</span> 1:</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                    qDebug(<span class="stringliteral">&quot;[ %-16s ] %s&quot;</span>, qPrintable(d), <span class="stringliteral">&quot;Propeller P8X32A&quot;</span>);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                <span class="keywordflow">case</span> 0:</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                    qDebug(<span class="stringliteral">&quot;[ %-16s ] %-9s&quot;</span>,qPrintable(d), <span class="stringliteral">&quot;NOT FOUND&quot;</span>);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            loader.<a class="code" href="class_propeller_device.html#a38304569f1ec7c60da6c640906fedd95">close</a>();</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        }</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <a class="code" href="class_propeller_device.html">PropellerDevice</a> loader(device,reset_pin);</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="keywordflow">if</span> (loader.<a class="code" href="class_propeller_device.html#a4bc98adc9e6e426b11694cdd2388a786">open</a>())</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    parser.addPositionalArgument(<span class="stringliteral">&quot;file&quot;</span>,  QObject::tr(<span class="stringliteral">&quot;Binary file to download&quot;</span>), <span class="stringliteral">&quot;FILE&quot;</span>);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    parser.process(app);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    QStringList device_list = <a class="code" href="class_propeller_session.html#ae4b4c9178f58009878a25526e50503be">PropellerSession::list_devices</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">if</span> (parser.isSet(argList))</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; device_list.size(); i++)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            qDebug() &lt;&lt; qPrintable(device_list[i]);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">if</span> (device_list.isEmpty())</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        qDebug() &lt;&lt; <span class="stringliteral">&quot;No devices available for download!&quot;</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    QString device = device_list[0];</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">if</span> (!parser.value(argDevice).isEmpty())</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        device = parser.value(argDevice);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordflow">if</span> (!device_list.contains(device))</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            qDebug() &lt;&lt; <span class="stringliteral">&quot;Device name not available&quot;</span>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#if defined(Q_PROCESSOR_ARM_V6) &amp;&amp; defined(Q_OS_LINUX)</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">int</span> reset_pin = 17;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">int</span> reset_pin = -1;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">if</span> (!parser.value(argPin).isEmpty())</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        reset_pin = parser.value(argPin).toInt();</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">if</span> (reset_pin &gt; -1)</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        qDebug() &lt;&lt; <span class="stringliteral">&quot;Using GPIO pin&quot;</span> &lt;&lt; reset_pin &lt;&lt; <span class="stringliteral">&quot;for hardware reset&quot;</span>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordflow">if</span> (parser.isSet(argIdentify))</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <span class="keywordflow">foreach</span> (QString d, device_list)</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <a class="code" href="class_propeller_session.html">PropellerSession</a> loader(d,reset_pin);</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            loader.<a class="code" href="class_propeller_session.html#a72978946bbfb6272e3a9dedce5bdb018">open</a>();</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keywordflow">if</span> (parser.positionalArguments().isEmpty())</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        {</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            qDebug() &lt;&lt; <span class="stringliteral">&quot;Error: Must provide name of binary&quot;</span>;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            <span class="keywordflow">return</span> 1;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        }</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordflow">if</span> (!parser.positionalArguments()[0].contains(<span class="stringliteral">&quot;*.binary$&quot;</span>))</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        {</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            loader.<a class="code" href="class_propeller_device.html#a674b722a9e1382ee11e21c7778f0c73d">upload_binary</a>(<a class="code" href="class_utility.html#a644c250fe9ed0458103c2aeea7def112">Utility::readFile</a>(parser.positionalArguments()[0]),parser.isSet(argWrite));</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        }</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        {</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            qDebug() &lt;&lt; <span class="stringliteral">&quot;Invalid file specified&quot;</span>;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keywordflow">if</span> (parser.isSet(argTerm))</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            loader.<a class="code" href="class_propeller_device.html#af55c93daed6d62ef353b041effbbddca">terminal</a>();</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        loader.<a class="code" href="class_propeller_device.html#a38304569f1ec7c60da6c640906fedd95">close</a>();</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    }</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;}</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
-<div class="ttc" id="class_propeller_device_html_a4bc98adc9e6e426b11694cdd2388a786"><div class="ttname"><a href="class_propeller_device.html#a4bc98adc9e6e426b11694cdd2388a786">PropellerDevice::open</a></div><div class="ttdeci">int open()</div><div class="ttdef"><b>Definition:</b> <a href="propellerdevice_8cpp_source.html#l00052">propellerdevice.cpp:52</a></div></div>
-<div class="ttc" id="class_propeller_device_html_af55c93daed6d62ef353b041effbbddca"><div class="ttname"><a href="class_propeller_device.html#af55c93daed6d62ef353b041effbbddca">PropellerDevice::terminal</a></div><div class="ttdeci">void terminal()</div><div class="ttdef"><b>Definition:</b> <a href="propellerdevice_8cpp_source.html#l00364">propellerdevice.cpp:364</a></div></div>
-<div class="ttc" id="class_propeller_device_html_a6ff8fe03503b7382e069b7e13a830a88"><div class="ttname"><a href="class_propeller_device.html#a6ff8fe03503b7382e069b7e13a830a88">PropellerDevice::list_devices</a></div><div class="ttdeci">static QStringList list_devices()</div><div class="ttdef"><b>Definition:</b> <a href="propellerdevice_8cpp_source.html#l00526">propellerdevice.cpp:526</a></div></div>
-<div class="ttc" id="main_8cpp_html_a1c6d5de492ac61ad29aec7aa9a436bbf"><div class="ttname"><a href="main_8cpp.html#a1c6d5de492ac61ad29aec7aa9a436bbf">VERSION</a></div><div class="ttdeci">#define VERSION</div><div class="ttdef"><b>Definition:</b> <a href="main_8cpp_source.html#l00010">main.cpp:10</a></div></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            <span class="keywordflow">switch</span> (loader.<a class="code" href="class_propeller_session.html#aabd954143d2f2e990af6f55f789f9c7f">get_version</a>())</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                <span class="keywordflow">case</span> 1:</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                    qDebug(<span class="stringliteral">&quot;[ %-16s ] %s&quot;</span>, qPrintable(d), <span class="stringliteral">&quot;Propeller P8X32A&quot;</span>);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                <span class="keywordflow">case</span> 0:</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                    qDebug(<span class="stringliteral">&quot;[ %-16s ] %-9s&quot;</span>,qPrintable(d), <span class="stringliteral">&quot;NOT FOUND&quot;</span>);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            }</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            loader.<a class="code" href="class_propeller_session.html#a65b6bb577fe886e1576d40ffccde1a46">close</a>();</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        }</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <a class="code" href="class_propeller_session.html">PropellerSession</a> loader(device,reset_pin);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="keywordflow">if</span> (loader.<a class="code" href="class_propeller_session.html#a72978946bbfb6272e3a9dedce5bdb018">open</a>())</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keywordflow">if</span> (parser.positionalArguments().isEmpty())</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        {</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            qDebug() &lt;&lt; <span class="stringliteral">&quot;Error: Must provide name of binary&quot;</span>;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        QString filename = parser.positionalArguments()[0];</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        QRegularExpression re_binary(<span class="stringliteral">&quot;.*\\.binary$&quot;</span>);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        QRegularExpression re_eeprom(<span class="stringliteral">&quot;.*\\.eeprom$&quot;</span>);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="keywordflow">if</span> (filename.contains(re_binary))</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            <a class="code" href="class_propeller_image.html">PropellerImage</a> image(<a class="code" href="class_utility.html#a644c250fe9ed0458103c2aeea7def112">Utility::readFile</a>(filename),filename);</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            <a class="code" href="main_8cpp.html#acb3ca6d3819fd227c94ff88129fd186a">info</a>(image);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            loader.<a class="code" href="class_propeller_session.html#ad80f54c3679f74e39b79a1a1657bac50">upload_binary</a>(image, parser.isSet(argWrite));</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        }</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (filename.contains(re_eeprom))</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        {</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            <a class="code" href="class_propeller_image.html">PropellerImage</a> image(<a class="code" href="class_utility.html#a644c250fe9ed0458103c2aeea7def112">Utility::readFile</a>(filename),filename);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            <a class="code" href="main_8cpp.html#acb3ca6d3819fd227c94ff88129fd186a">info</a>(image);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            loader.<a class="code" href="class_propeller_session.html#ad80f54c3679f74e39b79a1a1657bac50">upload_binary</a>(image, parser.isSet(argWrite));</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        }</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        {</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            qDebug() &lt;&lt; <span class="stringliteral">&quot;Invalid file specified&quot;</span>;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <span class="keywordflow">if</span> (parser.isSet(argTerm))</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            loader.<a class="code" href="class_propeller_session.html#a025d9a7ecb5af55bb40908dbceaaf422">terminal</a>();</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        loader.<a class="code" href="class_propeller_session.html#a65b6bb577fe886e1576d40ffccde1a46">close</a>();</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    }</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;}</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="ttc" id="class_propeller_image_html_aa40c90c26076b7d2887e09f4b2465c32"><div class="ttname"><a href="class_propeller_image.html#aa40c90c26076b7d2887e09f4b2465c32">PropellerImage::checksum</a></div><div class="ttdeci">quint8 checksum()</div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00037">propellerimage.cpp:37</a></div></div>
+<div class="ttc" id="class_propeller_image_html_a02da6195e6a2aff3aff66ab75e1ce185"><div class="ttname"><a href="class_propeller_image.html#a02da6195e6a2aff3aff66ab75e1ce185">PropellerImage::clockMode</a></div><div class="ttdeci">quint8 clockMode()</div><div class="ttdoc">Get an 8-bit integer containing the current clock mode. </div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00199">propellerimage.cpp:199</a></div></div>
+<div class="ttc" id="propellersession_8h_html"><div class="ttname"><a href="propellersession_8h.html">propellersession.h</a></div></div>
+<div class="ttc" id="class_propeller_image_html_ad2a55c0ea938fc8eb5b7d5cbe43396be"><div class="ttname"><a href="class_propeller_image.html#ad2a55c0ea938fc8eb5b7d5cbe43396be">PropellerImage::fileName</a></div><div class="ttdeci">QString fileName()</div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00253">propellerimage.cpp:253</a></div></div>
+<div class="ttc" id="class_propeller_session_html_aabd954143d2f2e990af6f55f789f9c7f"><div class="ttname"><a href="class_propeller_session.html#aabd954143d2f2e990af6f55f789f9c7f">PropellerSession::get_version</a></div><div class="ttdeci">int get_version()</div><div class="ttdef"><b>Definition:</b> <a href="propellersession_8cpp_source.html#l00145">propellersession.cpp:145</a></div></div>
+<div class="ttc" id="class_propeller_session_html_a72978946bbfb6272e3a9dedce5bdb018"><div class="ttname"><a href="class_propeller_session.html#a72978946bbfb6272e3a9dedce5bdb018">PropellerSession::open</a></div><div class="ttdeci">int open()</div><div class="ttdef"><b>Definition:</b> <a href="propellersession_8cpp_source.html#l00052">propellersession.cpp:52</a></div></div>
+<div class="ttc" id="class_propeller_session_html_a025d9a7ecb5af55bb40908dbceaaf422"><div class="ttname"><a href="class_propeller_session.html#a025d9a7ecb5af55bb40908dbceaaf422">PropellerSession::terminal</a></div><div class="ttdeci">void terminal()</div><div class="ttdef"><b>Definition:</b> <a href="propellersession_8cpp_source.html#l00316">propellersession.cpp:316</a></div></div>
+<div class="ttc" id="propellerimage_8h_html"><div class="ttname"><a href="propellerimage_8h.html">propellerimage.h</a></div></div>
+<div class="ttc" id="class_propeller_session_html"><div class="ttname"><a href="class_propeller_session.html">PropellerSession</a></div><div class="ttdef"><b>Definition:</b> <a href="propellersession_8h_source.html#l00037">propellersession.h:37</a></div></div>
+<div class="ttc" id="main_8cpp_html_a1c6d5de492ac61ad29aec7aa9a436bbf"><div class="ttname"><a href="main_8cpp.html#a1c6d5de492ac61ad29aec7aa9a436bbf">VERSION</a></div><div class="ttdeci">#define VERSION</div><div class="ttdef"><b>Definition:</b> <a href="main_8cpp_source.html#l00012">main.cpp:12</a></div></div>
+<div class="ttc" id="class_propeller_image_html_a6c564997c0969a159e67097fca000c1d"><div class="ttname"><a href="class_propeller_image.html#a6c564997c0969a159e67097fca000c1d">PropellerImage::clockFrequency</a></div><div class="ttdeci">quint32 clockFrequency()</div><div class="ttdoc">Get the current clock frequency of the image. </div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00194">propellerimage.cpp:194</a></div></div>
 <div class="ttc" id="class_utility_html_a644c250fe9ed0458103c2aeea7def112"><div class="ttname"><a href="class_utility.html#a644c250fe9ed0458103c2aeea7def112">Utility::readFile</a></div><div class="ttdeci">static QByteArray readFile(QString filename)</div><div class="ttdef"><b>Definition:</b> <a href="utility_8cpp_source.html#l00003">utility.cpp:3</a></div></div>
-<div class="ttc" id="class_propeller_device_html"><div class="ttname"><a href="class_propeller_device.html">PropellerDevice</a></div><div class="ttdef"><b>Definition:</b> <a href="propellerdevice_8h_source.html#l00034">propellerdevice.h:34</a></div></div>
+<div class="ttc" id="class_propeller_session_html_ad80f54c3679f74e39b79a1a1657bac50"><div class="ttname"><a href="class_propeller_session.html#ad80f54c3679f74e39b79a1a1657bac50">PropellerSession::upload_binary</a></div><div class="ttdeci">void upload_binary(PropellerImage binary, bool write=false, bool run=true)</div><div class="ttdef"><b>Definition:</b> <a href="propellersession_8cpp_source.html#l00334">propellersession.cpp:334</a></div></div>
 <div class="ttc" id="utility_8h_html"><div class="ttname"><a href="utility_8h.html">utility.h</a></div></div>
-<div class="ttc" id="class_propeller_device_html_a674b722a9e1382ee11e21c7778f0c73d"><div class="ttname"><a href="class_propeller_device.html#a674b722a9e1382ee11e21c7778f0c73d">PropellerDevice::upload_binary</a></div><div class="ttdeci">void upload_binary(QByteArray binary, bool eeprom=false, bool run=true)</div><div class="ttdef"><b>Definition:</b> <a href="propellerdevice_8cpp_source.html#l00382">propellerdevice.cpp:382</a></div></div>
-<div class="ttc" id="propellerdevice_8h_html"><div class="ttname"><a href="propellerdevice_8h.html">propellerdevice.h</a></div></div>
-<div class="ttc" id="main_8cpp_html_a0ddf1224851353fc92bfbff6f499fa97"><div class="ttname"><a href="main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a></div><div class="ttdeci">int main(int argc, char *argv[])</div><div class="ttdef"><b>Definition:</b> <a href="main_8cpp_source.html#l00013">main.cpp:13</a></div></div>
-<div class="ttc" id="class_propeller_device_html_a38304569f1ec7c60da6c640906fedd95"><div class="ttname"><a href="class_propeller_device.html#a38304569f1ec7c60da6c640906fedd95">PropellerDevice::close</a></div><div class="ttdeci">int close()</div><div class="ttdef"><b>Definition:</b> <a href="propellerdevice_8cpp_source.html#l00067">propellerdevice.cpp:67</a></div></div>
-<div class="ttc" id="class_propeller_device_html_acfaf7968a4626929300e41668e8faaf8"><div class="ttname"><a href="class_propeller_device.html#acfaf7968a4626929300e41668e8faaf8">PropellerDevice::get_version</a></div><div class="ttdeci">int get_version()</div><div class="ttdef"><b>Definition:</b> <a href="propellerdevice_8cpp_source.html#l00145">propellerdevice.cpp:145</a></div></div>
+<div class="ttc" id="class_propeller_image_html_acb1133d862d14e6f3c4021770112bd4c"><div class="ttname"><a href="class_propeller_image.html#acb1133d862d14e6f3c4021770112bd4c">PropellerImage::imageType</a></div><div class="ttdeci">ImageType imageType()</div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00258">propellerimage.cpp:258</a></div></div>
+<div class="ttc" id="class_propeller_image_html_ad0ed50fb9002604db8a88e21e26b2927"><div class="ttname"><a href="class_propeller_image.html#ad0ed50fb9002604db8a88e21e26b2927">PropellerImage::stackSize</a></div><div class="ttdeci">int stackSize()</div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00093">propellerimage.cpp:93</a></div></div>
+<div class="ttc" id="class_propeller_image_html_abf0c44fc3dca928b1864b5bc346ca1f9"><div class="ttname"><a href="class_propeller_image.html#abf0c44fc3dca928b1864b5bc346ca1f9">PropellerImage::clockModeText</a></div><div class="ttdeci">QString clockModeText()</div><div class="ttdoc">Get a human-readable string of the current clock mode. </div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00208">propellerimage.cpp:208</a></div></div>
+<div class="ttc" id="class_propeller_image_html_a105e2cd3a92d1d93dcccc99c0ac20aa5"><div class="ttname"><a href="class_propeller_image.html#a105e2cd3a92d1d93dcccc99c0ac20aa5">PropellerImage::variableSize</a></div><div class="ttdeci">int variableSize()</div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00088">propellerimage.cpp:88</a></div></div>
+<div class="ttc" id="class_propeller_image_html_a1883734ffee1a0b3ba7dcb4772fbd899"><div class="ttname"><a href="class_propeller_image.html#a1883734ffee1a0b3ba7dcb4772fbd899">PropellerImage::imageSize</a></div><div class="ttdeci">int imageSize()</div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00072">propellerimage.cpp:72</a></div></div>
+<div class="ttc" id="main_8cpp_html_acb3ca6d3819fd227c94ff88129fd186a"><div class="ttname"><a href="main_8cpp.html#acb3ca6d3819fd227c94ff88129fd186a">info</a></div><div class="ttdeci">void info(PropellerImage image)</div><div class="ttdef"><b>Definition:</b> <a href="main_8cpp_source.html#l00015">main.cpp:15</a></div></div>
+<div class="ttc" id="main_8cpp_html_a0ddf1224851353fc92bfbff6f499fa97"><div class="ttname"><a href="main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a></div><div class="ttdeci">int main(int argc, char *argv[])</div><div class="ttdef"><b>Definition:</b> <a href="main_8cpp_source.html#l00033">main.cpp:33</a></div></div>
+<div class="ttc" id="class_propeller_session_html_a65b6bb577fe886e1576d40ffccde1a46"><div class="ttname"><a href="class_propeller_session.html#a65b6bb577fe886e1576d40ffccde1a46">PropellerSession::close</a></div><div class="ttdeci">int close()</div><div class="ttdef"><b>Definition:</b> <a href="propellersession_8cpp_source.html#l00067">propellersession.cpp:67</a></div></div>
+<div class="ttc" id="class_propeller_session_html_ae4b4c9178f58009878a25526e50503be"><div class="ttname"><a href="class_propeller_session.html#ae4b4c9178f58009878a25526e50503be">PropellerSession::list_devices</a></div><div class="ttdeci">static QStringList list_devices()</div><div class="ttdef"><b>Definition:</b> <a href="propellersession_8cpp_source.html#l00457">propellersession.cpp:457</a></div></div>
+<div class="ttc" id="class_propeller_image_html_a9c037c6151894dc5ea3bebc2c96d0afe"><div class="ttname"><a href="class_propeller_image.html#a9c037c6151894dc5ea3bebc2c96d0afe">PropellerImage::programSize</a></div><div class="ttdeci">int programSize()</div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8cpp_source.html#l00083">propellerimage.cpp:83</a></div></div>
+<div class="ttc" id="class_propeller_image_html"><div class="ttname"><a href="class_propeller_image.html">PropellerImage</a></div><div class="ttdoc">PropellerImage is a class for analyzing and modifying prebuilt propeller images. </div><div class="ttdef"><b>Definition:</b> <a href="propellerimage_8h_source.html#l00040">propellerimage.h:40</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div>
 </div>
