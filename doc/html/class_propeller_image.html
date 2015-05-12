@@ -41,15 +41,16 @@ title: Propeller Manager  - PropellerImage Class Reference
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a5d6dcf94ae656814c5776fbe3147e867"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867">ImageType</a> { <a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867a4aada0d7a79e6ed8ff97940597c479fd">Binary</a>, 
+<tr class="memitem:a5d6dcf94ae656814c5776fbe3147e867"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867">ImageType</a> { <a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867aab2bac6165c788db1f410bd629db2c72">Invalid</a>, 
+<a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867a4aada0d7a79e6ed8ff97940597c479fd">Binary</a>, 
 <a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867a633062e9e08a84e033406dd239efb5d9">Eeprom</a>
  }</td></tr>
 <tr class="separator:a5d6dcf94ae656814c5776fbe3147e867"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7dd920f1a82ca6ae324954d2557a9630"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a7dd920f1a82ca6ae324954d2557a9630">PropellerImage</a> (QByteArray image, QString filename=&quot;&quot;)</td></tr>
-<tr class="separator:a7dd920f1a82ca6ae324954d2557a9630"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfa809aec9aee800d64501aa24de3eb9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#adfa809aec9aee800d64501aa24de3eb9">PropellerImage</a> (QByteArray image=QByteArray(), QString filename=&quot;&quot;)</td></tr>
+<tr class="separator:adfa809aec9aee800d64501aa24de3eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Image Validation</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Apply some data integrity measures locally. </p>
 </div></td></tr>
@@ -64,6 +65,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad2a55c0ea938fc8eb5b7d5cbe43396be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb1133d862d14e6f3c4021770112bd4c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867">ImageType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#acb1133d862d14e6f3c4021770112bd4c">imageType</a> ()</td></tr>
 <tr class="separator:acb1133d862d14e6f3c4021770112bd4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a678f70a38a4e25653b8ede86c0c5ea07"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a678f70a38a4e25653b8ede86c0c5ea07">imageTypeText</a> ()</td></tr>
+<tr class="separator:a678f70a38a4e25653b8ede86c0c5ea07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1883734ffee1a0b3ba7dcb4772fbd899"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a1883734ffee1a0b3ba7dcb4772fbd899">imageSize</a> ()</td></tr>
 <tr class="separator:a1883734ffee1a0b3ba7dcb4772fbd899"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c037c6151894dc5ea3bebc2c96d0afe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a9c037c6151894dc5ea3bebc2c96d0afe">programSize</a> ()</td></tr>
@@ -153,7 +156,10 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>An enumeration containing all Propeller image types that PropellerManager supports. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a5d6dcf94ae656814c5776fbe3147e867a4aada0d7a79e6ed8ff97940597c479fd"></a>Binary&#160;</td><td class="fielddoc">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a5d6dcf94ae656814c5776fbe3147e867aab2bac6165c788db1f410bd629db2c72"></a>Invalid&#160;</td><td class="fielddoc">
+<p>Not a valid image file. </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a5d6dcf94ae656814c5776fbe3147e867a4aada0d7a79e6ed8ff97940597c479fd"></a>Binary&#160;</td><td class="fielddoc">
 <p>Program data-only image files (usually have a <code>.binary</code> extension) </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="a5d6dcf94ae656814c5776fbe3147e867a633062e9e08a84e033406dd239efb5d9"></a>Eeprom&#160;</td><td class="fielddoc">
@@ -166,7 +172,7 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a7dd920f1a82ca6ae324954d2557a9630"></a>
+<a class="anchor" id="adfa809aec9aee800d64501aa24de3eb9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -174,7 +180,7 @@ Public Member Functions</h2></td></tr>
           <td class="memname">PropellerImage::PropellerImage </td>
           <td>(</td>
           <td class="paramtype">QByteArray&#160;</td>
-          <td class="paramname"><em>image</em>, </td>
+          <td class="paramname"><em>image</em> = <code>QByteArray()</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -208,7 +214,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00037">37</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00017">17</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -229,7 +235,7 @@ Public Member Functions</h2></td></tr>
 <p>Get the clock frequency.</p>
 <dl class="section return"><dt>Returns</dt><dd>a 32-bit unsigned value containing the clock frequency in Hertz. </dd></dl>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00194">194</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00174">174</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -248,7 +254,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Get an 8-bit integer containing the current clock mode. </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00199">199</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00179">179</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -267,7 +273,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Get a human-readable string of the current clock mode. </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00208">208</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00188">188</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -284,7 +290,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00054">54</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00034">34</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -301,7 +307,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00253">253</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00233">233</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -319,7 +325,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Total size of stored image file on disk. </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00072">72</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00052">52</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -336,7 +342,24 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00258">258</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00238">238</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a678f70a38a4e25653b8ede86c0c5ea07"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QString PropellerImage::imageTypeText </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00267">267</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +376,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00063">63</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00043">43</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -372,7 +395,7 @@ Public Member Functions</h2></td></tr>
 <p>Size of the application code. This value will be larger than the total file size for <a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867a4aada0d7a79e6ed8ff97940597c479fd" title="Program data-only image files (usually have a .binary extension) ">PropellerImage::Binary</a> images.</p>
 <p>This value is equivalent to <a class="el" href="class_propeller_image.html#a4004019dba00066b61605b59b683ae9f">startOfStackSpace()</a>. </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00083">83</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00063">63</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -398,7 +421,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>an 8-bit unsigned value. </dd></dl>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00149">149</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00129">129</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -425,7 +448,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>a 32-bit unsigned value.</dd></dl>
 <p>This function does not perform long-align on the address passed.* </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00180">180</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00160">160</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -452,7 +475,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>a 16-bit unsigned value.</dd></dl>
 <p>This function does not perform word-align on the address passed.* </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00164">164</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00144">144</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -474,7 +497,7 @@ Public Member Functions</h2></td></tr>
 <p>NOT YET IMPLEMENTED**</p>
 <p>Replace the current clock frequency with another value and recalculate the checksum. </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00136">136</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00116">116</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -492,7 +515,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00059">59</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00039">39</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -509,7 +532,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00093">93</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00073">73</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -527,7 +550,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Start of Code pointer (address 0x06). This value must always be equal to $0010. </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00102">102</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00082">82</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -545,7 +568,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Start of Stack Space pointer (address 0x0A). Otherwise known as DBase. </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00125">125</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00105">105</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -563,7 +586,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Start of Variables pointer (address 0x08). </p>
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00116">116</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00096">96</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
@@ -580,7 +603,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00088">88</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
+<p>Definition at line <a class="el" href="propellerimage_8cpp_source.html#l00068">68</a> of file <a class="el" href="propellerimage_8cpp_source.html">propellerimage.cpp</a>.</p>
 
 </div>
 </div>
