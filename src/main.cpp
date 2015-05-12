@@ -5,19 +5,23 @@
 #include <QRegularExpression>
 #include <QFileInfo>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "utility.h"
 #include "propellersession.h"
 #include "propellerimage.h"
-#include "stdio.h"
 
 #ifndef VERSION
 #define VERSION "0.0.0"
 #endif
 
 PropellerImage load_image(QCommandLineParser &parser);
-int loader(QCommandLineParser &parser, QStringList device_list);
+void open_session(QCommandLineParser &parser, QStringList device_list);
+void terminal(PropellerSession & session, QString device);
 void info(PropellerImage image);
 void list();
+void error(const QString & message);
 
 QCommandLineOption argList      (QStringList() << "l" << "list",    QObject::tr("List available devices"));
 QCommandLineOption argWrite     (QStringList() << "w" << "write",   QObject::tr("Write program to EEPROM"));
@@ -70,9 +74,8 @@ int main(int argc, char *argv[])
     }
 
     if (!parser.value(argPin).isEmpty())
-    {
         reset_pin = parser.value(argPin).toInt();
-    }
+
     if (reset_pin > -1)
         qDebug() << "Using GPIO pin" << reset_pin << "for hardware reset";
 
@@ -81,23 +84,24 @@ int main(int argc, char *argv[])
     {
         foreach (QString d, device_list)
         {
-            PropellerSession loader(d,reset_pin);
+            PropellerSession session(d,reset_pin);
 
-            if (!loader.open())
+            if (!session.open())
                 continue;
 
-            switch (loader.get_version())
+            switch (session.version())
             {
                 case 1:
-                    qDebug("[ %-16s ] %s", qPrintable(d), "Propeller P8X32A");
+                    printf("[ %-16s ] %s\n", qPrintable(d), "Propeller P8X32A");
                     break;
                 case 0:
                 default:
-                    qDebug("[ %-16s ] %-9s",qPrintable(d), "NOT FOUND");
+                    printf("[ %-16s ] %-9s\n",qPrintable(d), "NOT FOUND");
                     break;
             }
 
-            loader.close();
+            fflush(stdout);
+            session.close();
         }
     }
     else if (parser.isSet(argInfo))
@@ -106,64 +110,67 @@ int main(int argc, char *argv[])
     }
     else
     {
-        loader(parser, device_list);
+        open_session(parser, device_list);
     }
 
     return 0;
 }
 
-int loader(QCommandLineParser &parser, QStringList device_list)
+void open_session(QCommandLineParser &parser, QStringList device_list)
 {
     if (device_list.isEmpty())
-    {
-        qDebug() << "No device available for download!";
-        return 1;
-    }
+        error("No device available for download!");
 
     QString device = device_list[0];
     if (!parser.value(argDevice).isEmpty())
     {
         device = parser.value(argDevice);
         if (!device_list.contains(device))
-        {
-            qDebug() << "Device name not available";
-            return 1;
-        }
+            error("Device '"+device+"' not available");
     }
 
-    PropellerSession loader(device,reset_pin);
-    if (loader.open())
-        return 1;
+    PropellerSession session(device,reset_pin);
+    if (!session.open())
+        error("Failed to open "+device+"!");
 
     if (parser.positionalArguments().isEmpty())
     {
-        qDebug() << "Error: Must provide name of binary";
-        return 1;
+        if (parser.isSet(argTerm))
+            terminal(session, device);
+        else
+            error("Must provide name of binary");
     }
-
-    PropellerImage image = load_image(parser);
-
-    if (!image.isValid())
+    else
     {
-        qDebug() << "Error: image is invalid!";
-        return 1;
+        PropellerImage image = load_image(parser);
+        if (!image.isValid())
+            error("Image is invalid!");
+
+        session.upload(image, parser.isSet(argWrite));
+
+        if (parser.isSet(argTerm))
+            terminal(session, device);
     }
 
-    loader.upload_binary(image, parser.isSet(argWrite));
-
-    if (parser.isSet(argTerm))
-        loader.terminal();
-
-    loader.close();
-    return 0;
+    session.close();
 }
 
 void list()
 {
     for (int i = 0; i < device_list.size(); i++)
     {
-        qDebug() << qPrintable(device_list[i]);
+        printf("%s\n",qPrintable(device_list[i]));
     }
+}
+
+void terminal(PropellerSession & session, QString device)
+{
+    qDebug() << "--------------------------------------";
+    qDebug() << "Opening terminal:" << qPrintable(device);
+    qDebug() << "  (Ctrl+C to exit)";
+    qDebug() << "--------------------------------------";
+
+    session.terminal();
 }
 
 void info(PropellerImage image)
@@ -187,19 +194,17 @@ PropellerImage load_image(QCommandLineParser &parser)
     QRegularExpression re_binary(".*\\.binary$");
     QRegularExpression re_eeprom(".*\\.eeprom$");
 
-    QFileInfo fi(filename);
-    if (!fi.exists())
-        return PropellerImage();
+    if (!QFileInfo(filename).exists())
+        error("File does not exist!");
 
-    if (filename.contains(re_binary))
-    {
-        return PropellerImage(Utility::readFile(filename),filename);
-    }
-    else if (filename.contains(re_eeprom))
-    {
-        return PropellerImage(Utility::readFile(filename),filename);
-    }
+    if (!filename.contains(re_binary) && !filename.contains(re_eeprom))
+        error("Invalid file specified!");
 
-    qDebug() << "Invalid file specified";
-    return PropellerImage();
+    return PropellerImage(Utility::readFile(filename),filename);
+}
+
+void error(const QString & message)
+{
+    qDebug() << "Error:" << qPrintable(message);
+    exit(1);
 }

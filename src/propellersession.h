@@ -55,13 +55,13 @@ private:
 
     QByteArray build_request(QList<char> seq, int size);
     QByteArray build_reply(  QList<char> seq, int size, int offset);
-    int version;
+    int _version;
     int ack;
     int error;
     bool useRtsReset;
     int resourceErrorCount;
 
-    QByteArray encode_binary(QByteArray binary);
+    QByteArray encode_binary(PropellerImage image);
     int send_application_image(QByteArray encoded_binary, int image_size);
     int poll_acknowledge();
 
@@ -89,69 +89,16 @@ private slots:
 
 public:
 
-    /**
-      \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
-      \param reset_gpio Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset.
-      \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
-      */
     PropellerSession(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
     ~PropellerSession();
 
-    /**
-      Open the PropellerSession for use.
-      */
     bool open();
-
-    /**
-      Return whether the PropellerSession is now open.
-      */
     bool isOpen();
-
-    /**
-      Close the PropellerSession; this function is called when the PropellerSession is destroyed.
-    */
     void close();
-
-    /**
-      Get the version of the connected device.
-      
-      \return The version number, or 0 if not found.
-      */
-
-    int get_version();
-
-    /**
-      This function sends a reset to the connected device using
-      whatever method is available.
-
-      Methods supported:
-
-      - Serial
-        - Data Terminal Ready (DTR)
-        - Request To Send (RTS)
-        - GPIO (Linux only)
-
-      - Wireless
-        - TBD
-
-      */
+    int version();
     void reset();
-
-    /**
-      Upload a PropellerImage object to the target.
-      */
-
-    void upload_binary(PropellerImage binary, bool write=false, bool run=true);
-
-    /**
-      Open a serial terminal on this device.
-      */
-
+    void upload(PropellerImage binary, bool write=false, bool run=true);
     void terminal();
-
-    /**
-      \deprecated This command will be moved to PropellerManager when it is under way.
-      */
 
     static QStringList list_devices();
 };

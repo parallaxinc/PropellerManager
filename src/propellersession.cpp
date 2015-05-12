@@ -10,6 +10,12 @@
 
 #include <stdio.h>
 
+/**
+  \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
+  \param reset_gpio Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset.
+  \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
+  */
+
 PropellerSession::PropellerSession(   QString port,
                                     int reset_gpio,
                                     bool useRtsReset,
@@ -17,7 +23,7 @@ PropellerSession::PropellerSession(   QString port,
     : QObject(parent)
 {
     this->useRtsReset = useRtsReset;
-    version = 0;
+    _version = 0;
     resourceErrorCount = 0;
 
     serial.setSettingsRestoredOnClose(false);
@@ -45,6 +51,10 @@ PropellerSession::~PropellerSession()
     serial.close();
 }
 
+/**
+  Open the PropellerSession for use.
+  */
+
 bool PropellerSession::open()
 {
     resourceErrorCount = 0;
@@ -64,15 +74,38 @@ bool PropellerSession::open()
     return true;
 }
 
+/**
+  Return whether the PropellerSession is now open.
+  */
+
 bool PropellerSession::isOpen()
 {
     return serial.isOpen();
 }
 
+/**
+  Close the PropellerSession; this function is called when the PropellerSession is destroyed.
+  */
+
 void PropellerSession::close()
 {
     serial.close();
 }
+
+/**
+  This function sends a reset to the connected device using
+  whatever method is available.
+
+  Methods supported:
+
+  - Serial
+    - Data Terminal Ready (DTR)
+    - Request To Send (RTS)
+    - GPIO (Linux only)
+
+  - Wireless
+    - TBD
+  */
 
 void PropellerSession::reset()
 {
@@ -136,22 +169,28 @@ void PropellerSession::read_handshake()
 
         QByteArray versiondata = serial.read(8);
 
-        version = 0;
+        _version = 0;
         for (int i = 0; i < 8; i++)
         {
-            version = ((version >> 1) & 0x7f) | ((versiondata.at(i) & 0x1) << 7);
+            _version = ((_version >> 1) & 0x7f) | ((versiondata.at(i) & 0x1) << 7);
         }
-//        qDebug() << QString::number(version);
+
         emit finished();
     }
 }
 
-int PropellerSession::get_version()
+/**
+  \brief Get the version of the connected device.
+  
+  \return The version number, or 0 if not found.
+  */
+
+int PropellerSession::version()
 {
     handshake();
     write_long(Command::Shutdown);
     QCoreApplication::processEvents();
-    return version;
+    return _version;
 }
 
 QByteArray PropellerSession::encode_long(unsigned int value)
@@ -250,7 +289,6 @@ void PropellerSession::device_error(QSerialPort::SerialPortError e)
     error = Error::Timeout;
 }
 
-
 int PropellerSession::handshake()
 {
     reset();
@@ -276,21 +314,16 @@ int PropellerSession::handshake()
 
     disconnect(&serial, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
-    return version;
+    return _version;
 }
 
-QByteArray PropellerSession::encode_binary(QByteArray binary)
+QByteArray PropellerSession::encode_binary(PropellerImage image)
 {
     QByteArray encoded_binary;
-    for (int i = 0 ; i < binary.size() ; i += 4)
-    {
-        encoded_binary.append(encode_long(
-                ((unsigned char) binary.at(i)) | 
-                ((unsigned char) binary.at(i + 1) << 8)  | 
-                ((unsigned char) binary.at(i + 2) << 16) |
-                ((unsigned char) binary.at(i + 3) << 24)
-                ));
-    }
+
+    for (int i = 0 ; i < image.imageSize() ; i += 4)
+        encoded_binary.append(encode_long(image.readLong(i)));
+
     return encoded_binary;
 }
 
@@ -317,13 +350,16 @@ void PropellerSession::read_terminal()
     fflush(stdout);
 }
 
+/**
+  Open a serial terminal on this device.
+  */
+
 void PropellerSession::terminal()
 {
     serial.setBaudRate(115200);
+
     connect(&serial, SIGNAL(readyRead()), this, SLOT(read_terminal()));
     connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
-
-
 
     QEventLoop loop;
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
@@ -335,12 +371,16 @@ void PropellerSession::terminal()
     return;
 }
 
-void PropellerSession::upload_binary(PropellerImage binary, bool write, bool run)
+/**
+  Upload a PropellerImage object to the target.
+  */
+
+void PropellerSession::upload(PropellerImage binary, bool write, bool run)
 {
     if (!binary.isValid())
         return;
 
-    QByteArray encoded_binary = encode_binary(binary.data());
+    QByteArray encoded_binary = encode_binary(binary);
 
     Utility::print_task("Connecting to '"+serial.portName()+"'...");
     if (!handshake())
@@ -457,6 +497,9 @@ int PropellerSession::poll_acknowledge()
     return error;
 }
 
+/**
+  \deprecated This command will be moved to PropellerManager when it is under way.
+  */
 
 QStringList PropellerSession::list_devices()
 {
