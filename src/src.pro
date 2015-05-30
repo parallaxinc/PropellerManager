@@ -10,6 +10,7 @@ CONFIG -= debug_and_release
 SOURCES += \
     propellersession.cpp \
     propellerimage.cpp \
+    propellerdevice.cpp \
     gpio.cpp \
     utility.cpp \
     main.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
 HEADERS += \
     propellersession.h \
     propellerimage.h \
+    propellerdevice.h \
     gpio.h \
     utility.h \
     input_console.h \

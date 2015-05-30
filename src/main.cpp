@@ -11,6 +11,7 @@
 #include "utility.h"
 #include "propellersession.h"
 #include "propellerimage.h"
+#include "propellerdevice.h"
 
 #ifndef VERSION
 #define VERSION "0.0.0"
@@ -37,7 +38,7 @@ QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr(
     int reset_pin = -1;
 #endif
 
-QStringList device_list = PropellerSession::list_devices();
+QStringList device_list = PropellerDevice::list();
 
 int main(int argc, char *argv[])
 {

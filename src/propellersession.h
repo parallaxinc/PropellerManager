@@ -3,7 +3,7 @@
 #include "input_console.h"
 #include "propellerimage.h"
 
-#include <QSerialPort>
+#include "propellerdevice.h"
 #include <QTimer>
 
 namespace Command {
@@ -39,42 +39,36 @@ class PropellerSession : public QObject
     Q_OBJECT
 
 private:
-    QSerialPort serial;
-    int reset_gpio;
-    void write_byte(char value);
-    void write_long(unsigned int value);
+    PropellerDevice device;
+    void writeByte(char value);
+    void writeLong(unsigned int value);
     int handshake();
 
     int lfsr(int * seed);
     QList<char> sequence;
-    QList<char> build_lfsr_sequence(int size);
+    QList<char> buildLfsrSequence(int size);
 
     QByteArray request;
     QByteArray reply;
     QByteArray real_reply;
 
-    QByteArray build_request(QList<char> seq, int size);
-    QByteArray build_reply(  QList<char> seq, int size, int offset);
+    QByteArray buildRequest(QList<char> seq, int size);
+    QByteArray buildReply(  QList<char> seq, int size, int offset);
     int _version;
     int ack;
     int error;
-    bool useRtsReset;
-    int resourceErrorCount;
 
-    QByteArray encode_binary(PropellerImage image);
-    int send_application_image(QByteArray encoded_binary, int image_size);
-    int poll_acknowledge();
+    QByteArray encodeApplicationImage(PropellerImage image);
+    int sendApplicationImage(QByteArray encoded_image, int image_size);
+    int pollAcknowledge();
 
-    QByteArray encode_long(unsigned int value);
+    QByteArray encodeLong(unsigned int value);
 
     QTimer poll;
     Input::Console console;
 
 signals:
     void finished();
-    void sendError(int code, const QString & message);
-    void requestPrint(QString text);
-    void requestPrint_color(QString text);
 
 private slots:
     void read_handshake();
@@ -83,9 +77,7 @@ private slots:
     void write_terminal(const QString & text);
 
     void loader_error();
-    void device_error(QSerialPort::SerialPortError e);
     void calibrate();
-    void writeEmpty();
 
 public:
 
@@ -96,10 +88,8 @@ public:
     bool isOpen();
     void close();
     int version();
-    void reset();
     void upload(PropellerImage binary, bool write=false, bool run=true);
     void terminal();
 
-    static QStringList list_devices();
 };
 
