@@ -15,18 +15,6 @@ namespace Command {
     };
 };
 
-namespace Error {
-    enum Error {
-        None,
-        Timeout,
-        BadReply,
-        Program,
-        Verification,
-        Checksum,
-        NotFound
-    };
-};
-
 /**
   @class PropellerSession 
   
@@ -56,7 +44,6 @@ private:
     QByteArray buildReply(  QList<char> seq, int size, int offset);
     int _version;
     int ack;
-    int error;
 
     QByteArray encodeApplicationImage(PropellerImage image);
     int sendApplicationImage(QByteArray encoded_image, int image_size);
@@ -76,7 +63,6 @@ private slots:
     void read_terminal();
     void write_terminal(const QString & text);
 
-    void loader_error();
     void calibrate();
 
 public:
@@ -89,7 +75,7 @@ public:
     void close();
     int version();
     void upload(PropellerImage binary, bool write=false, bool run=true);
-    void terminal();
+    int terminal();
 
 };
 

@@ -112,7 +112,7 @@ void PropellerSession::writeByte(char value)
 
 void PropellerSession::writeLong(unsigned int value)
 {
-    qDebug() << encodeLong(value).toHex();
+//    qDebug() << encodeLong(value).toHex();
     device.write(encodeLong(value));
 }
 
@@ -210,11 +210,6 @@ QByteArray PropellerSession::buildReply(QList<char> seq, int size, int offset)
     return array;
 }
 
-void PropellerSession::loader_error()
-{
-    error = Error::Timeout;
-}
-
 int PropellerSession::handshake()
 {
     device.reset();
@@ -234,7 +229,7 @@ int PropellerSession::handshake()
     timer.setSingleShot(true);
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-    connect(&timer, SIGNAL(timeout()), this, SLOT(loader_error()));
+    connect(&timer, SIGNAL(timeout()), &device, SLOT(timeOver()));
     timer.start(500);
     loop.exec();
 
@@ -280,7 +275,7 @@ void PropellerSession::read_terminal()
   Open a device terminal on this device.
   */
 
-void PropellerSession::terminal()
+int PropellerSession::terminal()
 {
     device.setBaudRate(115200);
 
@@ -288,13 +283,13 @@ void PropellerSession::terminal()
     connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
 
     QEventLoop loop;
-    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
     disconnect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
     disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_terminal()));
 
-    return;
+    return device.error();
 }
 
 /**
@@ -367,51 +362,48 @@ void PropellerSession::read_acknowledge()
         ack = QString(device.readAll().data()).toInt();
 //        qDebug() << "ACK" << ack;
         poll.stop();
-//        error = 0;
         emit finished();
     }
 }
 
 int PropellerSession::sendApplicationImage(QByteArray encoded_image, int image_size)
 {
-    error = 0;
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
     writeLong(image_size / 4);
     device.write(encoded_image);
 
     QEventLoop loop;
-    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
     disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
-    return error;
+    return device.error();
 }
 
 int PropellerSession::pollAcknowledge()
 {
-    connect(&device, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
-    connect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
+    connect(&device,    SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
+    connect(&poll,      SIGNAL(timeout()),  this,   SLOT(calibrate()));
 
     poll.setInterval(20);
     poll.start();
 
     QEventLoop loop;
-    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(this,       SIGNAL(finished()), &loop,  SLOT(quit()));
 
     QTimer timeout;
     timeout.setSingleShot(true);
-    connect(&timeout, SIGNAL(timeout()), &loop, SLOT(quit()));
-    connect(&timeout, SIGNAL(timeout()), this, SLOT(loader_error()));
+    connect(&timeout,   SIGNAL(timeout()),  &loop,  SLOT(quit()));
+    connect(&timeout,   SIGNAL(timeout()),  &device,SLOT(timeOver()));
     timeout.start(5000);
 
     loop.exec();
 
     disconnect(&poll);
-    disconnect(&poll, SIGNAL(timeout()), this, SLOT(calibrate()));
+    disconnect(&poll,   SIGNAL(timeout()),  this,   SLOT(calibrate()));
+    disconnect(&device, SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
 
-    disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_acknowledge()));
-
-    return error;
+    return device.error();
 }

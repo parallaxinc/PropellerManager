@@ -2,6 +2,7 @@
 
 #include <QSerialPort>
 #include <QSerialPortInfo>
+#include <QTimer>
 
 class PropellerDevice
     : public QSerialPort
@@ -26,6 +27,7 @@ public:
 private slots:
     void handleError(QSerialPort::SerialPortError e);
     void writeBufferEmpty();
+    void timeOver();
 
 signals:
     void finished();

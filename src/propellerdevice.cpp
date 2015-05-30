@@ -15,7 +15,6 @@ PropellerDevice::PropellerDevice(QObject * parent)
 
     connect(this,SIGNAL(error(QSerialPort::SerialPortError)),
             this,  SLOT(handleError(QSerialPort::SerialPortError))); 
-
 }
     
 
@@ -27,9 +26,10 @@ PropellerDevice::~PropellerDevice()
 
 void PropellerDevice::writeBufferEmpty()
 {
-    if (bytesToWrite())
-//        error = 0;
+    if (!bytesToWrite())
+    {
         emit finished();
+    }
 }
 
 
@@ -64,8 +64,6 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
         default:
             break;
     }
-    
-//    error = Error::Timeout;
 }
 
 
@@ -154,3 +152,8 @@ QStringList PropellerDevice::list()
     return result;
 }
 
+
+void PropellerDevice::timeOver()
+{
+    emit error(QSerialPort::TimeoutError);
+}
