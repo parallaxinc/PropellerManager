@@ -30,20 +30,19 @@ private:
     PropellerDevice device;
     void writeByte(char value);
     void writeLong(unsigned int value);
-    int handshake();
+    int handshake(Command::Command command = Command::Shutdown);
 
     int lfsr(int * seed);
     QList<char> sequence;
     QList<char> buildLfsrSequence(int size);
 
-    QByteArray request;
-    QByteArray reply;
-    QByteArray real_reply;
-
-    QByteArray buildRequest(QList<char> seq, int size);
-    QByteArray buildReply(  QList<char> seq, int size, int offset);
+    QByteArray buildRequest(Command::Command command = Command::Shutdown);
     int _version;
     int ack;
+
+    QByteArray reply;
+    QByteArray real_reply;
+    QByteArray request;
 
     QByteArray encodeApplicationImage(PropellerImage image);
     int sendApplicationImage(QByteArray encoded_image, int image_size);

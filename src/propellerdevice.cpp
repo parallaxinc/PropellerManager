@@ -26,8 +26,10 @@ PropellerDevice::~PropellerDevice()
 
 void PropellerDevice::writeBufferEmpty()
 {
+    qDebug() << "Buffer empty...";
     if (!bytesToWrite())
     {
+        qDebug() << "No more bytes left!";
         emit finished();
     }
 }
@@ -76,11 +78,8 @@ bool PropellerDevice::open()
         return false;
     }
 
-#if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     setBaudRate(115200);
-#else
-    setBaudRate(230400);
-#endif
+
     return true;
 }
 
@@ -128,11 +127,7 @@ bool PropellerDevice::reset()
         }
     }
 
-#if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     QThread::msleep(80);
-#else
-    QThread::msleep(60);
-#endif
 
     clear(QSerialPort::Input);
     return true;

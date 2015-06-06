@@ -1,11 +1,13 @@
 #include "propellersession.h"
 #include "utility.h"
+#include "algorithms.h"
 
 #include <QCoreApplication>
 #include <QEventLoop>
 #include <QDebug>
+#include <QThread>
 
-#include <stdio.h>
+#include <bitset>
 
 /**
   \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
@@ -38,12 +40,8 @@ PropellerSession::PropellerSession(   QString port,
     connect(&device,&PropellerDevice::sendError,
             this,   &Utility::print_error);
 
-    int request_length = 250;
-    int reply_length = 250;
-
-    sequence = buildLfsrSequence(request_length + reply_length);
-    request = buildRequest(sequence, request_length);
-    reply = buildReply(sequence, reply_length, request_length);
+    request = QByteArray((char*) Propeller::request, Propeller::request_size);
+    reply = QByteArray((char*) Propeller::reply, Propeller::reply_size);
 
 }
 
@@ -112,29 +110,26 @@ void PropellerSession::writeByte(char value)
 
 void PropellerSession::writeLong(unsigned int value)
 {
-//    qDebug() << encodeLong(value).toHex();
     device.write(encodeLong(value));
 }
 
 
 void PropellerSession::read_handshake()
 {
-    if (device.bytesAvailable() == 258)
+//    qDebug() << "BYTES AVAILABLE" << device.bytesAvailable();
+    if (device.bytesAvailable() == reply.size() + 4)
     {
         real_reply = device.read(reply.size());
-
         if (real_reply != reply)
         {
             emit finished();
         }
 
-        QByteArray versiondata = device.read(8);
+        QByteArray versiondata = device.read(4);
 
         _version = 0;
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 4; i++)
             _version = ((_version >> 1) & 0x7f) | ((versiondata.at(i) & 0x1) << 7);
-        }
 
         emit finished();
     }
@@ -149,13 +144,23 @@ void PropellerSession::read_handshake()
 int PropellerSession::version()
 {
     handshake();
-    writeLong(Command::Shutdown);
-    QCoreApplication::processEvents();
     return _version;
 }
 
 QByteArray PropellerSession::encodeLong(unsigned int value)
 {
+// //   qDebug () << "LONG" << QString::number(value,32);
+//    int thing = value;
+//    QByteArray byteArray;
+//    QDataStream stream(&byteArray, QIODevice::WriteOnly);
+//    stream.setByteOrder(QDataStream::LittleEndian);
+//    stream << thing;
+//
+//    byteArray = encodeData(byteArray);
+////    qDebug() << "CONV" << byteArray.toHex();
+//    return byteArray;
+
+
     QByteArray result;
     for (int i = 0; i < 10; i++)
     {
@@ -163,7 +168,8 @@ QByteArray PropellerSession::encodeLong(unsigned int value)
         value >>= 3;
     }
     result.append(0xf2 | (value & 0x01) | ((value & 2) << 2));
-//    qDebug() << result.toHex().data();
+//    qDebug () << "LONG" << result.toHex();
+
     return result;
 }
 
@@ -187,43 +193,23 @@ QList<char> PropellerSession::buildLfsrSequence(int size)
     return seq;
 }
 
-QByteArray PropellerSession::buildRequest(QList<char> seq, int size)
+QByteArray PropellerSession::buildRequest(Command::Command command)
 {
-    QByteArray array;
-    for (int i = 0; i < size; i++)
-    {
-        array.append(seq[i] | 0xfe);
-    }
+    QByteArray array = request;
+    array.append(QByteArray(125, 0x29));
+    array.append(QByteArray(4, 0x29));
+    array.append(encodeLong(command));
     return array;
 }
 
-
-QByteArray PropellerSession::buildReply(QList<char> seq, int size, int offset)
+int PropellerSession::handshake(Command::Command command)
 {
-    QByteArray array;
-    for (int i = offset;
-            i < (offset + size);
-            i++)
-    {
-        array.append(seq[i] | 0xfe);
-    }
-    return array;
-}
-
-int PropellerSession::handshake()
-{
-    device.reset();
-
     real_reply.clear();
 
-    QByteArray header(reply.size()+8,'\xf9');
+    device.reset();
+    device.write(buildRequest(command));
 
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
-
-    calibrate();
-    device.write(request);
-    device.write(header);
-
     QEventLoop loop;
     QTimer timer;
     timer.setSingleShot(true);
@@ -241,6 +227,8 @@ int PropellerSession::handshake()
 QByteArray PropellerSession::encodeApplicationImage(PropellerImage image)
 {
     QByteArray encoded_image;
+
+//    encoded_image = encodeData(image.data());
 
     for (int i = 0 ; i < image.imageSize() ; i += 4)
         encoded_image.append(encodeLong(image.readLong(i)));
@@ -304,15 +292,15 @@ void PropellerSession::upload(PropellerImage binary, bool write, bool run)
     QByteArray encoded_image = encodeApplicationImage(binary);
 
     Utility::print_task("Connecting to '"+device.portName()+"'...");
-    if (!handshake())
+
+    int command = 2*write + run;
+    qDebug() << "COMMAND" << command;
+    if (!handshake((Command::Command) command))
     {
         Utility::print_status("NOT FOUND");
         return;
     }
     Utility::print_status("DONE");
-
-    int command = 2*write + run;
-    writeLong(command);
 
     Utility::print_task("Downloading to RAM...");
     if (sendApplicationImage(encoded_image, binary.imageSize()) != 0)
@@ -356,11 +344,11 @@ void PropellerSession::upload(PropellerImage binary, bool write, bool run)
 
 void PropellerSession::read_acknowledge()
 {
-//    qDebug() << "GOT ACK" << device.bytesAvailable();
+    qDebug() << "GOT ACK" << device.bytesAvailable();
     if (device.bytesAvailable())
     {
         ack = QString(device.readAll().data()).toInt();
-//        qDebug() << "ACK" << ack;
+        qDebug() << "ACK" << ack;
         poll.stop();
         emit finished();
     }

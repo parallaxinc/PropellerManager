@@ -21,4 +21,6 @@ HEADERS += \
     propellerdevice.h \
     gpio.h \
     utility.h \
+    algorithms.h \
     input_console.h \
+    portmonitor.h \
