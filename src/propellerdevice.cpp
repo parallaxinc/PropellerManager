@@ -26,10 +26,10 @@ PropellerDevice::~PropellerDevice()
 
 void PropellerDevice::writeBufferEmpty()
 {
-    qDebug() << "Buffer empty...";
+//    qDebug() << "Buffer empty...";
     if (!bytesToWrite())
     {
-        qDebug() << "No more bytes left!";
+//        qDebug() << "No more bytes left!";
         emit finished();
     }
 }
