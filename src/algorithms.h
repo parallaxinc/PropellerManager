@@ -38,6 +38,13 @@ the Propeller Download stream format. If less than 5 bits were translated, the
 remaining bits leads the next 5 bit translation unit input to the translation process.}
  **/
 
+/**
+   Power of 2 - 1 array.
+   Index into this array with the desired power of 2 (1 through 5) and element value is mask equal to power of 2 minus 1
+   */
+const quint8 Pwr2m1[] = {0x01, 0x03, 0x07, 0x0F, 0x1F};
+
+
 // Propeller Download Stream Translator array.  Index into this array using the "Binary Value" (usually 5 bits) to translate,
 // the incoming bit size (again, usually 5), and the desired data element to retrieve (dtTx = translation, dtBits = bit count
 // actually translated.
@@ -90,18 +97,23 @@ QByteArray encodeData(QByteArray loaderImage)
 
     while (bCount < loaderImage.size()*8) {
 
-        int bitsIn = loaderImage.size()*8 - bCount;
-        if (bitsIn > 5)
-            bitsIn = 5;
-
-        int mask = 0;
-        for (int i = 0; i < bitsIn; ++i)
-            mask = (mask << 1) | 1;
-
-        int bValue = ((loaderImage[bCount/8] >> (bCount%8)) + (loaderImage[bCount/8 + 1] << (8 - bCount%8))) & mask;
+        int bitsIn = qMin(5, loaderImage.size()*8 - bCount);
+        quint8 mask = Propeller::Pwr2m1[bitsIn-1];
+        quint8 bValue =(
+                        (((quint8) (loaderImage[bCount/8] & 0xFF))     >> (bCount % 8)) + 
+                        (((quint8) (loaderImage[bCount/8 + 1] & 0xFF)) << (8 - bCount % 8))
+                    ) & mask;
         loaderStream.append(Propeller::streamTranslator[bValue][bitsIn - 1][0]);
         bCount += Propeller::streamTranslator[bValue][bitsIn - 1][1];
+
+//        qDebug()
+//            << bitsIn
+//            << mask
+//            << QString::number(Propeller::streamTranslator[bValue][bitsIn -1][0], 16)
+//            << QString::number(bValue, 2);
     }
+
+ //   qDebug() << "Totals:" << bCount << loaderStream.size() << bCount / 8 << bCount / 4 /8;
 
 
 
