@@ -28,13 +28,8 @@ class PropellerSession : public QObject
 
 private:
     PropellerDevice device;
-    void writeByte(char value);
-    void writeLong(unsigned int value);
-    int handshake(Command::Command command = Command::Shutdown);
-
-    int lfsr(int * seed);
-    QList<char> sequence;
-    QList<char> buildLfsrSequence(int size);
+    void writeByte(quint8  value);
+    void writeLong(quint32 value);
 
     QByteArray buildRequest(Command::Command command = Command::Shutdown);
     int _version;
@@ -44,7 +39,6 @@ private:
     QByteArray real_reply;
     QByteArray request;
 
-    QByteArray encodeApplicationImage(PropellerImage image);
     bool sendPayload(QByteArray payload);
     int pollAcknowledge();
 

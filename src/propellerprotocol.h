@@ -46,7 +46,7 @@ remaining bits leads the next 5 bit translation unit input to the translation pr
 
 // Binary    Incoming    Translation
 // Value,    Bit Size,   or Bit Count
-const quint8 streamTranslator[32][5][2] = {
+const quint8 translator[32][5][2] = {
     //  ***  1-BIT  ***        ***  2-BIT  ***        ***  3-BIT  ***        ***  4-BIT  ***        ***  5-BIT  ***
     { /*%00000*/ {0xFE, 1},  /*%00000*/ {0xF2, 2},  /*%00000*/ {0x92, 3},  /*%00000*/ {0x92, 3},  /*%00000*/ {0x92, 3} },
     { /*%00001*/ {0xFF, 1},  /*%00001*/ {0xF9, 2},  /*%00001*/ {0xC9, 3},  /*%00001*/ {0xC9, 3},  /*%00001*/ {0xC9, 3} },
@@ -85,34 +85,18 @@ const quint8 streamTranslator[32][5][2] = {
 
 // Generate Propeller Loader Download Stream from adjusted LoaderImage (above); Output delivered to LoaderStream and LoaderStreamSize.
 
-QByteArray encodeData(QByteArray loader_image)
+// It should be noted that the Propeller Protocol is **Little-Endian**
+
+class PropellerProtocol
 {
-    int bit_count = 0;
-    QByteArray loaderStream;
 
-    while (bit_count < loader_image.size()*8) {
+private:
+    int lfsr(int * seed);
+    QList<char> buildLfsrSequence(int size);
 
-        int bits_in = qMin(5, loader_image.size()*8 - bit_count);
-        quint8 mask = (1 << bits_in) - 1;
-        quint8 bValue =(
-                        (((quint8) (loader_image[bit_count/8] & 0xFF))     >> (bit_count % 8)) + 
-                        (((quint8) (loader_image[bit_count/8 + 1] & 0xFF)) << (8 - bit_count % 8))
-                    ) & mask;
-        loaderStream.append(Propeller::streamTranslator[bValue][bits_in - 1][0]);
-        bit_count += Propeller::streamTranslator[bValue][bits_in - 1][1];
-
-//        qDebug()
-//            << bits_in
-//            << mask
-//            << QString::number(Propeller::streamTranslator[bValue][bits_in -1][0], 16)
-//            << QString::number(bValue, 2);
-    }
-
- //   qDebug() << "Totals:" << bit_count << loaderStream.size() << bit_count / 8 << bit_count / 4 /8;
+public:
+    static QByteArray encodeData(QByteArray image);
+    static QByteArray encodeLong(quint32 value);
 
 
-
-    return loaderStream;
-
-}
-
+};

@@ -11,6 +11,7 @@ SOURCES += \
     propellersession.cpp \
     propellerimage.cpp \
     propellerdevice.cpp \
+    propellerprotocol.cpp \
     gpio.cpp \
     utility.cpp \
     main.cpp \
