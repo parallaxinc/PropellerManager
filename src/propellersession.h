@@ -45,7 +45,7 @@ private:
     QByteArray request;
 
     QByteArray encodeApplicationImage(PropellerImage image);
-    bool sendApplicationImage(QByteArray payload);
+    bool sendPayload(QByteArray payload);
     int pollAcknowledge();
 
     QByteArray encodeLong(unsigned int value);

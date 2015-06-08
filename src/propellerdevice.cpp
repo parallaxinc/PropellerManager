@@ -57,7 +57,6 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
             resource_error_count++;
             if (resource_error_count > 1)
             {
-                qDebug() << "ERROR: " << e;
                 close();
                 emit finished();
                 emit sendError(e,"Device unexpectedly disconnected!"); 

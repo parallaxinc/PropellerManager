@@ -13,7 +13,7 @@
   \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
   */
 
-PropellerSession::PropellerSession(   QString port,
+PropellerSession::PropellerSession( QString port,
                                     int reset_gpio,
                                     bool useRtsReset,
                                     QObject * parent)
@@ -114,7 +114,7 @@ void PropellerSession::writeLong(unsigned int value)
 
 void PropellerSession::read_handshake()
 {
-//    qDebug() << "BYTES AVAILABLE" << device.bytesAvailable();
+//    qDebug() << "BYTES AVAILABLE" << device.bytesAvailable() << reply.size();
     if (device.bytesAvailable() == reply.size() + 4)
     {
         real_reply = device.read(reply.size());
@@ -127,9 +127,13 @@ void PropellerSession::read_handshake()
 
         _version = 0;
         for (int i = 0; i < 4; i++)
-            _version = ((_version >> 1) & 0x7f) | ((versiondata.at(i) & 0x1) << 7);
+        {
+            _version += (versiondata.at(i) & 1) +
+                        ((versiondata.at(i) >> 5) & 1);
+        }
 
         emit finished();
+//        qDebug() << "VERSION" << _version;
     }
 }
 
@@ -148,14 +152,10 @@ int PropellerSession::version()
 QByteArray PropellerSession::encodeLong(unsigned int value)
 {
     QByteArray result;
-    for (int i = 0; i < 10; i++)
-    {
-        result.append(0x92 | (value & 0x01) | ((value & 2) << 2) | ((value & 4) << 4));
-        value >>= 3;
-    }
-    result.append(0xf2 | (value & 0x01) | ((value & 2) << 2));
-
-    return result;
+    QDataStream stream(&result, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream << value;
+    return encodeData(result);
 }
 
 int PropellerSession::lfsr(int * seed)
@@ -280,21 +280,17 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
     if (!image.isValid())
         return;
 
-    Utility::print_task("Connecting to '"+device.portName()+"'...");
-
     int command = 2*write + run;
-    if (!handshake((Command::Command) command))
-    {
-        Utility::print_status("NOT FOUND");
-        return;
-    }
-    Utility::print_status("DONE");
+    Utility::print_task("Downloading to '"+device.portName()+"'...");
 
-    Utility::print_task("Downloading to RAM...");
-    QByteArray payload = encodeLong(image.imageSize() / 4);
+    QByteArray payload;
+
+    payload.append(buildRequest((Command::Command) command));
+    payload.append(encodeLong(image.imageSize() / 4));
     payload.append(encodeApplicationImage(image));
 
-    if (!sendApplicationImage(payload))
+
+    if (!sendPayload(payload))
         return;
 
     Utility::print_status("DONE");
@@ -345,16 +341,20 @@ void PropellerSession::read_acknowledge()
     }
 }
 
-bool PropellerSession::sendApplicationImage(QByteArray payload)
+bool PropellerSession::sendPayload(QByteArray payload)
 {
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
+    connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
+    real_reply.clear();
+    device.reset();
     device.write(payload);
 
     QEventLoop loop;
     connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
+    disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
     disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
     if (device.error())
