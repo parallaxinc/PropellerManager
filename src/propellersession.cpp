@@ -7,8 +7,6 @@
 #include <QDebug>
 #include <QThread>
 
-#include <bitset>
-
 /**
   \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
   \param reset_gpio Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset.
@@ -277,17 +275,14 @@ int PropellerSession::terminal()
   Upload a PropellerImage object to the target.
   */
 
-void PropellerSession::upload(PropellerImage binary, bool write, bool run)
+void PropellerSession::upload(PropellerImage image, bool write, bool run)
 {
-    if (!binary.isValid())
+    if (!image.isValid())
         return;
-
-    QByteArray encoded_image = encodeApplicationImage(binary);
 
     Utility::print_task("Connecting to '"+device.portName()+"'...");
 
     int command = 2*write + run;
-//    qDebug() << "COMMAND" << command;
     if (!handshake((Command::Command) command))
     {
         Utility::print_status("NOT FOUND");
@@ -296,7 +291,10 @@ void PropellerSession::upload(PropellerImage binary, bool write, bool run)
     Utility::print_status("DONE");
 
     Utility::print_task("Downloading to RAM...");
-    if (sendApplicationImage(encoded_image, binary.imageSize()) != 0)
+    QByteArray payload = encodeLong(image.imageSize() / 4);
+    payload.append(encodeApplicationImage(image));
+
+    if (!sendApplicationImage(payload))
         return;
 
     Utility::print_status("DONE");
@@ -347,12 +345,11 @@ void PropellerSession::read_acknowledge()
     }
 }
 
-int PropellerSession::sendApplicationImage(QByteArray encoded_image, int image_size)
+bool PropellerSession::sendApplicationImage(QByteArray payload)
 {
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
-    writeLong(image_size / 4);
-    device.write(encoded_image);
+    device.write(payload);
 
     QEventLoop loop;
     connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
@@ -360,7 +357,10 @@ int PropellerSession::sendApplicationImage(QByteArray encoded_image, int image_s
 
     disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
-    return device.error();
+    if (device.error())
+        return false;
+    else
+        return true;
 }
 
 int PropellerSession::pollAcknowledge()

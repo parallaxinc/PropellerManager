@@ -4,6 +4,8 @@
 
 namespace Propeller {
 
+const int _max_data_size = 1392;
+
 const int request_size = 69;
 const quint8 request[69] = {
     0x49,
