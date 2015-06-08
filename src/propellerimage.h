@@ -51,6 +51,18 @@ public:
         Eeprom          ///< Complete EEPROM images        (usually have a `.eeprom` extension)
     };
 
+    enum ImageFormat {
+        _long_clockfrequency = 0,
+        _byte_clockmode = 4,
+        _byte_checksum = 5,
+        _word_code = 6,
+        _word_variables = 8,
+        _word_stackspace = 10,
+        _size_eeprom = 32768
+    };
+
+
+
 private:
 
     int EEPROM_SIZE;
@@ -73,7 +85,9 @@ public:
 
     /**@{*/
     quint8      checksum();
+    bool        checksumIsValid();
     bool        isValid();
+    bool        recalculateChecksum();
     /**@}*/
 
     /**
@@ -106,9 +120,14 @@ public:
     QByteArray  data();
     void        setData(QByteArray data);
 
-    quint8      readByte(int pos);
-    quint16     readWord(int pos);
-    quint32     readLong(int pos);
+    quint8  readByte( int pos);
+    quint16 readWord( int pos);
+    quint32 readLong( int pos);
+
+    void    writeByte(int pos, quint8 value);
+    void    writeWord(int pos, quint16 value);
+    void    writeLong(int pos, quint32 value);
+
     /**@}*/
 
     /**
@@ -121,8 +140,11 @@ public:
 
     quint32     clockFrequency();                           ///< Get the current clock frequency of the image.
     void        setClockFrequency(quint32 frequency);       ///< Assign a new clock frequency to the image.
+
     quint8      clockMode();                                ///< Get an 8-bit integer containing the current clock mode.
     QString     clockModeText();                            ///< Get a human-readable string of the current clock mode.
+    QString     clockModeText(quint8 value);
+    bool        setClockMode(quint8 value);
 
     /**@}*/
 

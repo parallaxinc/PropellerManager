@@ -31,6 +31,8 @@ QCommandLineOption argPin       (QStringList() << "p" << "pin",     QObject::tr(
 QCommandLineOption argTerm      (QStringList() << "t" << "terminal",QObject::tr("Drop into terminal after download"));
 QCommandLineOption argIdentify  (QStringList() << "i" << "identify",QObject::tr("Identify device connected at port"));
 QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr("Print info about downloadable image"));
+QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download (see Propeller datasheet for supported clock modes)"), "MODE");
+QCommandLineOption argClkFreq   (QStringList() << "clkfreq",        QObject::tr("Change clock frequency before download"), "FREQ");
 
 #if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     int reset_pin = 17;
@@ -63,6 +65,8 @@ int main(int argc, char *argv[])
     parser.addOption(argTerm);
     parser.addOption(argIdentify);
     parser.addOption(argInfo);
+    parser.addOption(argClkMode);
+    parser.addOption(argClkFreq);
 
     parser.addPositionalArgument("file",  QObject::tr("Binary file to download"), "FILE");
 
@@ -144,6 +148,27 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
     else
     {
         PropellerImage image = load_image(parser);
+
+        if (parser.isSet(argClkFreq))
+        {
+            bool ok;
+            int freq = parser.value(argClkFreq).toInt(&ok);
+            if (!ok)
+                error("Invalid clock frequency: "+parser.value(argClkFreq));
+
+            image.setClockFrequency(freq);
+            image.recalculateChecksum();
+        }
+
+        if (parser.isSet(argClkMode))
+        {
+            bool ok;
+            int mode = parser.value(argClkMode).toUInt(&ok, 16);
+            if (!image.setClockMode(mode) || !ok)
+                error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
+            image.recalculateChecksum();
+        }
+
         if (!image.isValid())
             error("Image is invalid!");
 
@@ -179,7 +204,7 @@ void info(PropellerImage image)
     printf("           Image: %s\n",qPrintable(image.fileName()));
     printf("            Type: %s\n",qPrintable(image.imageTypeText()));
     printf("            Size: %u\n",image.imageSize());
-    printf("        Checksum: %u\n",image.checksum());
+    printf("        Checksum: %u (%s)\n",image.checksum(), image.checksumIsValid() ? "VALID" : "INVALID");
     printf("    Program size: %u\n",image.programSize());
     printf("   Variable size: %u\n",image.variableSize());
     printf(" Free/stack size: %u\n",image.stackSize());

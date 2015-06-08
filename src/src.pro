@@ -19,8 +19,8 @@ HEADERS += \
     propellersession.h \
     propellerimage.h \
     propellerdevice.h \
+    propellerprotocol.h \
     gpio.h \
     utility.h \
-    algorithms.h \
     input_console.h \
     portmonitor.h \

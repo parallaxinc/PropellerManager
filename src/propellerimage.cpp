@@ -2,7 +2,6 @@
 
 PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
-    EEPROM_SIZE = 32768;
 
     _image  = image;
     _filename = filename;
@@ -14,21 +13,49 @@ PropellerImage::PropellerImage(QByteArray image, QString filename)
     _typenames[Eeprom] = "EEPROM";
 }
 
-quint8 PropellerImage::checksum()
+bool PropellerImage::checksumIsValid()
 {
-    int checksum = 0;
+    int sum = 0;
     foreach (unsigned char c, _image)
     {
-        checksum += c;
+        sum += c;
     }
 
     // Add value of initial call frame
     if (_type == Binary)
-        checksum += 2 * (0xff + 0xff + 0xff + 0xf9);
+        sum += 2 * (0xff + 0xff + 0xff + 0xf9);
 
-    checksum &= 0xff;
+    sum &= 0xff;
 
-    return checksum;
+    if (sum)
+        return false;
+    else
+        return true;
+}
+
+quint8 PropellerImage::checksum()
+{
+    return readByte(_byte_checksum);
+}
+
+
+bool PropellerImage::recalculateChecksum()
+{
+    _image[_byte_checksum] = 0;
+
+    int sum = 0;
+    foreach (unsigned char c, _image)
+    {
+        sum += c;
+    }
+
+    // Add value of initial call frame
+    if (_type == Binary)
+        sum += 2 * (0xff + 0xff + 0xff + 0xf9);
+
+   _image[_byte_checksum] = 0x100 - (sum & 0xFF); 
+
+   return checksumIsValid();
 }
 
 QByteArray PropellerImage::data()
@@ -81,7 +108,7 @@ Start of Code pointer (address 0x06). This value must always be equal to $0010.
 
 quint16 PropellerImage::startOfCode()
 {
-    int start = readWord(6);
+    int start = readWord(_word_code);
 
     if (start != 0x0010)
         qDebug() << "Code start is invalid!";
@@ -95,7 +122,7 @@ Start of Variables pointer (address 0x08).
 
 quint16 PropellerImage::startOfVariables()
 {
-    return readWord(8);
+    return readWord(_word_variables);
 }
 
 /**
@@ -104,18 +131,7 @@ Start of Stack Space pointer (address 0x0A). Otherwise known as DBase.
 
 quint16 PropellerImage::startOfStackSpace()
 {
-    return readWord(10);
-}
-
-/**
-**NOT YET IMPLEMENTED**
-
-Replace the current clock frequency with another value and recalculate the checksum.
-*/
-
-void PropellerImage::setClockFrequency(quint32 frequency)
-{
-    Q_UNUSED(frequency);
+    return readWord(_word_stackspace);
 }
 
 /**
@@ -165,6 +181,50 @@ quint32 PropellerImage::readLong(int pos)
         (readByte(pos+3) << 24);
 }
 
+
+void PropellerImage::writeByte(int pos, quint8 value)
+{
+    _image[pos] = value;
+}
+
+void PropellerImage::writeWord(int pos, quint16 value)
+{
+    writeByte(pos,  ( value       & 0xFF));
+    writeByte(pos+1,((value >> 8) & 0xFF));
+}
+
+void PropellerImage::writeLong(int pos, quint32 value)
+{
+    writeByte(pos,  ( value        & 0xFF));
+    writeByte(pos+1,((value >>  8) & 0xFF));
+    writeByte(pos+2,((value >> 16) & 0xFF));
+    writeByte(pos+3,((value >> 24) & 0xFF));
+}
+
+
+/**
+**NOT YET IMPLEMENTED**
+
+Replace the current clock frequency with another value and recalculate the checksum.
+*/
+
+void PropellerImage::setClockFrequency(quint32 frequency)
+{
+    writeLong(_long_clockfrequency, frequency);
+}
+
+bool PropellerImage::setClockMode(quint8 value)
+{
+    if (_clkmodesettings.contains(value))
+    {
+        writeByte(_byte_clockmode, value);
+        return true;
+    }
+    else
+        return false;
+}
+
+
 /**
 Get the clock frequency.
 
@@ -173,12 +233,12 @@ Get the clock frequency.
 
 quint32 PropellerImage::clockFrequency()
 {
-    return readLong(0x0);
+    return readLong(_long_clockfrequency);
 }
 
 quint8 PropellerImage::clockMode()
 {
-    quint8 clkmode = readByte(4);
+    quint8 clkmode = readByte(_byte_clockmode);
     if (_clkmodesettings.contains(clkmode))
         return clkmode;
     else
@@ -187,7 +247,12 @@ quint8 PropellerImage::clockMode()
 
 QString PropellerImage::clockModeText()
 {
-    return _clkmodesettings.value(clockMode());
+    return clockModeText(clockMode());
+}
+
+QString PropellerImage::clockModeText(quint8 value)
+{
+    return _clkmodesettings.value(value);
 }
 
 QHash<quint8, QString> PropellerImage::initClockModeSettings()
@@ -245,7 +310,7 @@ PropellerImage::ImageType PropellerImage::imageType()
     {
         _type = Invalid;
     }
-    else if (_image.size() > EEPROM_SIZE)
+    else if (_image.size() > _size_eeprom)
     {
         _type = Invalid;
     }
@@ -257,7 +322,7 @@ PropellerImage::ImageType PropellerImage::imageType()
             _type = Binary;
     }
 
-    if (checksum())
+    if (!checksumIsValid())
     {
         _type = Invalid;
     }

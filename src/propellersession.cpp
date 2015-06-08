@@ -1,6 +1,6 @@
 #include "propellersession.h"
+#include "propellerprotocol.h"
 #include "utility.h"
-#include "algorithms.h"
 
 #include <QCoreApplication>
 #include <QEventLoop>
@@ -337,11 +337,11 @@ void PropellerSession::upload(PropellerImage binary, bool write, bool run)
 
 void PropellerSession::read_acknowledge()
 {
-    qDebug() << "GOT ACK" << device.bytesAvailable();
+//    qDebug() << "GOT ACK" << device.bytesAvailable();
     if (device.bytesAvailable())
     {
         ack = QString(device.readAll().data()).toInt();
-        qDebug() << "ACK" << ack;
+//        qDebug() << "ACK" << ack;
         poll.stop();
         emit finished();
     }
