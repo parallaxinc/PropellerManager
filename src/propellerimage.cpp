@@ -189,16 +189,14 @@ void PropellerImage::writeByte(int pos, quint8 value)
 
 void PropellerImage::writeWord(int pos, quint16 value)
 {
-    writeByte(pos,  ( value       & 0xFF));
-    writeByte(pos+1,((value >> 8) & 0xFF));
+    for (int i = 0; i < 2; i++)
+        writeByte(pos+i, (value >> (i * 8)) & 0xFF);
 }
 
 void PropellerImage::writeLong(int pos, quint32 value)
 {
-    writeByte(pos,  ( value        & 0xFF));
-    writeByte(pos+1,((value >>  8) & 0xFF));
-    writeByte(pos+2,((value >> 16) & 0xFF));
-    writeByte(pos+3,((value >> 24) & 0xFF));
+    for (int i = 0; i < 4; i++)
+        writeByte(pos+i, (value >> (i * 8)) & 0xFF);
 }
 
 
