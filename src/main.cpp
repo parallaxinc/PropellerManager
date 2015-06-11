@@ -172,7 +172,7 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
         if (!image.isValid())
             error("Image is invalid!");
 
-        session.upload(image, parser.isSet(argWrite));
+        session.highSpeedUpload(image, parser.isSet(argWrite));
 
         if (parser.isSet(argTerm))
             terminal(session, device);

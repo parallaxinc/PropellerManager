@@ -2,10 +2,8 @@
 #include "propellerprotocol.h"
 #include "utility.h"
 
-#include <QCoreApplication>
 #include <QEventLoop>
 #include <QDebug>
-#include <QThread>
 
 /**
   \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
@@ -117,11 +115,8 @@ void PropellerSession::read_handshake()
 //    qDebug() << "BYTES AVAILABLE" << device.bytesAvailable() << reply.size();
     if (device.bytesAvailable() == reply.size() + 4)
     {
-        real_reply = device.read(reply.size());
-        if (real_reply != reply)
-        {
+        if (device.read(reply.size()) != reply)
             emit finished();
-        }
 
         QByteArray versiondata = device.read(4);
 
@@ -151,11 +146,8 @@ QByteArray PropellerSession::buildRequest(Command::Command command)
   
   \return The version number, or 0 if not found.
   */
-
 int PropellerSession::version()
 {
-    real_reply.clear();
-
     device.reset();
     device.write(buildRequest(Command::Shutdown));
 
@@ -224,54 +216,45 @@ int PropellerSession::terminal()
 
 void PropellerSession::upload(PropellerImage image, bool write, bool run)
 {
+
     if (!image.isValid())
         return;
 
     int command = 2*write + run;
-    Utility::print_task("Downloading to '"+device.portName()+"'...");
 
     QByteArray payload;
     payload.append(buildRequest((Command::Command) command));
     payload.append(PropellerProtocol::encodeLong(image.imageSize() / 4));
     payload.append(PropellerProtocol::encodeData(image.data()));
 
+    device.setBaudRate(115200);
+    device.reset();
+
     if (!sendPayload(payload))
         return;
 
-    Utility::print_status("DONE");
-
-    Utility::print_task("Verifying RAM...");
-    if (pollAcknowledge() != 0)
-    {
-        Utility::print_status("RAM CHECKSUM INVALID");
+    if (!pollAcknowledge())
         return;
-    }
-
-    Utility::print_status("DONE");
 
     if (!write)
         return;
     
-    Utility::print_task("Writing EEPROM...");
-
-    if (pollAcknowledge() != 0)
-    {
-        Utility::print_status("FAIL");
+    if (!pollAcknowledge())
         return;
-    }
-    Utility::print_status("DONE");
 
-    Utility::print_task("Verifying EEPROM...");
-
-    if (pollAcknowledge() != 0)
-    {
-        Utility::print_status("FAIL");
+    if (!pollAcknowledge())
         return;
-    }
-    Utility::print_status("DONE");
 
     if (run)
         device.reset();
+}
+
+void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
+{
+    PropellerImage loader(Utility::readFile("miniloader.binary"));
+//    upload(loader, write, run);
+
+    upload(image, write, run);
 }
 
 void PropellerSession::read_acknowledge()
@@ -291,11 +274,10 @@ bool PropellerSession::sendPayload(QByteArray payload)
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
-    real_reply.clear();
-    device.reset();
     device.write(payload);
 
     QEventLoop loop;
+    connect(this,    SIGNAL(finished()), &loop, SLOT(quit()));
     connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
@@ -331,5 +313,8 @@ int PropellerSession::pollAcknowledge()
     disconnect(&poll,   SIGNAL(timeout()),  this,   SLOT(calibrate()));
     disconnect(&device, SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
 
-    return device.error();
+    if (device.error())
+        return false;
+    else
+        return true;
 }

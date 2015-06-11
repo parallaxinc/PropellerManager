@@ -30,7 +30,8 @@ void PropellerDevice::writeBufferEmpty()
     if (!bytesToWrite())
     {
 //        qDebug() << "No more bytes left!";
-        emit finished();
+        if (!bytesAvailable())
+            emit finished();
     }
 }
 

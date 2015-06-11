@@ -36,7 +36,6 @@ private:
     int ack;
 
     QByteArray reply;
-    QByteArray real_reply;
     QByteArray request;
 
     bool sendPayload(QByteArray payload);
@@ -68,6 +67,7 @@ public:
     void close();
     int version();
     void upload(PropellerImage binary, bool write=false, bool run=true);
+    void highSpeedUpload(PropellerImage binary, bool write=false, bool run=true);
     int terminal();
 
 };
