@@ -249,10 +249,81 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
         device.reset();
 }
 
+
+struct LoaderPacket {
+    QByteArray data;
+    quint32 id;
+};
+
+
 void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
 {
     PropellerImage loader(Utility::readFile("miniloader.binary"));
-//    upload(loader, write, run);
+
+
+    QList<LoaderPacket> loadercomponents;
+
+    int last = 0;
+    quint32 lastvalue = 0;
+    for (int i = 0; i < loader.imageSize(); i += 4)
+    {
+        quint32 value = loader.readLong(i);
+        if ((value & 0xFFFFFFF0) == 0x11111110)
+        {
+            LoaderPacket p;
+            p.id = lastvalue;
+            p.data = loader.data().mid(last, i-last);
+
+            loadercomponents.append(p);
+
+            last = i+4;
+            lastvalue = value;
+        }
+    }
+    
+    if ((loader.imageSize() - last) > 0)
+    {
+        LoaderPacket p;
+        p.id = lastvalue;
+        p.data = loader.data().mid(last, loader.imageSize() - last);
+        loadercomponents.append(p);
+    }
+
+    foreach (LoaderPacket a, loadercomponents)
+    {
+        qDebug() << QString::number(a.id, 16) << a.data.toHex();
+//        if (a.id == 0x11111110)
+//            qDebug() << a.data.toHex();
+    }
+
+
+    quint32 initialbaud = 115200;
+    quint32 finalbaud = 460800; // 921600
+
+//    QByteArray loaderCore, loaderVerify
+
+//    int last = 0, i = 0;
+//    while (last == 0 && i < loader.imageSize())
+//    {
+//        if (loader.readLong(i) == 0x11111110)
+//            last = i+4;
+//        i += 4;
+//    }
+
+    int hostvalues = last;
+
+
+
+
+//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset, Round(80000000 / InitialBaud));                        {Initial Bit Time}
+//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 4, Round(80000000 / FinalBaud));                      {Final Bit Time}
+//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 8, Round(((1.5 * 80000000) / FinalBaud) - MaxRxSenseError));  {1.5x Final Bit Time minus maximum start bit sense error}
+//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 12, 2 * 80000000 div (3 * 4));                        {Failsafe Timeout (seconds-worth of Loader's Receive loop iterations)}
+//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 16, Round(2 * 80000000 / FinalBaud * 10 / 12));       {EndOfPacket Timeout (2 bytes worth of Loader's Receive loop iterations)}
+//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 20, PacketID);                                        {First Expected Packet ID; total packet count}
+
+
+    upload(loader, write, run);
 
     upload(image, write, run);
 }
