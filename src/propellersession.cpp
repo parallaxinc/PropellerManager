@@ -250,21 +250,13 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
 }
 
 
-struct LoaderPacket {
-    QByteArray data;
-    quint32 id;
-};
-
-
 void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
 {
     PropellerImage loader(Utility::readFile("miniloaders/miniloader.binary"));
 
-
     // SPLIT ALL PACKETS
 
-    //QList<LoaderPacket> loadercomponents;
-    QList<LoaderPacket> loadercomponents;
+    QMap<quint32, QByteArray> pieces;
 
     int last = 0;
     quint32 lastvalue = 0;
@@ -273,11 +265,7 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
         quint32 value = loader.readLong(i);
         if ((value & 0xFFFFFFF0) == 0x11111110)
         {
-            LoaderPacket p;
-            p.id = lastvalue;
-            p.data = loader.data().mid(last, i-last);
-
-            loadercomponents.append(p);
+            pieces[lastvalue] = loader.data().mid(last, i-last);
 
             last = i+4;
             lastvalue = value;
@@ -285,30 +273,10 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
     }
     
     if ((loader.imageSize() - last) > 0)
-    {
-        LoaderPacket p;
-        p.id = lastvalue;
-        p.data = loader.data().mid(last, loader.imageSize() - last);
-        loadercomponents.append(p);
-    }
+        pieces[lastvalue] = loader.data().mid(last, loader.imageSize() - last);
 
-
-
-//    QByteArray spincode = loadercomponents.last().data.right(8); // get last 2 longs
-//    qDebug() << spincode.toHex();
-//    qDebug() << loadercomponents.last().data.toHex();
-//    qDebug() << loadercomponents.first().data.toHex();
-
-
-
-
-    // PRINT ALL THE DATA
-
-    foreach (LoaderPacket a, loadercomponents)
-    {
-        qDebug() << QString::number(a.id, 16) << a.data.toHex();
-    }
-
+    foreach (quint32 v, pieces.keys())
+        qDebug() << QString::number(v,16) << pieces[v].toHex();
 
 
     // GENERATE HOST INITIALIZED VALUES
@@ -333,47 +301,41 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
 
     // INJECT HOST VALUES INTO IMAGE AND MOVE SPIN CODE
 
-    foreach (LoaderPacket lp, loadercomponents)
-    {
-        if (lp.id == 0x11111110)
-        {
-            qDebug() << QString::number(lp.id, 16);
+    PropellerImage l(pieces[0x11111110]);
 
-//            qDebug() << loadercomponents[0].data.toHex();
-            qDebug() << loadercomponents[1].data.toHex();
+    l.writeLong(0, initialperiod);
+    l.writeLong(4, finalperiod);
+    l.writeLong(8, errorperiod);
+    l.writeLong(12, timeout_failsafe);
+    l.writeLong(16, timeout_endofpacket);
+    l.writeLong(20, packetid);
 
-            PropellerImage l(loadercomponents[1].data);
+    QByteArray newdata = pieces[0x0];
+    QByteArray spincode = pieces[pieces.lastKey()].right(8);
+    pieces[pieces.lastKey()].chop(8);
 
-            l.writeLong(0, initialperiod);
-            l.writeLong(4, finalperiod);
-            l.writeLong(8, errorperiod);
-            l.writeLong(12, timeout_failsafe);
-            l.writeLong(16, timeout_endofpacket);
-            l.writeLong(20, packetid);
+    newdata.append(l.data());
+    newdata.append(spincode);
 
-            QByteArray newdata = loadercomponents[0].data;
+    loader.setData(newdata);
+    loader.recalculateChecksum();
 
-            QByteArray spincode = loadercomponents.last().data.right(8);
-            loadercomponents.last().data.chop(8);
 
-            newdata.append(l.data());
-            newdata.append(spincode);
 
-            loader.setData(newdata);
-        }
-    }
+//  {Adjust pointers (start of variables, start of stack space, first public method pointer, current stack pointer, and Spin method pointers}
+//  for SIdx := 4 to 7 do PWordArray(FLdrImage)[SIdx] := PWordArray(FLdrImage)[SIdx] - RCount*4;
+//  for SIdx := 0 to PWordArray(FLdrImage)[9]-1 do PWordArray(FLdrImage)[8+SIdx*2] := PWordArray(FLdrImage)[8+SIdx*2] - RCount*4;
 
     qDebug() << loader.data().size() << loader.data().toHex();
 
-//    int hostvalues = last;
-
-//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset, Round(80000000 / InitialBaud));                        {Initial Bit Time}
-//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 4, Round(80000000 / FinalBaud));                      {Final Bit Time}
-//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 8, Round(((1.5 * 80000000) / FinalBaud) - MaxRxSenseError));  {1.5x Final Bit Time minus maximum start bit sense error}
-//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 12, 2 * 80000000 div (3 * 4));                        {Failsafe Timeout (seconds-worth of Loader's Receive loop iterations)}
-//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 16, Round(2 * 80000000 / FinalBaud * 10 / 12));       {EndOfPacket Timeout (2 bytes worth of Loader's Receive loop iterations)}
-//    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 20, PacketID);                                        {First Expected Packet ID; total packet count}
-
+//    QByteArray dataz = loader.data();
+//    QByteArray pretty = dataz.toHex().toUpper();
+//    for (int i = 0 ; i < pretty.size() ; i++)
+//    {
+//        printf("%c",(unsigned char) pretty[i]);
+//        if (i % 2 == 1)
+//            printf("\n");
+//    }
 
     upload(loader, write, run);
 
