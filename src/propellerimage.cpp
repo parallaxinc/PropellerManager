@@ -64,7 +64,7 @@ QByteArray PropellerImage::data()
 }
 
 void PropellerImage::setData(QByteArray data) {
-    Q_UNUSED(data);
+    _image = data;
 }
 
 bool PropellerImage::isValid()

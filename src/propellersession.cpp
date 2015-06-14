@@ -258,9 +258,12 @@ struct LoaderPacket {
 
 void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
 {
-    PropellerImage loader(Utility::readFile("miniloader.binary"));
+    PropellerImage loader(Utility::readFile("miniloaders/miniloader.binary"));
 
 
+    // SPLIT ALL PACKETS
+
+    //QList<LoaderPacket> loadercomponents;
     QList<LoaderPacket> loadercomponents;
 
     int last = 0;
@@ -289,31 +292,80 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
         loadercomponents.append(p);
     }
 
+
+
+//    QByteArray spincode = loadercomponents.last().data.right(8); // get last 2 longs
+//    qDebug() << spincode.toHex();
+//    qDebug() << loadercomponents.last().data.toHex();
+//    qDebug() << loadercomponents.first().data.toHex();
+
+
+
+
+    // PRINT ALL THE DATA
+
     foreach (LoaderPacket a, loadercomponents)
     {
         qDebug() << QString::number(a.id, 16) << a.data.toHex();
-//        if (a.id == 0x11111110)
-//            qDebug() << a.data.toHex();
     }
 
 
+
+    // GENERATE HOST INITIALIZED VALUES
+
+    quint32 maxRxSenseError = 23; // maximum number of cycles by which the detection of a start bit could be off (SHOULD BE AUTO CALCULATED?!?)
+
+    quint32 clkfreq = image.clockFrequency();
+
     quint32 initialbaud = 115200;
+    quint32 initialperiod = clkfreq / initialbaud;
+
     quint32 finalbaud = 460800; // 921600
+    quint32 finalperiod = clkfreq / finalbaud;
 
-//    QByteArray loaderCore, loaderVerify
+    quint32 errorperiod = ((1.5 * clkfreq) / finalbaud) - maxRxSenseError;  // no idea what this does
+    quint32 timeout_failsafe = (2 * clkfreq / (3 * 4));                     //
+    quint32 timeout_endofpacket = (2 * finalperiod * 10 / 12);              //
 
-//    int last = 0, i = 0;
-//    while (last == 0 && i < loader.imageSize())
-//    {
-//        if (loader.readLong(i) == 0x11111110)
-//            last = i+4;
-//        i += 4;
-//    }
-
-    int hostvalues = last;
+    quint32 total_packet_count = image.imageSize() / (Propeller::_max_data_size - 4); // binary image / (max XBee packet - packet header)
+    quint32 packetid = total_packet_count;
 
 
+    // INJECT HOST VALUES INTO IMAGE AND MOVE SPIN CODE
 
+    foreach (LoaderPacket lp, loadercomponents)
+    {
+        if (lp.id == 0x11111110)
+        {
+            qDebug() << QString::number(lp.id, 16);
+
+//            qDebug() << loadercomponents[0].data.toHex();
+            qDebug() << loadercomponents[1].data.toHex();
+
+            PropellerImage l(loadercomponents[1].data);
+
+            l.writeLong(0, initialperiod);
+            l.writeLong(4, finalperiod);
+            l.writeLong(8, errorperiod);
+            l.writeLong(12, timeout_failsafe);
+            l.writeLong(16, timeout_endofpacket);
+            l.writeLong(20, packetid);
+
+            QByteArray newdata = loadercomponents[0].data;
+
+            QByteArray spincode = loadercomponents.last().data.right(8);
+            loadercomponents.last().data.chop(8);
+
+            newdata.append(l.data());
+            newdata.append(spincode);
+
+            loader.setData(newdata);
+        }
+    }
+
+    qDebug() << loader.data().size() << loader.data().toHex();
+
+//    int hostvalues = last;
 
 //    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset, Round(80000000 / InitialBaud));                        {Initial Bit Time}
 //    SetHostInitializedValue(RawSize*4+RawLoaderInitOffset + 4, Round(80000000 / FinalBaud));                      {Final Bit Time}
@@ -325,7 +377,7 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
 
     upload(loader, write, run);
 
-    upload(image, write, run);
+//    upload(image, write, run);
 }
 
 void PropellerSession::read_acknowledge()
