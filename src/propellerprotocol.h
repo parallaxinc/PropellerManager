@@ -111,6 +111,7 @@ public:
     QByteArray buildRequest(Command::Command command = Command::Shutdown);
     static QByteArray encodeData(QByteArray image);
     static QByteArray encodeLong(quint32 value);
+    static QByteArray packLong(quint32 value);
 
     QByteArray reply();
     QByteArray request();

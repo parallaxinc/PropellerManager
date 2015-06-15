@@ -3,6 +3,7 @@
 
 #include <QEventLoop>
 #include <QDebug>
+#include <QThread>
 
 /**
   \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
@@ -425,6 +426,32 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
     loader.recalculateChecksum();
 
     upload(loader, write, run);
+
+
+
+    device.setBaudRate(finalbaud);
+
+    QByteArray data = image.data();
+    qDebug() << data.size();
+
+    int maxsize = Propeller::_max_data_size - 4;
+
+
+    QThread::msleep(40);
+    qDebug() << "DOWNLOADING";
+    for (int i = total_packet_count ; i > 0 ; i--)
+    {
+        qDebug() << "ASSEMBLE";
+        QByteArray payload;
+        payload.append(protocol.packLong(i));
+        payload.append(data.left(maxsize));
+
+        qDebug() << payload.size();
+
+        sendPayload(payload);
+        qDebug() << "RETURN FROM PAYHLOAD";
+    }
+
 
 //    upload(image, write, run);
 }

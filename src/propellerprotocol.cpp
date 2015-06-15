@@ -40,13 +40,18 @@ QByteArray PropellerProtocol::encodeData(QByteArray image)
 
 }
 
-QByteArray PropellerProtocol::encodeLong(quint32 value)
+QByteArray PropellerProtocol::packLong(quint32 value)
 {
     QByteArray result;
     QDataStream stream(&result, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::LittleEndian);
     stream << value;
-    return encodeData(result);
+    return result;
+}
+
+QByteArray PropellerProtocol::encodeLong(quint32 value)
+{
+    return encodeData(packLong(value));
 }
 
 
