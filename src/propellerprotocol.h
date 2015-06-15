@@ -2,6 +2,15 @@
 
 #include <QByteArray>
 
+namespace Command {
+    enum Command {
+        Shutdown,
+        Run,
+        Write,
+        WriteRun
+    };
+};
+
 namespace Propeller {
 
 const int _max_data_size = 1392;
@@ -91,12 +100,19 @@ class PropellerProtocol
 {
 
 private:
+    QByteArray _reply;
+    QByteArray _request;
+
     int lfsr(int * seed);
     QList<char> buildLfsrSequence(int size);
 
 public:
+    PropellerProtocol();
+    QByteArray buildRequest(Command::Command command = Command::Shutdown);
     static QByteArray encodeData(QByteArray image);
     static QByteArray encodeLong(quint32 value);
 
+    QByteArray reply();
+    QByteArray request();
 
 };

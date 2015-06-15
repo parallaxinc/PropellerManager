@@ -33,6 +33,7 @@ QCommandLineOption argIdentify  (QStringList() << "i" << "identify",QObject::tr(
 QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr("Print info about downloadable image"));
 QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download (see Propeller datasheet for supported clock modes)"), "MODE");
 QCommandLineOption argClkFreq   (QStringList() << "clkfreq",        QObject::tr("Change clock frequency before download"), "FREQ");
+QCommandLineOption argHighSpeed (QStringList() << "fast",           QObject::tr("Enable ULTRA HIGH SPEED MODE"));
 
 #if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     int reset_pin = 17;
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
     parser.addOption(argInfo);
     parser.addOption(argClkMode);
     parser.addOption(argClkFreq);
+    parser.addOption(argHighSpeed);
 
     parser.addPositionalArgument("file",  QObject::tr("Binary file to download"), "FILE");
 
@@ -172,7 +174,10 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
         if (!image.isValid())
             error("Image is invalid!");
 
-        session.highSpeedUpload(image, parser.isSet(argWrite));
+        if (parser.isSet(argHighSpeed))
+            session.highSpeedUpload(image, parser.isSet(argWrite));
+        else
+            session.upload(image, parser.isSet(argWrite));
 
         if (parser.isSet(argTerm))
             terminal(session, device);

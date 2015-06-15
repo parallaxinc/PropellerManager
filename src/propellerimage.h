@@ -118,7 +118,7 @@ public:
       */
     /**@{*/
     QByteArray  data();
-    void        setData(QByteArray data);
+    void        setData(QByteArray image);
 
     quint8  readByte( int pos);
     quint16 readWord( int pos);

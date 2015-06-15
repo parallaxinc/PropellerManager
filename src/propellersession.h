@@ -2,18 +2,10 @@
 
 #include "input_console.h"
 #include "propellerimage.h"
-
 #include "propellerdevice.h"
-#include <QTimer>
+#include "propellerprotocol.h"
 
-namespace Command {
-    enum Command {
-        Shutdown,
-        Run,
-        Write,
-        WriteRun
-    };
-};
+#include <QTimer>
 
 /**
   @class PropellerSession 
@@ -28,20 +20,16 @@ class PropellerSession : public QObject
 
 private:
     PropellerDevice device;
+    PropellerProtocol protocol;
+
     void writeByte(quint8  value);
     void writeLong(quint32 value);
 
-    QByteArray buildRequest(Command::Command command = Command::Shutdown);
     int _version;
     int ack;
 
-    QByteArray reply;
-    QByteArray request;
-
     bool sendPayload(QByteArray payload);
     int pollAcknowledge();
-
-    QByteArray encodeLong(unsigned int value);
 
     QTimer poll;
     Input::Console console;
@@ -66,8 +54,8 @@ public:
     bool isOpen();
     void close();
     int version();
-    void upload(PropellerImage binary, bool write=false, bool run=true);
-    void highSpeedUpload(PropellerImage binary, bool write=false, bool run=true);
+    void upload(PropellerImage image, bool write=false, bool run=true);
+    void highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
     int terminal();
 
 };

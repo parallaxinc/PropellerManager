@@ -2,6 +2,12 @@
 
 #include <QDataStream>
 
+PropellerProtocol::PropellerProtocol()
+{
+    _request = QByteArray((char*) Propeller::request, Propeller::request_size);
+    _reply = QByteArray((char*) Propeller::reply, Propeller::reply_size);
+}
+
 QByteArray PropellerProtocol::encodeData(QByteArray image)
 {
     int bits_processed = 0;
@@ -64,3 +70,23 @@ QList<char> PropellerProtocol::buildLfsrSequence(int size)
     return seq;
 }
 
+
+QByteArray PropellerProtocol::buildRequest(Command::Command command)
+{
+    QByteArray array = _request;
+    array.append(QByteArray(125, 0x29));
+    array.append(QByteArray(4, 0x29));
+    array.append(encodeLong(command));
+    return array;
+}
+
+
+QByteArray PropellerProtocol::reply()
+{
+    return _reply;
+}
+
+QByteArray PropellerProtocol::request()
+{
+    return _request;
+}

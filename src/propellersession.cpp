@@ -1,5 +1,4 @@
 #include "propellersession.h"
-#include "propellerprotocol.h"
 #include "utility.h"
 
 #include <QEventLoop>
@@ -36,8 +35,6 @@ PropellerSession::PropellerSession( QString port,
     connect(&device,&PropellerDevice::sendError,
             this,   &Utility::print_error);
 
-    request = QByteArray((char*) Propeller::request, Propeller::request_size);
-    reply = QByteArray((char*) Propeller::reply, Propeller::reply_size);
 
 }
 
@@ -106,16 +103,16 @@ void PropellerSession::writeByte(quint8 value)
 
 void PropellerSession::writeLong(quint32 value)
 {
-    device.write(PropellerProtocol::encodeLong(value));
+    device.write(protocol.encodeLong(value));
 }
 
 
 void PropellerSession::read_handshake()
 {
 //    qDebug() << "BYTES AVAILABLE" << device.bytesAvailable() << reply.size();
-    if (device.bytesAvailable() == reply.size() + 4)
+    if (device.bytesAvailable() == protocol.reply().size() + 4)
     {
-        if (device.read(reply.size()) != reply)
+        if (device.read(protocol.reply().size()) != protocol.reply())
             emit finished();
 
         QByteArray versiondata = device.read(4);
@@ -132,15 +129,6 @@ void PropellerSession::read_handshake()
     }
 }
 
-QByteArray PropellerSession::buildRequest(Command::Command command)
-{
-    QByteArray array = request;
-    array.append(QByteArray(125, 0x29));
-    array.append(QByteArray(4, 0x29));
-    array.append(PropellerProtocol::encodeLong(command));
-    return array;
-}
-
 /**
   \brief Get the version of the connected device.
   
@@ -149,7 +137,7 @@ QByteArray PropellerSession::buildRequest(Command::Command command)
 int PropellerSession::version()
 {
     device.reset();
-    device.write(buildRequest(Command::Shutdown));
+    device.write(protocol.buildRequest(Command::Shutdown));
 
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
     QEventLoop loop;
@@ -218,14 +206,17 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
 {
 
     if (!image.isValid())
+    {
+        qDebug() << "Image is invalid";
         return;
+    }
 
     int command = 2*write + run;
 
     QByteArray payload;
-    payload.append(buildRequest((Command::Command) command));
-    payload.append(PropellerProtocol::encodeLong(image.imageSize() / 4));
-    payload.append(PropellerProtocol::encodeData(image.data()));
+    payload.append(protocol.buildRequest((Command::Command) command));
+    payload.append(protocol.encodeLong(image.imageSize() / 4));
+    payload.append(protocol.encodeData(image.data()));
 
     device.setBaudRate(115200);
     device.reset();
@@ -316,6 +307,9 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
 
     newdata.append(l.data());
     newdata.append(spincode);
+
+
+    // finalize loader image
 
     loader.setData(newdata);
     loader.recalculateChecksum();

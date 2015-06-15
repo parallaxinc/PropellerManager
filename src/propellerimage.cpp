@@ -13,49 +13,33 @@ PropellerImage::PropellerImage(QByteArray image, QString filename)
     _typenames[Eeprom] = "EEPROM";
 }
 
-bool PropellerImage::checksumIsValid()
+quint8 PropellerImage::checksum()
 {
-    int sum = 0;
-    foreach (unsigned char c, _image)
-    {
+    quint8 sum = 0;
+    foreach (quint8 c, _image)
         sum += c;
-    }
 
-    // Add value of initial call frame
     if (_type == Binary)
         sum += 2 * (0xff + 0xff + 0xff + 0xf9);
 
-    sum &= 0xff;
+    return sum;
+}
 
-    if (sum)
+bool PropellerImage::checksumIsValid()
+{
+    if (checksum())
         return false;
     else
         return true;
 }
 
-quint8 PropellerImage::checksum()
-{
-    return readByte(_byte_checksum);
-}
-
-
 bool PropellerImage::recalculateChecksum()
 {
     _image[_byte_checksum] = 0;
+    _image[_byte_checksum] = 0x100 - checksum(); 
 
-    int sum = 0;
-    foreach (unsigned char c, _image)
-    {
-        sum += c;
-    }
-
-    // Add value of initial call frame
-    if (_type == Binary)
-        sum += 2 * (0xff + 0xff + 0xff + 0xf9);
-
-   _image[_byte_checksum] = 0x100 - (sum & 0xFF); 
-
-   return checksumIsValid();
+    imageType();
+    return checksumIsValid();
 }
 
 QByteArray PropellerImage::data()
