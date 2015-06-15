@@ -185,9 +185,7 @@ void PropellerImage::writeLong(int pos, quint32 value)
 
 
 /**
-**NOT YET IMPLEMENTED**
-
-Replace the current clock frequency with another value and recalculate the checksum.
+Replace the current clock frequency with another value.
 */
 
 void PropellerImage::setClockFrequency(quint32 frequency)
