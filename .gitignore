@@ -33,3 +33,5 @@ Makefile*
 
 propman
 propman.exe
+
+*.swp

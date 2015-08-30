@@ -13,7 +13,6 @@ SOURCES += \
     propellerdevice.cpp \
     propellerprotocol.cpp \
     gpio.cpp \
-    utility.cpp \
     main.cpp \
 
 HEADERS += \
@@ -22,6 +21,5 @@ HEADERS += \
     propellerdevice.h \
     propellerprotocol.h \
     gpio.h \
-    utility.h \
     input_console.h \
     portmonitor.h \

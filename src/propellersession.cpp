@@ -1,9 +1,9 @@
 #include "propellersession.h"
-#include "utility.h"
 
 #include <QEventLoop>
 #include <QDebug>
 #include <QThread>
+#include <QFile>
 
 /**
   \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
@@ -33,9 +33,6 @@ PropellerSession::PropellerSession( QString port,
 
     connect(&device,&PropellerDevice::finished,
             this,   &PropellerSession::finished);
-    connect(&device,&PropellerDevice::sendError,
-            this,   &Utility::print_error);
-
 
 }
 
@@ -247,7 +244,12 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
 
 void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
 {
-    PropellerImage loader(Utility::readFile("miniloaders/miniloader.binary"));
+    QFile file("miniloaders/miniloader.binary");
+
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+
+    PropellerImage loader(file.readAll());
 
     // SPLIT ALL PACKETS
 

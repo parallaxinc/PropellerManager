@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "utility.h"
 #include "propellersession.h"
 #include "propellerimage.h"
 #include "propellerdevice.h"
@@ -231,7 +230,12 @@ PropellerImage load_image(QCommandLineParser &parser)
     if (!filename.contains(re_binary) && !filename.contains(re_eeprom))
         error("Invalid file specified!");
 
-    return PropellerImage(Utility::readFile(filename),filename);
+    QFile file(filename);
+
+    if (!file.open(QIODevice::ReadOnly))
+        return PropellerImage();
+
+    return PropellerImage(file.readAll(),filename);
 }
 
 void error(const QString & message)

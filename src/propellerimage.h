@@ -5,8 +5,6 @@
 #include <QString>
 #include <QHash>
 
-#include "utility.h"
-
 /**
 @class PropellerImage
 
@@ -75,7 +73,8 @@ private:
 
 public:
 
-    PropellerImage(QByteArray image = QByteArray(), QString filename = "");
+    PropellerImage( QByteArray image = QByteArray(),
+                    QString filename = "");
 
     /**
         @name Image Validation
