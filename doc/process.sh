@@ -1,8 +1,6 @@
 #!/bin/bash
 
-pushd ../src
 doxygen
-popd
 
 pushd html
 
