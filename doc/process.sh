@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -rf html
 doxygen
 
 pushd html
