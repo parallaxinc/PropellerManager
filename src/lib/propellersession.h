@@ -10,8 +10,7 @@
 /**
   @class PropellerSession 
   
-  PropellerSession provides an interface for connecting and managing
-  a single Propeller device.
+  @brief an interface for connecting to and managing a single Propeller device.
 
   */
 class PropellerSession : public QObject

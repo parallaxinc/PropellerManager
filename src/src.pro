@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
 SUBDIRS = \
     lib \
-    cli \
+    propman \
+    example \
 
-cli.depends = lib
+propman.depends = lib
+example.depends = lib

@@ -8,7 +8,7 @@
 /**
 @class PropellerImage
 
-@brief PropellerImage is a class for analyzing and modifying prebuilt propeller images.
+@brief The PropellerImage class encapsulates the Propeller binary format.
 
 - Converts between binary and EEPROM image formats
 - Extract information about binaries
