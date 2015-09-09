@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QWidget>
-#include <QSerialPort>
+
+#include "propellersession.h"
+#include "propellerdevice.h"
 
 #include "ui_propterm.h"
 
@@ -14,7 +16,7 @@ class PropTerm : public QWidget
 private:
     Ui::PropTerm ui;
     Console console;
-    QSerialPort serial;
+    PropellerDevice device;
 
 public:
     explicit PropTerm(QWidget *parent = 0);
@@ -26,10 +28,13 @@ private slots:
     void writeData(const QByteArray &data);
     void readData();
 
-    void handleError(QSerialPort::SerialPortError error);
+    void handleError();
     void handleToggle(bool checked);
     void portChanged(const QString & text);
     void baudRateChanged(const QString & text);
 
-private:
+private slots:
+    void message(QString text);
+    void error(QString text);
+
 };

@@ -1,21 +1,17 @@
 #include "propterm.h"
 #include "console.h"
 
-#include <QMessageBox>
-#include <QSerialPort>
-#include <QSerialPortInfo>
 #include <QDebug>
 
 PropTerm::PropTerm(QWidget *parent) :
     QWidget(parent)
 {
     ui.setupUi(this);
-    ui.console->setEnabled(false);
 
-    connect(&serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
-            SLOT(handleError(QSerialPort::SerialPortError)));
+    connect(&device, SIGNAL(sendError()),
+            this, SLOT(handleError()));
 
-    connect(&serial, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(&device, SIGNAL(readyRead()), this, SLOT(readData()));
     connect(ui.console, SIGNAL(getData(QByteArray)), this, SLOT(writeData(QByteArray)));
 
     connect(ui.port, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(portChanged(const QString &)));
@@ -27,9 +23,10 @@ PropTerm::PropTerm(QWidget *parent) :
 
     connect(ui.echo, SIGNAL(clicked(bool)), ui.console, SLOT(setEchoEnabled(bool)));
 
-    foreach (QSerialPortInfo i, QSerialPortInfo::availablePorts())
+    foreach (QString s, PropellerDevice::list())
     {
-        ui.port->addItem(i.portName(),QVariant(i.systemLocation()));
+        qDebug() << s;
+        ui.port->addItem(s);
     }
 
     ui.console->clear();
@@ -37,52 +34,75 @@ PropTerm::PropTerm(QWidget *parent) :
 
 PropTerm::~PropTerm()
 {
+    closeSerialPort();
 }
+
+void PropTerm::message(QString text)
+{
+    qDebug() << "[PropellerManager]" << qPrintable(device.portName())
+             << ":" << qPrintable(text);
+}
+
+void PropTerm::error(QString text)
+{
+    message("ERROR: "+text);
+}
+
 
 void PropTerm::openSerialPort()
 {
+    qDebug() << "Opening port" << ui.port->currentText();
     ui.console->setEnabled(true);
-    ui.console->setEchoEnabled(ui.echo->isChecked());
 
-    serial.setPortName(ui.port->currentText());
-    serial.setBaudRate(ui.baudRate->currentText().toInt());
-    serial.open(QIODevice::ReadWrite);
-}
+    device.setPortName(ui.port->currentText());
+    device.setBaudRate(115200);
+    if (!device.open())
+        qDebug() << "ERROR: Failed to open device";
 
-void PropTerm::portChanged(const QString & text)
-{
-    closeSerialPort();
-    qDebug() << text;
-    openSerialPort();
-}
+    device.reset();
+//    device.setBaudRate(ui.baudRate->currentText().toInt());
 
-void PropTerm::baudRateChanged(const QString & text)
-{
-    qDebug() << serial.setBaudRate(text.toInt());
+    qDebug() << "Port open" << device.baudRate() << device.portName();
 }
 
 void PropTerm::closeSerialPort()
 {
-    serial.close();
+    device.close();
     ui.console->setEnabled(false);
+}
+
+void PropTerm::portChanged(const QString & text)
+{
+    qDebug() << "Port changed" << text;
+    if (ui.enable->isChecked())
+    {
+        qDebug() << "Was enabled!";
+        closeSerialPort();
+        openSerialPort();
+    }
+}
+
+void PropTerm::baudRateChanged(const QString & text)
+{
+    int baud = text.toInt();
+    qDebug() << "Baud rate changed" << baud;
+    device.setBaudRate(115200);
 }
 
 void PropTerm::writeData(const QByteArray &data)
 {
-    serial.write(data);
+    device.write(data);
 }
 
 void PropTerm::readData()
 {
-    QByteArray data = serial.readAll();
+    QByteArray data = device.readAll();
     ui.console->putData(data);
 }
 
-void PropTerm::handleError(QSerialPort::SerialPortError error)
+void PropTerm::handleError()
 {
-    if (error == QSerialPort::ResourceError) {
-        closeSerialPort();
-    }
+    closeSerialPort();
 }
 
 void PropTerm::handleToggle(bool checked)
