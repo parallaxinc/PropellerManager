@@ -4,13 +4,13 @@ TARGET = propterm
 TEMPLATE = app
 CONFIG -= app_bundle debug_and_release
 
-INCLUDEPATH += ../
-LIBS += -L../  -lpropellermanager
+INCLUDEPATH += ../lib/
+LIBS += -L../lib/  -lpropellermanager
 
 win32-msvc* {
-	PRE_TARGETDEPS += ../propellermanager.lib
+	PRE_TARGETDEPS += ../lib/propellermanager.lib
 } else {
-	PRE_TARGETDEPS += ../libpropellermanager.a
+	PRE_TARGETDEPS += ../lib/libpropellermanager.a
 }
 
 SOURCES += \
