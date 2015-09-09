@@ -62,6 +62,7 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
             {
                 close();
                 emit finished();
+                emit error(e);
                 qDebug() << "ERROR" << e << ": device unexpectedly disconnected!";
             }
             break;
