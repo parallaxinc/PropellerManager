@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QSerialPort>
-#include <QSerialPortInfo>
-#include <QTimer>
 
 class PropellerDevice
     : public QSerialPort
@@ -31,6 +29,5 @@ private slots:
 
 signals:
     void finished();
-    void sendError(int code, const QString & message);
 
 };

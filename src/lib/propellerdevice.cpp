@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QThread>
+#include <QSerialPortInfo>
 
 #include "gpio.h"
 
@@ -26,12 +27,13 @@ PropellerDevice::~PropellerDevice()
 
 void PropellerDevice::writeBufferEmpty()
 {
-    qDebug() << "Buffer empty...";
+//    qDebug() << "   " << bytesToWrite() << "...";
     if (!bytesToWrite())
     {
-        qDebug() << "No more bytes left!";
-//        if (!bytesAvailable())
-        emit finished();
+//        qDebug() << "Download finished";
+
+        if (!bytesAvailable())
+            emit finished();
     }
 }
 
@@ -60,7 +62,7 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
             {
                 close();
                 emit finished();
-                emit sendError(e,"Device unexpectedly disconnected!"); 
+                qDebug() << "ERROR" << e << ": device unexpectedly disconnected!";
             }
             break;
         default:
@@ -142,7 +144,7 @@ QStringList PropellerDevice::list()
     {
         if (!port.systemLocation().contains("ttyS") &&
             !port.systemLocation().contains("Bluetooth"))
-            result.append(port.systemLocation());
+            result.append(port.portName());
     }
     return result;
 }

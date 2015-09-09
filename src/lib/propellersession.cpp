@@ -11,6 +11,12 @@
   \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
   */
 
+
+const int TIMEOUT_HANDSHAKE = 100;
+const int TIMEOUT_DOWNLOAD  = 5000;
+const int TIMEOUT_VERSION   = 500;
+
+
 PropellerSession::PropellerSession( QString port,
                                     int reset_gpio,
                                     bool useRtsReset,
@@ -18,6 +24,7 @@ PropellerSession::PropellerSession( QString port,
     : QObject(parent)
 {
     _version = 0;
+    _ack     = 0;
 
     if (reset_gpio > -1)
     {
@@ -45,12 +52,22 @@ PropellerSession::~PropellerSession()
   Open the PropellerSession for use.
   */
 
+void PropellerSession::message(QString text)
+{
+    qDebug() << "[PropellerManager]" << qPrintable(device.portName())
+             << ":" << qPrintable(text);
+}
+
+void PropellerSession::error(QString text)
+{
+    message("ERROR: "+text);
+}
+
 bool PropellerSession::open()
 {
     if (!device.open())
     {
-        qDebug() << "Failed to open" << device.portName()
-            << ":" << device.errorString();
+        error("Device failed to open: "+device.errorString());
         return false;
     }
     return true;
@@ -107,11 +124,17 @@ void PropellerSession::writeLong(quint32 value)
 
 void PropellerSession::read_handshake()
 {
-//    qDebug() << "BYTES AVAILABLE" << device.bytesAvailable() << protocol.reply().size();
+//    message(QString("Receiving handshake (%1/%2B)")
+//                    .arg(device.bytesAvailable())
+//                    .arg(protocol.reply().size() + 4)
+//                    );
     if (device.bytesAvailable() == protocol.reply().size() + 4)
     {
         if (device.read(protocol.reply().size()) != protocol.reply())
+        {
+            error("Handshake invalid");
             emit finished();
+        }
 
         QByteArray versiondata = device.read(4);
 
@@ -126,7 +149,8 @@ void PropellerSession::read_handshake()
 //        qDebug() << device.bytesToWrite();
         if (!device.bytesToWrite())
             emit finished();
-//        qDebug() << "VERSION" << _version;
+
+//        message(QString("Hardware version: %1").arg(_version));
     }
 }
 
@@ -147,7 +171,7 @@ int PropellerSession::version()
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &device, SLOT(timeOver()));
-    timer.start(500);
+    timer.start(TIMEOUT_VERSION);
     loop.exec();
 
     disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
@@ -190,7 +214,7 @@ int PropellerSession::terminal()
     connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
 
     QEventLoop loop;
-    connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
     disconnect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
@@ -208,7 +232,7 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
 
     if (!image.isValid())
     {
-        qDebug() << "Image is invalid";
+        error("Image is invalid");
         return;
     }
 
@@ -223,22 +247,43 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
     device.reset();
 
     if (!sendPayload(payload))
+    {
         return;
+    }
 
+    message("Verifying RAM");
     if (!pollAcknowledge())
+    {
+        error("Verify RAM Failed");
         return;
+    }
 
     if (!write)
+    {
+        message("DOWNLOAD COMPLETE");
         return;
+    }
     
+    message("Writing to EEPROM");
     if (!pollAcknowledge())
+    {
+        error("Write EEPROM Failed");
         return;
+    }
 
+    message("Verifying EEPROM");
     if (!pollAcknowledge())
+    {
+        error("Verify EEPROM Failed");
         return;
+    }
 
     if (run)
+    {
         device.reset();
+    }
+
+    message("DOWNLOAD COMPLETE");
 }
 
 
@@ -460,11 +505,12 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
 
 void PropellerSession::read_acknowledge()
 {
-//    qDebug() << "GOT ACK" << device.bytesAvailable();
     if (device.bytesAvailable())
     {
-        ack = QString(device.readAll().data()).toInt();
-//        qDebug() << "ACK" << ack;
+        _ack = QString(device.readAll().data()).toInt();
+
+        if (_ack)
+            message(QString("Invalid ACK: %1").arg(_ack));
         poll.stop();
         emit finished();
     }
@@ -472,23 +518,41 @@ void PropellerSession::read_acknowledge()
 
 bool PropellerSession::sendPayload(QByteArray payload)
 {
+    message(QString("Starting download (%1 bytes)").arg(payload.size()));
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
+
 
     device.write(payload);
 
     QEventLoop loop;
     connect(this,    SIGNAL(finished()), &loop, SLOT(quit()));
     connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
+
+    QTimer timeout;
+    timeout.setSingleShot(true);
+    connect(&timeout, SIGNAL(timeout()), &loop, SLOT(quit()));
+    timeout.start(TIMEOUT_HANDSHAKE);
+
     loop.exec();
 
     disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
     disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
-    if (device.error())
+    if (device.error()) 
+    {
+        error("Download Failed:"+device.errorString());
         return false;
+    }
+    else if (!_version)
+    {
+        error("Device not found");
+        return false;
+    } 
     else
+    {
         return true;
+    }
 }
 
 int PropellerSession::pollAcknowledge()
@@ -506,7 +570,7 @@ int PropellerSession::pollAcknowledge()
     timeout.setSingleShot(true);
     connect(&timeout,   SIGNAL(timeout()),  &loop,  SLOT(quit()));
     connect(&timeout,   SIGNAL(timeout()),  &device,SLOT(timeOver()));
-    timeout.start(5000);
+    timeout.start(TIMEOUT_DOWNLOAD);
 
     loop.exec();
 

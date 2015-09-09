@@ -25,7 +25,7 @@ private:
     void writeLong(quint32 value);
 
     int _version;
-    int ack;
+    int _ack;
 
     bool sendPayload(QByteArray payload);
     int pollAcknowledge();
@@ -43,6 +43,9 @@ private slots:
     void write_terminal(const QString & text);
 
     void calibrate();
+
+    void message(QString text);
+    void error(QString text);
 
 public:
 

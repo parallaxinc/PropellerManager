@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     if (!session.open())
         return 1;
 
+    qDebug() << device_list[0];
     qDebug() << "Entering terminal; press CTRL+C to exit";
     session.terminal();
 
