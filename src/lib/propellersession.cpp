@@ -227,13 +227,13 @@ int PropellerSession::terminal()
   Upload a PropellerImage object to the target.
   */
 
-void PropellerSession::upload(PropellerImage image, bool write, bool run)
+int PropellerSession::upload(PropellerImage image, bool write, bool run)
 {
 
     if (!image.isValid())
     {
         error("Image is invalid");
-        return;
+        return 1;
     }
 
     int command = 2*write + run;
@@ -248,34 +248,34 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
 
     if (!sendPayload(payload))
     {
-        return;
+        return 1;
     }
 
     message("Verifying RAM");
     if (!pollAcknowledge())
     {
         error("Verify RAM Failed");
-        return;
+        return 1;
     }
 
     if (!write)
     {
         message("DOWNLOAD COMPLETE");
-        return;
+        return 0;
     }
     
     message("Writing to EEPROM");
     if (!pollAcknowledge())
     {
         error("Write EEPROM Failed");
-        return;
+        return 1;
     }
 
     message("Verifying EEPROM");
     if (!pollAcknowledge())
     {
         error("Verify EEPROM Failed");
-        return;
+        return 1;
     }
 
     if (run)
@@ -284,15 +284,16 @@ void PropellerSession::upload(PropellerImage image, bool write, bool run)
     }
 
     message("DOWNLOAD COMPLETE");
+    return 0;
 }
 
 
-void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
+int PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
 {
     QFile file("miniloaders/miniloader.binary");
 
     if (!file.open(QIODevice::ReadOnly))
-        return;
+        return 1;
 
     PropellerImage loader(file.readAll());
 
@@ -501,6 +502,8 @@ void PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool ru
 
 
 //    upload(image, write, run);
+//
+    return 0;
 }
 
 void PropellerSession::read_acknowledge()

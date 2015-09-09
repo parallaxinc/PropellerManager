@@ -56,8 +56,8 @@ public:
     bool isOpen();
     void close();
     int version();
-    void upload(PropellerImage image, bool write=false, bool run=true);
-    void highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
+    int upload(PropellerImage image, bool write=false, bool run=true);
+    int highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
     int terminal();
 
 };
