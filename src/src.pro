@@ -5,3 +5,4 @@ SUBDIRS = \
     propterm \
 
 propman.depends = lib
+propterm.depends = lib
