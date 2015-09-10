@@ -1,16 +1,9 @@
 language: cpp
-os:
-  - linux
-  - osx
 matrix:
   include:
   - compiler: gcc
   - compiler: clang
     env: QMAKESPEC=linux-clang
-  exclude:
-  - os: osx
-    compiler: clang
-
 before_install:
 - sudo add-apt-repository "deb http://cz.archive.ubuntu.com/ubuntu utopic main"
 - sudo apt-get update
