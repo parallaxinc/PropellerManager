@@ -1,4 +1,5 @@
 language: cpp
+cache: apt
 matrix:
   include:
   - compiler: gcc
