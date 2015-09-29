@@ -42,26 +42,26 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
 {
     switch (e)
     {
-        case QSerialPort::NoError:
+        case QSerialPort::NoError:                              // 0
             break;
-        case QSerialPort::DeviceNotFoundError:
-        case QSerialPort::PermissionError:
-        case QSerialPort::NotOpenError:
+        case QSerialPort::DeviceNotFoundError:                  // 1
+        case QSerialPort::PermissionError:                      // 2
+        case QSerialPort::NotOpenError:                         // 13
+        case QSerialPort::UnsupportedOperationError:            // 10
+            clearError();
             break;
-        case QSerialPort::ParityError:
-        case QSerialPort::FramingError:
-        case QSerialPort::BreakConditionError:
-        case QSerialPort::WriteError:
-        case QSerialPort::ReadError:
-        case QSerialPort::UnsupportedOperationError:
-        case QSerialPort::TimeoutError:
-        case QSerialPort::UnknownError:
-        case QSerialPort::ResourceError: // SUPER IMPORTANT
+        case QSerialPort::ParityError:                          // 4
+        case QSerialPort::FramingError:                         // 5
+        case QSerialPort::BreakConditionError:                  // 6
+        case QSerialPort::WriteError:                           // 7
+        case QSerialPort::ReadError:                            // 8
+        case QSerialPort::TimeoutError:                         // 12
+        case QSerialPort::UnknownError:                         // 11
+        case QSerialPort::ResourceError: // SUPER IMPORTANT     // 9
             resource_error_count++;
             if (resource_error_count > 1)
             {
                 close();
-                clearError();
                 emit finished();
                 sendError(QString("ERROR %1: %2").arg(e).arg(errorString()));
             }

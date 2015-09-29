@@ -233,6 +233,7 @@ int PropellerSession::terminal()
 
 int PropellerSession::upload(PropellerImage image, bool write, bool run)
 {
+    device.setBaudRate(115200);
 
     if (!image.isValid())
     {
@@ -247,7 +248,6 @@ int PropellerSession::upload(PropellerImage image, bool write, bool run)
     payload.append(protocol.encodeLong(image.imageSize() / 4));
     payload.append(protocol.encodeData(image.data()));
 
-    device.setBaudRate(115200);
     device.reset();
 
     if (!sendPayload(payload))
@@ -525,16 +525,15 @@ void PropellerSession::read_acknowledge()
 
 bool PropellerSession::sendPayload(QByteArray payload)
 {
-    message(QString("Starting download (%1 bytes)").arg(payload.size()));
+    message(QString("Sending payload (%1 bytes)").arg(payload.size()));
+
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
-
 
     device.write(payload);
 
     QEventLoop loop;
     connect(this,    SIGNAL(finished()), &loop, SLOT(quit()));
-    connect(&device, SIGNAL(finished()), &loop, SLOT(quit()));
 
     QTimer timeout;
     timeout.setSingleShot(true);
@@ -548,7 +547,7 @@ bool PropellerSession::sendPayload(QByteArray payload)
 
     if (device.error()) 
     {
-        error("Download Failed: "+device.errorString());
+        error(QString("Download failed: '%1' (error %2)").arg(device.errorString()).arg(device.error()));
         return false;
     }
     else if (!_version)
