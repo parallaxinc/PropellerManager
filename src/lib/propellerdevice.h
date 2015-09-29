@@ -29,5 +29,5 @@ private slots:
 
 signals:
     void finished();
-    void sendError();
+    void sendError(const QString &);
 };

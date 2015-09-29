@@ -61,9 +61,9 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
             if (resource_error_count > 1)
             {
                 close();
+                clearError();
                 emit finished();
-                emit error(e);
-                qDebug() << "ERROR" << e << ": device unexpectedly disconnected!";
+                sendError(QString("ERROR %1: %2").arg(e).arg(errorString()));
             }
             break;
         default:
@@ -133,6 +133,7 @@ bool PropellerDevice::reset()
     QThread::msleep(80);
 
     clear(QSerialPort::Input);
+
     return true;
 }
 

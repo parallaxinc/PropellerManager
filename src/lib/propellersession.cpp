@@ -37,6 +37,7 @@ PropellerSession::PropellerSession( QString port,
     }
 
     device.setPortName(port);
+    device.setBaudRate(115200);
 
     connect(&device,&PropellerDevice::finished,
             this,   &PropellerSession::finished);
@@ -165,13 +166,16 @@ int PropellerSession::version()
     device.write(protocol.buildRequest(Command::Shutdown));
 
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
+
     QEventLoop loop;
     QTimer timer;
     timer.setSingleShot(true);
+
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &device, SLOT(timeOver()));
     timer.start(TIMEOUT_VERSION);
+
     loop.exec();
 
     disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
@@ -544,7 +548,7 @@ bool PropellerSession::sendPayload(QByteArray payload)
 
     if (device.error()) 
     {
-        error("Download Failed:"+device.errorString());
+        error("Download Failed: "+device.errorString());
         return false;
     }
     else if (!_version)

@@ -102,7 +102,6 @@ int main(int argc, char *argv[])
                     break;
                 case 0:
                 default:
-                    printf("[ %-16s ] %-9s\n",qPrintable(d), "NOT FOUND");
                     break;
             }
 

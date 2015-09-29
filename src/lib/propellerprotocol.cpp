@@ -1,6 +1,7 @@
 #include "propellerprotocol.h"
 
 #include <QDataStream>
+#include <QDebug>
 
 PropellerProtocol::PropellerProtocol()
 {
