@@ -42,6 +42,9 @@ PropellerSession::PropellerSession( QString port,
     connect(&device,&PropellerDevice::finished,
             this,   &PropellerSession::finished);
 
+    connect(&device,&PropellerDevice::sendError,
+            this,   &PropellerSession::error);
+
 }
 
 PropellerSession::~PropellerSession()
@@ -529,7 +532,8 @@ int PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run
     
     sendPayload will exit even when all of the data hasn't been written to the Propeller yet,
     which is why the timeout period only accounts for the length of the handshake.
-    
+
+    This function makes two attempts to receive the handshake and then gives up.
   */
 
 bool PropellerSession::sendPayload(QByteArray payload)
@@ -560,9 +564,13 @@ bool PropellerSession::sendPayload(QByteArray payload)
     disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
     disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
-    if (device.error()) 
+    if (timeout.remainingTime() <= 0)
     {
-        error(QString("Download failed: '%1' (error %2)").arg(device.errorString()).arg(device.error()));
+        error(QString("Download timed out after %1 ms").arg(_elapsedtime.elapsed()));
+        return false;
+    }
+    else if (device.error())
+    {
         return false;
     }
     else
@@ -596,7 +604,13 @@ int PropellerSession::pollAcknowledge()
     disconnect(&poll,   SIGNAL(timeout()),  this,   SLOT(calibrate()));
     disconnect(&device, SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
 
-    if (device.error())
+
+    if (timeout.remainingTime() <= 0)
+    {
+        error(QString("Download timed out after %1 ms").arg(_elapsedtime.elapsed()));
+        return false;
+    }
+    else if (device.error())
     {
         return false;
     }

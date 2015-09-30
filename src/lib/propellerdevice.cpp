@@ -10,7 +10,7 @@ PropellerDevice::PropellerDevice(QObject * parent)
  : QSerialPort(parent)
 {
     resource_error_count = 0;
-    _minimum_timeout = 200;
+    _minimum_timeout = 300;
 
     setSettingsRestoredOnClose(false);
     useDtrReset();
@@ -51,20 +51,21 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
         case QSerialPort::UnsupportedOperationError:            // 10
             clearError();
             break;
+        case QSerialPort::TimeoutError:                         // 12
+            break;
         case QSerialPort::ParityError:                          // 4
         case QSerialPort::FramingError:                         // 5
         case QSerialPort::BreakConditionError:                  // 6
         case QSerialPort::WriteError:                           // 7
         case QSerialPort::ReadError:                            // 8
         case QSerialPort::UnknownError:                         // 11
-        case QSerialPort::TimeoutError:                         // 12
         case QSerialPort::ResourceError: // SUPER IMPORTANT     // 9
             resource_error_count++;
             if (resource_error_count > 1)
             {
                 close();
                 emit finished();
-                sendError(QString("ERROR %1: %2").arg(e).arg(errorString()));
+                sendError(QString("'%1' (error %2)").arg(errorString()).arg(e));
             }
             break;
         default:
@@ -228,6 +229,5 @@ QStringList PropellerDevice::list()
 
 void PropellerDevice::timeOver()
 {
-    qDebug() << "Time over";
     emit error(QSerialPort::TimeoutError);
 }
