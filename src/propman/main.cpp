@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
             switch (session.version())
             {
                 case 1:
-                    printf("[ %-16s ] %s\n", qPrintable(d), "Propeller P8X32A");
+                    printf("[ %-30s ] %s\n", qPrintable(d), "Propeller P8X32A");
                     break;
                 case 0:
                 default:

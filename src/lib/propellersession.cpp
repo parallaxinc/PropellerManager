@@ -155,7 +155,7 @@ void PropellerSession::read_handshake()
             emit finished();
         }
 
-        message(QString("Handshake received: hardware version %1").arg(_version));
+//        message(QString("Handshake received: hardware version %1").arg(_version));
     }
 }
 
