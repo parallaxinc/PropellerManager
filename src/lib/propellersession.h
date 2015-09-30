@@ -6,6 +6,7 @@
 #include "propellerprotocol.h"
 
 #include <QTimer>
+#include <QElapsedTimer>
 
 /**
   @class PropellerSession 
@@ -29,8 +30,11 @@ private:
 
     bool sendPayload(QByteArray payload);
     int pollAcknowledge();
+    void printTime();
 
+    QTimer timeout;
     QTimer poll;
+    QElapsedTimer _elapsedtime;
     Input::Console console;
 
 signals:

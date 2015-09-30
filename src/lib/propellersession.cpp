@@ -4,18 +4,15 @@
 #include <QDebug>
 #include <QThread>
 #include <QFile>
+#include <QElapsedTimer>
+
+#include <stdio.h>
 
 /**
   \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
   \param reset_gpio Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset.
   \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
   */
-
-
-const int TIMEOUT_HANDSHAKE = 100;
-const int TIMEOUT_DOWNLOAD  = 5000;
-const int TIMEOUT_VERSION   = 500;
-
 
 PropellerSession::PropellerSession( QString port,
                                     int reset_gpio,
@@ -39,6 +36,9 @@ PropellerSession::PropellerSession( QString port,
     device.setPortName(port);
     device.setBaudRate(115200);
 
+    timeout.setSingleShot(true);
+    connect(&timeout, SIGNAL(timeout()), &device, SLOT(timeOver()));
+
     connect(&device,&PropellerDevice::finished,
             this,   &PropellerSession::finished);
 
@@ -55,8 +55,9 @@ PropellerSession::~PropellerSession()
 
 void PropellerSession::message(QString text)
 {
-    qDebug() << "[PropellerManager]" << qPrintable(device.portName())
-             << ":" << qPrintable(text);
+    text = "[PropellerManager] "+device.portName()+": "+text;
+    printf("%s\n", qPrintable(text));
+    fflush(stdout);
 }
 
 void PropellerSession::error(QString text)
@@ -146,12 +147,12 @@ void PropellerSession::read_handshake()
                         ((versiondata.at(i) >> 5) & 1);
         }
 
-//        qDebug() << device.bytesAvailable();
-//        qDebug() << device.bytesToWrite();
         if (!device.bytesToWrite())
+        {
             emit finished();
+        }
 
-//        message(QString("Hardware version: %1").arg(_version));
+        message(QString("Handshake received: hardware version %1").arg(_version));
     }
 }
 
@@ -162,19 +163,20 @@ void PropellerSession::read_handshake()
   */
 int PropellerSession::version()
 {
+    QByteArray payload = protocol.buildRequest(Command::Shutdown);
+
+    int timeout_payload = device.calculateTimeout(payload.size());
+    timeout.start(timeout_payload);
+
     device.reset();
-    device.write(protocol.buildRequest(Command::Shutdown));
+    device.write(payload);
 
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
     QEventLoop loop;
-    QTimer timer;
-    timer.setSingleShot(true);
 
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
-    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-    connect(&timer, SIGNAL(timeout()), &device, SLOT(timeOver()));
-    timer.start(TIMEOUT_VERSION);
+
 
     loop.exec();
 
@@ -248,8 +250,19 @@ int PropellerSession::upload(PropellerImage image, bool write, bool run)
     payload.append(protocol.encodeLong(image.imageSize() / 4));
     payload.append(protocol.encodeData(image.data()));
 
+
+    int timeout_payload = device.calculateTimeout(payload.size());
+    if (write)
+        timeout_payload += 5000; // ms (EEPROM write speed is constant.
+                                 // the Propeller firmware only does 32kB EEPROMs
+                                 // and this transaction is handled entirely by the firmware.
+
+    timeout.start(timeout_payload);
+    _elapsedtime.start();
+
     device.reset();
 
+    message(QString("Downloading image (%1 bytes, %2 ms)").arg(image.imageSize()).arg(timeout_payload));
     if (!sendPayload(payload))
     {
         return 1;
@@ -510,23 +523,17 @@ int PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run
     return 0;
 }
 
-void PropellerSession::read_acknowledge()
-{
-    if (device.bytesAvailable())
-    {
-        _ack = QString(device.readAll().data()).toInt();
 
-        if (_ack)
-            message(QString("Invalid ACK: %1").arg(_ack));
-        poll.stop();
-        emit finished();
-    }
-}
+/**
+    \brief Transmit a complete data payload on this device.
+    
+    sendPayload will exit even when all of the data hasn't been written to the Propeller yet,
+    which is why the timeout period only accounts for the length of the handshake.
+    
+  */
 
 bool PropellerSession::sendPayload(QByteArray payload)
 {
-    message(QString("Sending payload (%1 bytes)").arg(payload.size()));
-
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
@@ -535,12 +542,20 @@ bool PropellerSession::sendPayload(QByteArray payload)
     QEventLoop loop;
     connect(this,    SIGNAL(finished()), &loop, SLOT(quit()));
 
-    QTimer timeout;
-    timeout.setSingleShot(true);
-    connect(&timeout, SIGNAL(timeout()), &loop, SLOT(quit()));
-    timeout.start(TIMEOUT_HANDSHAKE);
 
     loop.exec();
+
+    if (!_version)
+    {
+        // if handshake not received on first finish, try again
+        loop.exec();
+
+        if (!_version)
+        {
+            error("Device not found");
+            return false;
+        }
+    } 
 
     disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
     disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
@@ -550,15 +565,18 @@ bool PropellerSession::sendPayload(QByteArray payload)
         error(QString("Download failed: '%1' (error %2)").arg(device.errorString()).arg(device.error()));
         return false;
     }
-    else if (!_version)
-    {
-        error("Device not found");
-        return false;
-    } 
     else
     {
+        printTime();
         return true;
     }
+}
+
+void PropellerSession::printTime()
+{
+    message(QString("%1... %2 ms elapsed")
+            .arg(QString(40,QChar(' ')))
+            .arg(_elapsedtime.elapsed()));
 }
 
 int PropellerSession::pollAcknowledge()
@@ -572,12 +590,6 @@ int PropellerSession::pollAcknowledge()
     QEventLoop loop;
     connect(this,       SIGNAL(finished()), &loop,  SLOT(quit()));
 
-    QTimer timeout;
-    timeout.setSingleShot(true);
-    connect(&timeout,   SIGNAL(timeout()),  &loop,  SLOT(quit()));
-    connect(&timeout,   SIGNAL(timeout()),  &device,SLOT(timeOver()));
-    timeout.start(TIMEOUT_DOWNLOAD);
-
     loop.exec();
 
     disconnect(&poll);
@@ -585,7 +597,26 @@ int PropellerSession::pollAcknowledge()
     disconnect(&device, SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
 
     if (device.error())
+    {
         return false;
+    }
     else
+    {   
+        printTime();
         return true;
+    }
 }
+
+void PropellerSession::read_acknowledge()
+{
+    if (device.bytesAvailable())
+    {
+        _ack = QString(device.readAll().data()).toInt();
+
+        if (_ack)
+            message(QString("Invalid ACK: %1").arg(_ack));
+        poll.stop();
+        emit finished();
+    }
+}
+

@@ -32,7 +32,7 @@ QCommandLineOption argIdentify  (QStringList() << "i" << "identify",QObject::tr(
 QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr("Print info about downloadable image"));
 QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download (see Propeller datasheet for supported clock modes)"), "MODE");
 QCommandLineOption argClkFreq   (QStringList() << "clkfreq",        QObject::tr("Change clock frequency before download"), "FREQ");
-QCommandLineOption argHighSpeed (QStringList() << "fast",           QObject::tr("Enable ULTRA HIGH SPEED MODE"));
+QCommandLineOption argHighSpeed (QStringList() << "ultrafast",      QObject::tr("Enable two-stage high-speed mode (experimental)"));
 
 #if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
     int reset_pin = 17;
