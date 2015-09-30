@@ -90,23 +90,36 @@ bool PropellerDevice::open()
 }
 
 /**
-    The timeout period is calculated as follows.
-    
-        timeout = bytes * bits_per_character / bits_per_second
-                        * (1000ms / 1s) * safety_factor / 10;
+    Return the minimum timeout for downloading to the Propeller.
 
-    safety_factor defaults to 10, and is divided by 10, allowing <1 safety factors.
-  */
+    The default value is 200 ms.
+    */
 
 quint32 PropellerDevice::minimumTimeout()
 {
     return _minimum_timeout;
 }
 
+/**
+    Set the minimum timeout for downloading to the Propeller.
+
+    The default value is 200 ms.
+    */
+
 void PropellerDevice::setMinimumTimeout(quint32 milliseconds)
 {
     _minimum_timeout = milliseconds;
 }
+
+/**
+    The timeout period is calculated as follows.
+    
+        timeout = bytes * bits_per_character / bits_per_second
+                        * (1000ms / 1s) * safety_factor / 10
+                        + minimumTimeout()
+
+    safety_factor defaults to 10, and is divided by 10, allowing <1 safety factors.
+  */
 
 quint32 PropellerDevice::calculateTimeout(quint32 bytes, quint32 safety_factor)
 {
@@ -114,11 +127,25 @@ quint32 PropellerDevice::calculateTimeout(quint32 bytes, quint32 safety_factor)
                  * 1000 / baudRate() + minimumTimeout();
 }
 
+/**
+    Use a GPIO pin for hardware reset if available.
+
+    Raspberry Pi builds of PropellerManager are configured to use
+    GPIO reset by default for as this is the hardware configuration
+    of the Propeller HAT.
+    */
 void PropellerDevice::useGpioReset(int pin)
 {
     reset_gpio = pin;
     use_rts_reset = false;
 }
+
+/**
+    Use RTS for hardware reset if available. Most Parallax products use DTR for reset,
+    but some third-party boards use RTS as the reset pin.
+
+    Refer to your board schematic for more information.
+    */
 
 void PropellerDevice::useRtsReset()
 {
@@ -126,12 +153,26 @@ void PropellerDevice::useRtsReset()
     use_rts_reset = true;
 }
 
+/**
+    Use DTR for hardware reset if available. Most Parallax products use DTR for reset,
+    but some third-party boards use RTS as the reset pin.
+
+    Refer to your board schematic for more information.
+    */
+
 void PropellerDevice::useDtrReset()
 {
     reset_gpio = -1;
     use_rts_reset = false;
 }
 
+/**
+    Reset your attached Propeller hardware using the configured
+    hardware reset.
+
+    DTR is the default hardware reset on all PropellerIDE distributions,
+    with the exception of Raspberry Pi, where it is GPIO reset.
+    */
 
 bool PropellerDevice::reset()
 {
@@ -163,6 +204,12 @@ bool PropellerDevice::reset()
 
     return true;
 }
+
+/**
+    List all available hardware devices.
+
+    This function does not check whether Propeller hardware attached to the given devices.
+    */
 
 QStringList PropellerDevice::list()
 {

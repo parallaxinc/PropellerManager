@@ -2,6 +2,16 @@
 
 #include <QSerialPort>
 
+/**
+    @class PropellerDevice
+  
+    @brief this class encapsulates a Propeller hardware device.
+
+    This class inherits from QSerialPort but provides Propeller
+    specific functionality such as hardware reset and download
+    timeouts.
+  */
+
 class PropellerDevice
     : public QSerialPort
 {

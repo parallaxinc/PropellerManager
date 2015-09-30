@@ -8,7 +8,7 @@
 /**
 @class PropellerImage
 
-@brief The PropellerImage class encapsulates the Propeller binary format.
+@brief this class encapsulates the Propeller binary format.
 
 - Converts between binary and EEPROM image formats
 - Extract information about binaries
@@ -17,7 +17,10 @@
 
 ### Propeller Application Format
 
-The Propeller Application image consists of data blocks for initialization, program, variables, and data/stack space. The first block, initialization, describes the application's startup parameters, including the position of the other blocks within the image, as shown below.
+The Propeller Application image consists of data blocks for initialization,
+program, variables, and data/stack space. The first block, initialization,
+describes the application's startup parameters, including the position of the 
+other blocks within the image, as shown below.
 
 | data size | address  | description      |
 |-----------|----------|------------------|
@@ -32,7 +35,13 @@ The Propeller Application image consists of data blocks for initialization, prog
 
 ### What Gets Downloaded
 
-To save time, PropellerManager does not download the entire application image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the Propeller chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well.
+To save time, PropellerManager does not download the entire application image. Instead, it
+downloads only the parts of the image from long 0 through the end of code (up
+to the start of variables) and then the Propeller chip itself writes zeros (0)
+to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and
+inserts the initial call frame in the proper location. This effectively clears
+(initializes) all global variables to zero (0) and sets all available stack
+and free space to zero (0) as well.
 */
 
 class PropellerImage
