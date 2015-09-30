@@ -34,6 +34,9 @@ title: PropellerManager  - PropellerDevice Class Reference
 </div><!--header-->
 <div class="contents">
 
+<p>this class encapsulates a <a class="el" href="namespace_propeller.html">Propeller</a> hardware device.  
+ <a href="class_propeller_device.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="propellerdevice_8h_source.html">propellerdevice.h</a>&gt;</code></p>
 
 <p>Inherits QSerialPort.</p>
@@ -42,8 +45,8 @@ title: PropellerManager  - PropellerDevice Class Reference
 Signals</h2></td></tr>
 <tr class="memitem:a68bf1a41b3e41540a77f51b284477456"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a68bf1a41b3e41540a77f51b284477456">finished</a> ()</td></tr>
 <tr class="separator:a68bf1a41b3e41540a77f51b284477456"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29e71dc3c059413c712b98a8ffd10b84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a29e71dc3c059413c712b98a8ffd10b84">sendError</a> ()</td></tr>
-<tr class="separator:a29e71dc3c059413c712b98a8ffd10b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60854dc5f3581d49286bde55472159c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a60854dc5f3581d49286bde55472159c5">sendError</a> (const QString &amp;)</td></tr>
+<tr class="separator:a60854dc5f3581d49286bde55472159c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -61,13 +64,22 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9311fb82add6fb17450b296d0b3f1f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c5795fa0f563898934b41875e2534ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a5c5795fa0f563898934b41875e2534ad">useDtrReset</a> ()</td></tr>
 <tr class="separator:a5c5795fa0f563898934b41875e2534ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a508c7514bcbc7d75e421639a9ec1c420"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a508c7514bcbc7d75e421639a9ec1c420">calculateTimeout</a> (quint32 bytes, quint32 safety_factor=15)</td></tr>
+<tr class="separator:a508c7514bcbc7d75e421639a9ec1c420"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa970a5feeecca0074d451d97cf5c430c"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#aa970a5feeecca0074d451d97cf5c430c">minimumTimeout</a> ()</td></tr>
+<tr class="separator:aa970a5feeecca0074d451d97cf5c430c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cfd2e6295567838e362c1513787ff4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a7cfd2e6295567838e362c1513787ff4a">setMinimumTimeout</a> (quint32 milliseconds)</td></tr>
+<tr class="separator:a7cfd2e6295567838e362c1513787ff4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aa4fe3b7c8348dc7b3df1c888ea730978"><td class="memItemLeft" align="right" valign="top">static QStringList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#aa4fe3b7c8348dc7b3df1c888ea730978">list</a> ()</td></tr>
 <tr class="separator:aa4fe3b7c8348dc7b3df1c888ea730978"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>this class encapsulates a <a class="el" href="namespace_propeller.html">Propeller</a> hardware device. </p>
+<p>This class inherits from QSerialPort but provides <a class="el" href="namespace_propeller.html">Propeller</a> specific functionality such as hardware reset and download timeouts. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ae17b0402bf39bec8ab3746ddb4674ea0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -100,6 +112,36 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a508c7514bcbc7d75e421639a9ec1c420"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">quint32 PropellerDevice::calculateTimeout </td>
+          <td>(</td>
+          <td class="paramtype">quint32&#160;</td>
+          <td class="paramname"><em>bytes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">quint32&#160;</td>
+          <td class="paramname"><em>safety_factor</em> = <code>15</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The timeout period is calculated as follows. </p><pre class="fragment">timeout = bytes * bits_per_character / bits_per_second
+                  (1000ms / 1s) * safety_factor / 10
+                + minimumTimeout()
+</pre><p>safety_factor defaults to 10, and is divided by 10, allowing &lt;1 safety factors. </p>
+
+</div>
+</div>
 <a class="anchor" id="a68bf1a41b3e41540a77f51b284477456"></a>
 <div class="memitem">
 <div class="memproto">
@@ -143,6 +185,25 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>List all available hardware devices.</p>
+<p>This function does not check whether <a class="el" href="namespace_propeller.html">Propeller</a> hardware attached to the given devices. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa970a5feeecca0074d451d97cf5c430c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">quint32 PropellerDevice::minimumTimeout </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Return the minimum timeout for downloading to the <a class="el" href="namespace_propeller.html">Propeller</a>.</p>
+<p>The default value is 200 ms. </p>
 
 </div>
 </div>
@@ -158,6 +219,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Open the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> for use. </p>
 
 </div>
 </div>
@@ -173,10 +235,12 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Reset your attached <a class="el" href="namespace_propeller.html">Propeller</a> hardware using the configured hardware reset.</p>
+<p>DTR is the default hardware reset on all PropellerIDE distributions, with the exception of Raspberry Pi, where it is GPIO reset. </p>
 
 </div>
 </div>
-<a class="anchor" id="a29e71dc3c059413c712b98a8ffd10b84"></a>
+<a class="anchor" id="a60854dc5f3581d49286bde55472159c5"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -186,6 +250,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void PropellerDevice::sendError </td>
           <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -196,6 +261,24 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a7cfd2e6295567838e362c1513787ff4a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerDevice::setMinimumTimeout </td>
+          <td>(</td>
+          <td class="paramtype">quint32&#160;</td>
+          <td class="paramname"><em>milliseconds</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Set the minimum timeout for downloading to the <a class="el" href="namespace_propeller.html">Propeller</a>.</p>
+<p>The default value is 200 ms. </p>
 
 </div>
 </div>
@@ -211,6 +294,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Use DTR for hardware reset if available. Most Parallax products use DTR for reset, but some third-party boards use RTS as the reset pin.</p>
+<p>Refer to your board schematic for more information. </p>
 
 </div>
 </div>
@@ -227,6 +312,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Use a GPIO pin for hardware reset if available.</p>
+<p>Raspberry Pi builds of PropellerManager are configured to use GPIO reset by default for as this is the hardware configuration of the <a class="el" href="namespace_propeller.html">Propeller</a> HAT. </p>
 
 </div>
 </div>
@@ -242,6 +329,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Use RTS for hardware reset if available. Most Parallax products use DTR for reset, but some third-party boards use RTS as the reset pin.</p>
+<p>Refer to your board schematic for more information. </p>
 
 </div>
 </div>
