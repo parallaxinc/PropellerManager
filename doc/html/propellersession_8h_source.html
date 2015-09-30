@@ -38,74 +38,77 @@ title: PropellerManager  - propellersession.h Source File
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="propellerprotocol_8h.html">propellerprotocol.h</a>&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;QTimer&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_propeller_session.html">   16</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_propeller_session.html">PropellerSession</a> : <span class="keyword">public</span> QObject</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <a class="code" href="class_propeller_device.html">PropellerDevice</a> device;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="class_propeller_protocol.html">PropellerProtocol</a> protocol;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">void</span> writeByte(quint8  value);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">void</span> writeLong(quint32 value);</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">int</span> _version;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">int</span> _ack;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">bool</span> sendPayload(QByteArray payload);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">int</span> pollAcknowledge();</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;QElapsedTimer&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_propeller_session.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_propeller_session.html">PropellerSession</a> : <span class="keyword">public</span> QObject</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="class_propeller_device.html">PropellerDevice</a> device;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="class_propeller_protocol.html">PropellerProtocol</a> protocol;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    QTimer poll;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    Input::Console console;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">void</span> writeByte(quint8  value);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">void</span> writeLong(quint32 value);</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;signals:</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_propeller_session.html#a1c8292dfffcef1c770ef2eaa70e66e13">finished</a>();</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">int</span> _version;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">int</span> _ack;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">void</span> read_handshake();</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> read_acknowledge();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> read_terminal();</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">void</span> write_terminal(<span class="keyword">const</span> QString &amp; text);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">void</span> calibrate();</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> message(QString text);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> error(QString text);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="class_propeller_session.html#a3e1763eef3663136bdc60683093be338">PropellerSession</a>(QString port, <span class="keywordtype">int</span> reset_gpio=-1, <span class="keywordtype">bool</span> useRtsReset = <span class="keyword">false</span>, QObject * parent = 0);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="class_propeller_session.html#a90f8f755312349306c7fac07cd0a2841">~PropellerSession</a>();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_propeller_session.html#a08a7145b41c6d156c5596c185dec4b08">open</a>();</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_propeller_session.html#abf2786fd5a06236f6b018cd53578954c">isOpen</a>();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_propeller_session.html#a28c34b5fced451788e83d5fb1e3d5343">close</a>();</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#a0ccee672bef16ffa00f66e48770d21fb">version</a>();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#a25f20bdf008deb99c8f4bda92d341257">upload</a>(<a class="code" href="class_propeller_image.html">PropellerImage</a> image, <span class="keywordtype">bool</span> write=<span class="keyword">false</span>, <span class="keywordtype">bool</span> run=<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#a98b7a51ebede2bac26ad5ebb75178909">highSpeedUpload</a>(<a class="code" href="class_propeller_image.html">PropellerImage</a> image, <span class="keywordtype">bool</span> write=<span class="keyword">false</span>, <span class="keywordtype">bool</span> run=<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#af5dbd94512dc45d167df9460f0580b54">terminal</a>();</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;};</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="ttc" id="class_propeller_session_html_abf2786fd5a06236f6b018cd53578954c"><div class="ttname"><a href="class_propeller_session.html#abf2786fd5a06236f6b018cd53578954c">PropellerSession::isOpen</a></div><div class="ttdeci">bool isOpen()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:80</div></div>
-<div class="ttc" id="class_propeller_protocol_html"><div class="ttname"><a href="class_propeller_protocol.html">PropellerProtocol</a></div><div class="ttdef"><b>Definition:</b> propellerprotocol.h:99</div></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">bool</span> sendPayload(QByteArray payload);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">int</span> pollAcknowledge();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> printTime();</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    QTimer timeout;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    QTimer poll;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    QElapsedTimer _elapsedtime;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    Input::Console console;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;signals:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_propeller_session.html#a1c8292dfffcef1c770ef2eaa70e66e13">finished</a>();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> read_handshake();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> read_acknowledge();</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">void</span> read_terminal();</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> write_terminal(<span class="keyword">const</span> QString &amp; text);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> calibrate();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> message(QString text);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> error(QString text);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="class_propeller_session.html#a3e1763eef3663136bdc60683093be338">PropellerSession</a>(QString port, <span class="keywordtype">int</span> reset_gpio=-1, <span class="keywordtype">bool</span> useRtsReset = <span class="keyword">false</span>, QObject * parent = 0);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <a class="code" href="class_propeller_session.html#a90f8f755312349306c7fac07cd0a2841">~PropellerSession</a>();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_propeller_session.html#a08a7145b41c6d156c5596c185dec4b08">open</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_propeller_session.html#abf2786fd5a06236f6b018cd53578954c">isOpen</a>();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_propeller_session.html#a28c34b5fced451788e83d5fb1e3d5343">close</a>();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#a0ccee672bef16ffa00f66e48770d21fb">version</a>();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#a25f20bdf008deb99c8f4bda92d341257">upload</a>(<a class="code" href="class_propeller_image.html">PropellerImage</a> image, <span class="keywordtype">bool</span> write=<span class="keyword">false</span>, <span class="keywordtype">bool</span> run=<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#a98b7a51ebede2bac26ad5ebb75178909">highSpeedUpload</a>(<a class="code" href="class_propeller_image.html">PropellerImage</a> image, <span class="keywordtype">bool</span> write=<span class="keyword">false</span>, <span class="keywordtype">bool</span> run=<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_propeller_session.html#af5dbd94512dc45d167df9460f0580b54">terminal</a>();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;};</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="ttc" id="class_propeller_session_html_abf2786fd5a06236f6b018cd53578954c"><div class="ttname"><a href="class_propeller_session.html#abf2786fd5a06236f6b018cd53578954c">PropellerSession::isOpen</a></div><div class="ttdeci">bool isOpen()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:85</div></div>
+<div class="ttc" id="class_propeller_protocol_html"><div class="ttname"><a href="class_propeller_protocol.html">PropellerProtocol</a></div><div class="ttdoc">this class contains various algorithms needed to interact with the Propeller firmware. </div><div class="ttdef"><b>Definition:</b> propellerprotocol.h:108</div></div>
 <div class="ttc" id="propellerprotocol_8h_html"><div class="ttname"><a href="propellerprotocol_8h.html">propellerprotocol.h</a></div></div>
 <div class="ttc" id="class_propeller_session_html_a1c8292dfffcef1c770ef2eaa70e66e13"><div class="ttname"><a href="class_propeller_session.html#a1c8292dfffcef1c770ef2eaa70e66e13">PropellerSession::finished</a></div><div class="ttdeci">void finished()</div></div>
-<div class="ttc" id="class_propeller_session_html_a3e1763eef3663136bdc60683093be338"><div class="ttname"><a href="class_propeller_session.html#a3e1763eef3663136bdc60683093be338">PropellerSession::PropellerSession</a></div><div class="ttdeci">PropellerSession(QString port, int reset_gpio=-1, bool useRtsReset=false, QObject *parent=0)</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:20</div></div>
-<div class="ttc" id="class_propeller_session_html_a25f20bdf008deb99c8f4bda92d341257"><div class="ttname"><a href="class_propeller_session.html#a25f20bdf008deb99c8f4bda92d341257">PropellerSession::upload</a></div><div class="ttdeci">int upload(PropellerImage image, bool write=false, bool run=true)</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:230</div></div>
-<div class="ttc" id="class_propeller_session_html_a08a7145b41c6d156c5596c185dec4b08"><div class="ttname"><a href="class_propeller_session.html#a08a7145b41c6d156c5596c185dec4b08">PropellerSession::open</a></div><div class="ttdeci">bool open()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:66</div></div>
-<div class="ttc" id="class_propeller_session_html_a90f8f755312349306c7fac07cd0a2841"><div class="ttname"><a href="class_propeller_session.html#a90f8f755312349306c7fac07cd0a2841">PropellerSession::~PropellerSession</a></div><div class="ttdeci">~PropellerSession()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:46</div></div>
-<div class="ttc" id="class_propeller_session_html_af5dbd94512dc45d167df9460f0580b54"><div class="ttname"><a href="class_propeller_session.html#af5dbd94512dc45d167df9460f0580b54">PropellerSession::terminal</a></div><div class="ttdeci">int terminal()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:209</div></div>
+<div class="ttc" id="class_propeller_session_html_a3e1763eef3663136bdc60683093be338"><div class="ttname"><a href="class_propeller_session.html#a3e1763eef3663136bdc60683093be338">PropellerSession::PropellerSession</a></div><div class="ttdeci">PropellerSession(QString port, int reset_gpio=-1, bool useRtsReset=false, QObject *parent=0)</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:17</div></div>
+<div class="ttc" id="class_propeller_session_html_a25f20bdf008deb99c8f4bda92d341257"><div class="ttname"><a href="class_propeller_session.html#a25f20bdf008deb99c8f4bda92d341257">PropellerSession::upload</a></div><div class="ttdeci">int upload(PropellerImage image, bool write=false, bool run=true)</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:239</div></div>
+<div class="ttc" id="class_propeller_session_html_a08a7145b41c6d156c5596c185dec4b08"><div class="ttname"><a href="class_propeller_session.html#a08a7145b41c6d156c5596c185dec4b08">PropellerSession::open</a></div><div class="ttdeci">bool open()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:71</div></div>
+<div class="ttc" id="class_propeller_session_html_a90f8f755312349306c7fac07cd0a2841"><div class="ttname"><a href="class_propeller_session.html#a90f8f755312349306c7fac07cd0a2841">PropellerSession::~PropellerSession</a></div><div class="ttdeci">~PropellerSession()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:50</div></div>
+<div class="ttc" id="class_propeller_session_html_af5dbd94512dc45d167df9460f0580b54"><div class="ttname"><a href="class_propeller_session.html#af5dbd94512dc45d167df9460f0580b54">PropellerSession::terminal</a></div><div class="ttdeci">int terminal()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:218</div></div>
 <div class="ttc" id="propellerimage_8h_html"><div class="ttname"><a href="propellerimage_8h.html">propellerimage.h</a></div></div>
-<div class="ttc" id="class_propeller_session_html"><div class="ttname"><a href="class_propeller_session.html">PropellerSession</a></div><div class="ttdoc">an interface for connecting to and managing a single Propeller device. </div><div class="ttdef"><b>Definition:</b> propellersession.h:16</div></div>
-<div class="ttc" id="class_propeller_session_html_a98b7a51ebede2bac26ad5ebb75178909"><div class="ttname"><a href="class_propeller_session.html#a98b7a51ebede2bac26ad5ebb75178909">PropellerSession::highSpeedUpload</a></div><div class="ttdeci">int highSpeedUpload(PropellerImage image, bool write=false, bool run=true)</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:291</div></div>
-<div class="ttc" id="class_propeller_device_html"><div class="ttname"><a href="class_propeller_device.html">PropellerDevice</a></div><div class="ttdef"><b>Definition:</b> propellerdevice.h:5</div></div>
+<div class="ttc" id="class_propeller_session_html"><div class="ttname"><a href="class_propeller_session.html">PropellerSession</a></div><div class="ttdoc">a high-level interface for managing a single PropellerDevice. </div><div class="ttdef"><b>Definition:</b> propellersession.h:25</div></div>
+<div class="ttc" id="class_propeller_session_html_a98b7a51ebede2bac26ad5ebb75178909"><div class="ttname"><a href="class_propeller_session.html#a98b7a51ebede2bac26ad5ebb75178909">PropellerSession::highSpeedUpload</a></div><div class="ttdeci">int highSpeedUpload(PropellerImage image, bool write=false, bool run=true)</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:311</div></div>
+<div class="ttc" id="class_propeller_device_html"><div class="ttname"><a href="class_propeller_device.html">PropellerDevice</a></div><div class="ttdoc">this class encapsulates a Propeller hardware device. </div><div class="ttdef"><b>Definition:</b> propellerdevice.h:15</div></div>
 <div class="ttc" id="propellerdevice_8h_html"><div class="ttname"><a href="propellerdevice_8h.html">propellerdevice.h</a></div></div>
 <div class="ttc" id="input__console_8h_html"><div class="ttname"><a href="input__console_8h.html">input_console.h</a></div></div>
-<div class="ttc" id="class_propeller_session_html_a0ccee672bef16ffa00f66e48770d21fb"><div class="ttname"><a href="class_propeller_session.html#a0ccee672bef16ffa00f66e48770d21fb">PropellerSession::version</a></div><div class="ttdeci">int version()</div><div class="ttdoc">Get the version of the connected device. </div><div class="ttdef"><b>Definition:</b> propellersession.cpp:162</div></div>
-<div class="ttc" id="class_propeller_session_html_a28c34b5fced451788e83d5fb1e3d5343"><div class="ttname"><a href="class_propeller_session.html#a28c34b5fced451788e83d5fb1e3d5343">PropellerSession::close</a></div><div class="ttdeci">void close()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:89</div></div>
-<div class="ttc" id="class_propeller_image_html"><div class="ttname"><a href="class_propeller_image.html">PropellerImage</a></div><div class="ttdoc">The PropellerImage class encapsulates the Propeller binary format. </div><div class="ttdef"><b>Definition:</b> propellerimage.h:38</div></div>
+<div class="ttc" id="class_propeller_session_html_a0ccee672bef16ffa00f66e48770d21fb"><div class="ttname"><a href="class_propeller_session.html#a0ccee672bef16ffa00f66e48770d21fb">PropellerSession::version</a></div><div class="ttdeci">int version()</div><div class="ttdoc">Get the version of the connected device. </div><div class="ttdef"><b>Definition:</b> propellersession.cpp:167</div></div>
+<div class="ttc" id="class_propeller_session_html_a28c34b5fced451788e83d5fb1e3d5343"><div class="ttname"><a href="class_propeller_session.html#a28c34b5fced451788e83d5fb1e3d5343">PropellerSession::close</a></div><div class="ttdeci">void close()</div><div class="ttdef"><b>Definition:</b> propellersession.cpp:94</div></div>
+<div class="ttc" id="class_propeller_image_html"><div class="ttname"><a href="class_propeller_image.html">PropellerImage</a></div><div class="ttdoc">this class encapsulates the Propeller binary format. </div><div class="ttdef"><b>Definition:</b> propellerimage.h:47</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div>
 </div>

@@ -26,8 +26,6 @@ title: PropellerManager  - propellersession.cpp File Reference
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="summary">
-<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">propellersession.cpp File Reference</div>  </div>
 </div><!--header-->
@@ -37,61 +35,8 @@ title: PropellerManager  - propellersession.cpp File Reference
 <code>#include &lt;QDebug&gt;</code><br />
 <code>#include &lt;QThread&gt;</code><br />
 <code>#include &lt;QFile&gt;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:aab62324d8cb4834c7b0f4d8629790879"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="propellersession_8cpp.html#aab62324d8cb4834c7b0f4d8629790879">TIMEOUT_HANDSHAKE</a> = 100</td></tr>
-<tr class="separator:aab62324d8cb4834c7b0f4d8629790879"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae80abe070abbc482a4f57c18e3a48010"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="propellersession_8cpp.html#ae80abe070abbc482a4f57c18e3a48010">TIMEOUT_DOWNLOAD</a> = 5000</td></tr>
-<tr class="separator:ae80abe070abbc482a4f57c18e3a48010"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39093dd6485d0209c2ad6db29a8cfc74"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="propellersession_8cpp.html#a39093dd6485d0209c2ad6db29a8cfc74">TIMEOUT_VERSION</a> = 500</td></tr>
-<tr class="separator:a39093dd6485d0209c2ad6db29a8cfc74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<h2 class="groupheader">Variable Documentation</h2>
-<a class="anchor" id="ae80abe070abbc482a4f57c18e3a48010"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const int TIMEOUT_DOWNLOAD = 5000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aab62324d8cb4834c7b0f4d8629790879"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const int TIMEOUT_HANDSHAKE = 100</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">port</td><td>A string representing the port (e.g. '<code>/dev/ttyUSB0</code>', '<code>/./COM1</code>'). </td></tr>
-    <tr><td class="paramname">reset_gpio</td><td>Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset. </td></tr>
-    <tr><td class="paramname">useRtsReset</td><td>Use RTS for hardware reset instead of DTR; overridden by reset_gpio. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a39093dd6485d0209c2ad6db29a8cfc74"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const int TIMEOUT_VERSION = 500</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-</div><!-- contents -->
+<code>#include &lt;QElapsedTimer&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
+</div></div><!-- contents -->
 </div>
 </div>

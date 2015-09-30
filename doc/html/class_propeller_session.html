@@ -33,7 +33,7 @@ title: PropellerManager  - PropellerSession Class Reference
 </div><!--header-->
 <div class="contents">
 
-<p>an interface for connecting to and managing a single <a class="el" href="namespace_propeller.html">Propeller</a> device.  
+<p>a high-level interface for managing a single <a class="el" href="class_propeller_device.html" title="this class encapsulates a Propeller hardware device. ">PropellerDevice</a>.  
  <a href="class_propeller_session.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellersession_8h_source.html">propellersession.h</a>&gt;</code></p>
@@ -68,7 +68,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af5dbd94512dc45d167df9460f0580b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>an interface for connecting to and managing a single <a class="el" href="namespace_propeller.html">Propeller</a> device. </p>
+<div class="textblock"><p>a high-level interface for managing a single <a class="el" href="class_propeller_device.html" title="this class encapsulates a Propeller hardware device. ">PropellerDevice</a>. </p>
+<p><a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> provides a persistent environment from which to interact with the <a class="el" href="namespace_propeller.html">Propeller</a>. Any functionality relevant to the <a class="el" href="namespace_propeller.html">Propeller</a> can be performed from this class: RAM and EEPROM downloads, terminal sessions, and identification of attached hardware, can all be done without having to disconnect from the attached device.</p>
+<p>This ensures that the program always behaves as expected and makes it possible to debug the <a class="el" href="namespace_propeller.html">Propeller</a> in RAM on non-Windows platforms. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a3e1763eef3663136bdc60683093be338"></a>
 <div class="memitem">
@@ -105,6 +107,14 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">port</td><td>A string representing the port (e.g. '<code>/dev/ttyUSB0</code>', '<code>/./COM1</code>'). </td></tr>
+    <tr><td class="paramname">reset_gpio</td><td>Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset. </td></tr>
+    <tr><td class="paramname">useRtsReset</td><td>Use RTS for hardware reset instead of DTR; overridden by reset_gpio. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -136,7 +146,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Close the <a class="el" href="class_propeller_session.html" title="an interface for connecting to and managing a single Propeller device. ">PropellerSession</a>; this function is called when the <a class="el" href="class_propeller_session.html" title="an interface for connecting to and managing a single Propeller device. ">PropellerSession</a> is destroyed. </p>
+<p>Close the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a>; this function is called when the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> is destroyed. </p>
 
 </div>
 </div>
@@ -207,7 +217,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Return whether the <a class="el" href="class_propeller_session.html" title="an interface for connecting to and managing a single Propeller device. ">PropellerSession</a> is now open. </p>
+<p>Return whether the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> is now open. </p>
 
 </div>
 </div>
@@ -271,7 +281,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Upload a <a class="el" href="class_propeller_image.html" title="The PropellerImage class encapsulates the Propeller binary format. ">PropellerImage</a> object to the target. </p>
+<p>Upload a <a class="el" href="class_propeller_image.html" title="this class encapsulates the Propeller binary format. ">PropellerImage</a> object to the target. </p>
 
 </div>
 </div>
