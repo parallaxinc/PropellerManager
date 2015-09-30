@@ -174,12 +174,12 @@ int PropellerSession::version()
     device.reset();
     device.write(payload);
 
-    connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
+    connect(&device,    SIGNAL(readyRead()),this,   SLOT(read_handshake()));
 
     QEventLoop loop;
 
-    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
-
+    connect(this,       SIGNAL(finished()), &loop,  SLOT(quit()));
+    connect(&timeout,   SIGNAL(timeout()),  &loop,  SLOT(quit()));
 
     loop.exec();
 
@@ -544,7 +544,8 @@ bool PropellerSession::sendPayload(QByteArray payload)
     device.write(payload);
 
     QEventLoop loop;
-    connect(this,    SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(this,    SIGNAL(finished()),&loop, SLOT(quit()));
+    connect(&timeout,SIGNAL(timeout()), &loop, SLOT(quit()));
 
 
     loop.exec();
