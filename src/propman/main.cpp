@@ -135,56 +135,64 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
     }
 
     PropellerSession session(device,reset_pin);
-    if (!session.open())
-        error("Failed to open "+device+"!");
 
-    if (parser.positionalArguments().isEmpty())
+    if (parser.isSet(argTerm))
     {
-        if (parser.isSet(argTerm))
-            terminal(session, device);
-        else
-            error("Must provide name of binary");
+        if (!session.open())
+            error("Failed to open "+device+"!");
+
+        terminal(session, device);
     }
     else
     {
-        PropellerImage image = load_image(parser);
-
-        if (parser.isSet(argClkFreq))
+        if (parser.positionalArguments().isEmpty())
         {
-            bool ok;
-            int freq = parser.value(argClkFreq).toInt(&ok);
-            if (!ok)
-                error("Invalid clock frequency: "+parser.value(argClkFreq));
-
-            image.setClockFrequency(freq);
-            image.recalculateChecksum();
-        }
-
-        if (parser.isSet(argClkMode))
-        {
-            bool ok;
-            int mode = parser.value(argClkMode).toUInt(&ok, 16);
-            if (!image.setClockMode(mode) || !ok)
-                error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
-            image.recalculateChecksum();
-        }
-
-        if (!image.isValid())
-            error("Image is invalid!");
-
-        if (parser.isSet(argHighSpeed))
-        {
-            if (session.highSpeedUpload(image, parser.isSet(argWrite)))
-                exit(1);
+            error("Must provide name of binary");
         }
         else
         {
-            if (session.upload(image, parser.isSet(argWrite)))
-                exit(1);
-        }
+            if (!session.open())
+                error("Failed to open "+device+"!");
 
-        if (parser.isSet(argTerm))
-            terminal(session, device);
+            PropellerImage image = load_image(parser);
+
+            if (parser.isSet(argClkFreq))
+            {
+                bool ok;
+                int freq = parser.value(argClkFreq).toInt(&ok);
+                if (!ok)
+                    error("Invalid clock frequency: "+parser.value(argClkFreq));
+
+                image.setClockFrequency(freq);
+                image.recalculateChecksum();
+            }
+
+            if (parser.isSet(argClkMode))
+            {
+                bool ok;
+                int mode = parser.value(argClkMode).toUInt(&ok, 16);
+                if (!image.setClockMode(mode) || !ok)
+                    error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
+                image.recalculateChecksum();
+            }
+
+            if (!image.isValid())
+                error("Image is invalid!");
+
+            if (parser.isSet(argHighSpeed))
+            {
+                if (session.highSpeedUpload(image, parser.isSet(argWrite)))
+                    exit(1);
+            }
+            else
+            {
+                if (session.upload(image, parser.isSet(argWrite)))
+                    exit(1);
+            }
+
+            if (parser.isSet(argTerm))
+                terminal(session, device);
+        }
     }
 
     session.close();
