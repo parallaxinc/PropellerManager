@@ -2,6 +2,9 @@
 
 PROPMAN=./src/propman/propman
 
+TOTAL_FAILS=0
+TOTAL_TESTS=0
+
 test_header()
 {
     echo TEST: $1
@@ -62,11 +65,12 @@ test_fail()
 
 test_pass()
 {
+    TOTAL_TESTS=$((TOTAL_TESTS+1))
     "$@"
     local status=$?
     if [ $status -ne 0 ] ; then
         echo "test failed: $@" >&2
-        DOWNLOAD_FAILURES=$((DOWNLOAD_FAILURES+1))
+        TOTAL_FAILS=$((TOTAL_FAILS+1))
     fi
     return $status
 }
@@ -84,4 +88,4 @@ test_download './test/images/ls/Brettris.binary' 'file write' '-w'
 test_download './test/images/ls/FrappyBard.eeprom' 'EEPROM write' '-w'
 
 echo
-echo "Download Failures: $DOWNLOAD_FAILURES"
+echo "Download Failures: $TOTAL_FAILS / $TOTAL_TESTS"
