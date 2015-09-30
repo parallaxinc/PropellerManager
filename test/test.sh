@@ -37,7 +37,7 @@ test_commandline()
 test_listdevices()
 {
     echo TEST: list devices
-    if [ -z `$PROPMAN --list | grep ttyUSB` ] ; then
+    if [[ -z `$PROPMAN --list | grep 'ttyUSB\|cu.usbserial'` ]] ; then
         echo "No devices found"
         exit 1;
     fi
