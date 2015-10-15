@@ -1,160 +1,138 @@
-// GPIO.cpp is based on Guillermo A. Amaral's blink.c example as
-// featured in p1load
-
-/* blink.c
-*
-* Raspberry Pi GPIO example using sysfs interface.
-* Guillermo A. Amaral B. <g@maral.me>
-*/
-
 #include "gpio.h"
 
-extern "C"
-{
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-}
+#include <QFile>
+#include <QString>
+#include <QTextStream>
+#include <QDebug>
 
-#define BUFFER_MAX 3
-
-GPIO::GPIO(int pin, int dir)
+Gpio::Gpio(int pin, Gpio::Direction dir)
 {
     this->pin = pin;
     this->dir = dir;
-    GPIO::Export(pin);
-    GPIO::Direction(pin, dir);
+    Gpio::Export(pin);
+    Gpio::setDirection(pin, dir);
 }
 
-GPIO::~GPIO()
+Gpio::~Gpio()
 {
-    GPIO::Unexport(pin);
+    Gpio::Unexport(pin);
 }
 
-int GPIO::Read()
+int Gpio::Read()
 {
-    return GPIO::Read(pin);
+    return Gpio::Read(pin);
 }
 
-int GPIO::Write(int value)
+int Gpio::Write(int value)
 {
-    return GPIO::Write(pin, value);
+    return Gpio::Write(pin, value);
 }
 
-int GPIO::Export(int pin)
+int Gpio::Export(int pin)
 {
-    char buffer[BUFFER_MAX];
-    ssize_t bytes_written;
-    int fd;
-
-    fd = open("/sys/class/gpio/export", O_WRONLY);
-    if (-1 == fd) {
-        fprintf(stderr, "Failed to open export for writing!\n");
-        return(-1);
-    }
-
-    bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
-    if (1 != write(fd, buffer, bytes_written))
+    QFile file("/sys/class/gpio/export");
+    if (!file.open(QIODevice::WriteOnly))
     {
-        fprintf(stderr, "Failed to write value!\n");
-        return(-1);
-    }
-    close(fd);
-    return(0);
-}
-
-int GPIO::Unexport(int pin)
-{
-    char buffer[BUFFER_MAX];
-    ssize_t bytes_written;
-    int fd;
-
-    fd = open("/sys/class/gpio/unexport", O_WRONLY);
-    if (-1 == fd) {
-        fprintf(stderr, "Failed to open unexport for writing!\n");
-        return(-1);
+        qDebug() << "Failed to open export for writing.";
+        return -1;
     }
 
-    bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
-    if (1 != write(fd, buffer, bytes_written))
+    QTextStream stream(&file);
+    stream << pin << endl;
+
+    if (stream.status() != 0)
     {
-        fprintf(stderr, "Failed to write value!\n");
-        return(-1);
+        qDebug() << "Failed to write export";
     }
-    close(fd);
-    return(0);
+    return 0;
 }
 
-int GPIO::Direction(int pin, int dir)
+int Gpio::Unexport(int pin)
 {
-    static const char s_directions_str[]  = "in\0out";
-
-#define DIRECTION_MAX 35
-    char path[DIRECTION_MAX];
-    int fd;
-
-    snprintf(path, DIRECTION_MAX, "/sys/class/gpio/gpio%d/direction", pin);
-    fd = open(path, O_WRONLY);
-    if (-1 == fd) {
-        fprintf(stderr, "Failed to open gpio direction for writing!\n");
-        return(-1);
+    QFile file("/sys/class/gpio/unexport");
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Failed to open unexport for writing.";
+        return -1;
     }
 
-    if (-1 == write(fd, &s_directions_str[GPIO::In == dir ? 0 : 3], GPIO::In == dir ? 2 : 3)) {
-        fprintf(stderr, "Failed to set direction!\n");
-        return(-1);
-    }
+    QTextStream stream(&file);
+    stream << pin << endl;
 
-    close(fd);
-    return(0);
+    if (stream.status() != 0)
+    {
+        qDebug() << "Failed to write unexport";
+    }
+    return 0;
 }
 
-int GPIO::Read(int pin)
+int Gpio::setDirection(int pin, Gpio::Direction dir)
 {
-#define VALUE_MAX 30
-    char path[VALUE_MAX];
-    char value_str[3];
-    int fd;
-
-    snprintf(path, VALUE_MAX, "/sys/class/gpio/gpio%d/value", pin);
-    fd = open(path, O_RDONLY);
-    if (-1 == fd) {
-        fprintf(stderr, "Failed to open gpio value for reading!\n");
-        return(-1);
+    QString filename = QString("/sys/class/gpio/gpio%1/direction").arg(pin);
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Failed to open" << filename << "for writing.";
+        return -1;
     }
 
-    if (-1 == read(fd, value_str, 3)) {
-        fprintf(stderr, "Failed to read value!\n");
-        return(-1);
+    QTextStream stream(&file);
+    if (dir == Gpio::Out)
+    {
+        stream << "out" << endl;
+    }
+    else
+    {
+        stream << "in" << endl;
     }
 
-    close(fd);
-
-    return(atoi(value_str));
+    if (stream.status() != 0)
+    {
+        qDebug() << "Failed to write GPIO direction";
+    }
+    return 0;
 }
 
-int GPIO::Write(int pin, int value)
+int Gpio::Read(int pin)
 {
-    static const char s_values_str[] = "01";
-
-    char path[VALUE_MAX];
-    int fd;
-
-    snprintf(path, VALUE_MAX, "/sys/class/gpio/gpio%d/value", pin);
-    fd = open(path, O_WRONLY);
-    if (-1 == fd) {
-        fprintf(stderr, "Failed to open gpio value for writing!\n");
-        return(-1);
+    QString filename = QString("/sys/class/gpio/gpio%1/value").arg(pin);
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "Failed to open" << filename << "for reading.";
+        return -1;
     }
 
-    if (1 != write(fd, &s_values_str[GPIO::Low == value ? 0 : 1], 1)) {
-        fprintf(stderr, "Failed to write value!\n");
-        return(-1);
+    int value = 0;
+    QTextStream stream(&file);
+    stream >> value;
+
+    if (stream.status() != 0)
+    {
+        qDebug() << "Failed to read GPIO value";
+        return -1;
+    }
+    return 0;
+}
+
+int Gpio::Write(int pin, int value)
+{
+    QString filename = QString("/sys/class/gpio/gpio%1/value").arg(pin);
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Failed to open" << filename << "for writing.";
+        return -1;
     }
 
-    close(fd);
-    return(0);
+    QTextStream stream(&file);
+    stream << value;
+
+    if (stream.status() != 0)
+    {
+        qDebug() << "Failed to write GPIO value";
+        return -1;
+    }
+
+    return 0;
 }

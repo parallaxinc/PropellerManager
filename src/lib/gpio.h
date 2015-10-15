@@ -1,15 +1,12 @@
 #pragma once
 
-class GPIO
+class Gpio
 {
 private:
     int pin;
     int dir;
 
 public:
-    GPIO(int pin, int dir);
-    ~GPIO();
-
     enum Direction {
         In,
         Out
@@ -20,12 +17,16 @@ public:
         High
     };
 
+    Gpio(int pin, Gpio::Direction dir);
+    ~Gpio();
+
+
     int Read();
     int Write(int value);
 
     static int Export(int pin);
     static int Unexport(int pin);
-    static int Direction(int pin, int dir);
+    static int setDirection(int pin, Gpio::Direction dir);
     static int Read(int pin);
     static int Write(int pin, int value);
 };

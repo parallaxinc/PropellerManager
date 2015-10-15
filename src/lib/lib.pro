@@ -1,4 +1,5 @@
 QT += serialport
+QT -= gui
 
 TEMPLATE = lib
 TARGET = propellermanager
