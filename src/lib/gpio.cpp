@@ -4,6 +4,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QDebug>
+#include <QThread>
 
 Gpio::Gpio(int pin, Gpio::Direction dir)
 {
@@ -39,6 +40,8 @@ int Gpio::Export(int pin)
 
     QTextStream stream(&file);
     stream << pin << endl;
+
+    QThread::msleep(100);
 
     if (stream.status() != 0)
     {

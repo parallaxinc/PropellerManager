@@ -181,9 +181,9 @@ bool PropellerDevice::reset()
 
     if (reset_gpio > -1)
     {
-        GPIO gpio(reset_gpio, GPIO::Out);
-        gpio.Write(GPIO::Low);
-        gpio.Write(GPIO::High);
+        Gpio gpio(reset_gpio, Gpio::Out);
+        gpio.Write(Gpio::Low);
+        gpio.Write(Gpio::High);
     }
     else
     {
