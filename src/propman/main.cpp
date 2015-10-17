@@ -21,7 +21,9 @@ void open_session(QCommandLineParser &parser, QStringList device_list);
 void terminal(PropellerSession & session, QString device);
 void info(PropellerImage image);
 void list();
-void error(const QString & message);
+void error(const QString & text);
+void message(const QString & text);
+void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 QCommandLineOption argList      (QStringList() << "l" << "list",    QObject::tr("List available devices"));
 QCommandLineOption argWrite     (QStringList() << "w" << "write",   QObject::tr("Write program to EEPROM"));
@@ -49,13 +51,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Parallax Inc.");
     QCoreApplication::setOrganizationDomain("www.parallax.com");
     QCoreApplication::setApplicationVersion(VERSION);
-    QCoreApplication::setApplicationName(QObject::tr("Propeller Manager CLI"));
+    QCoreApplication::setApplicationName(QObject::tr("PropellerManager CLI"));
 
     QCommandLineParser parser;
     parser.addHelpOption();
     parser.addVersionOption();
     parser.setApplicationDescription(
-            QObject::tr("\nA command-line wrapper for the Propeller Manager API"
+            QObject::tr("\nA command-line wrapper for the PropellerManager API"
                 "\nCopyright 2015 by %1").arg(QCoreApplication::organizationName()));
 
     parser.addOption(argList);
@@ -83,11 +85,14 @@ int main(int argc, char *argv[])
         reset_pin = parser.value(argPin).toInt();
 
     if (reset_pin > -1)
-        qDebug() << "Using GPIO pin" << reset_pin << "for hardware reset";
+        message("Using GPIO pin "+QString::number(reset_pin)+" for hardware reset");
 
 
     if (parser.isSet(argIdentify))
     {
+        if (! device_list.length() > 0)
+            error("No devices attached!");
+
         foreach (QString d, device_list)
         {
             PropellerSession session(d,reset_pin);
@@ -208,10 +213,10 @@ void list()
 
 void terminal(PropellerSession & session, QString device)
 {
-    qDebug() << "--------------------------------------";
-    qDebug() << "Opening terminal:" << qPrintable(device);
-    qDebug() << "  (Ctrl+C to exit)";
-    qDebug() << "--------------------------------------";
+    message("--------------------------------------");
+    message("Opening terminal: "+device);
+    message("  (Ctrl+C to exit)");
+    message("--------------------------------------");
 
     session.terminal();
 }
@@ -251,8 +256,15 @@ PropellerImage load_image(QCommandLineParser &parser)
     return PropellerImage(file.readAll(),filename);
 }
 
-void error(const QString & message)
+void message(const QString & text)
 {
-    qDebug() << "Error:" << qPrintable(message);
+    fprintf(stderr, "%s\n", qPrintable(text));
+    fflush(stderr);
+}
+
+
+void error(const QString & text)
+{
+    message("ERROR: " + text);
     exit(1);
 }

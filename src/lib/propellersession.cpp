@@ -36,15 +36,22 @@ PropellerSession::PropellerSession( QString port,
     device.setPortName(port);
     device.setBaudRate(115200);
 
-    timeout.setSingleShot(true);
-    connect(&timeout, SIGNAL(timeout()), &device, SLOT(timeOver()));
+    totalTimeout.setSingleShot(true);
+    handshakeTimeout.setSingleShot(true);
+
+    connect(&totalTimeout,      SIGNAL(timeout()), &device, SLOT(timeOver()));
+    connect(&handshakeTimeout,  SIGNAL(timeout()), &device, SLOT(timeOver()));
+
+    connect(&totalTimeout,      SIGNAL(timeout()), this, SLOT(timeover()));
+
+    connect(&timeoutAlarm,      SIGNAL(timeout()), this, SIGNAL(finished()));
+    connect(&timeoutAlarm,      SIGNAL(timeout()), this, SLOT(timestamp()));
 
     connect(&device,&PropellerDevice::finished,
             this,   &PropellerSession::finished);
 
     connect(&device,&PropellerDevice::sendError,
             this,   &PropellerSession::error);
-
 }
 
 PropellerSession::~PropellerSession()
@@ -59,8 +66,8 @@ PropellerSession::~PropellerSession()
 void PropellerSession::message(QString text)
 {
     text = "[PropellerManager] "+device.portName()+": "+text;
-    printf("%s\n", qPrintable(text));
-    fflush(stdout);
+    fprintf(stderr, "%s\n", qPrintable(text));
+    fflush(stderr);
 }
 
 void PropellerSession::error(QString text)
@@ -135,6 +142,7 @@ void PropellerSession::read_handshake()
 //                    );
     if (device.bytesAvailable() == protocol.reply().size() + 4)
     {
+        handshakeTimeout.stop();
         if (device.read(protocol.reply().size()) != protocol.reply())
         {
             error("Handshake invalid");
@@ -169,7 +177,8 @@ int PropellerSession::version()
     QByteArray payload = protocol.buildRequest(Command::Shutdown);
 
     int timeout_payload = device.calculateTimeout(payload.size());
-    timeout.start(timeout_payload);
+    totalTimeout.start(timeout_payload);
+    handshakeTimeout.start(timeout_payload);
 
     device.reset();
     device.write(payload);
@@ -178,8 +187,7 @@ int PropellerSession::version()
 
     QEventLoop loop;
 
-    connect(this,       SIGNAL(finished()), &loop,  SLOT(quit()));
-    connect(&timeout,   SIGNAL(timeout()),  &loop,  SLOT(quit()));
+    connect(this,           SIGNAL(finished()), &loop,  SLOT(quit()));
 
     loop.exec();
 
@@ -248,11 +256,12 @@ int PropellerSession::upload(PropellerImage image, bool write, bool run)
 
     int command = 2*write + run;
 
+    QByteArray request = protocol.buildRequest((Command::Command) command);
+
     QByteArray payload;
-    payload.append(protocol.buildRequest((Command::Command) command));
+    payload.append(request);
     payload.append(protocol.encodeLong(image.imageSize() / 4));
     payload.append(protocol.encodeData(image.data()));
-
 
     int timeout_payload = device.calculateTimeout(payload.size());
     if (write)
@@ -260,8 +269,9 @@ int PropellerSession::upload(PropellerImage image, bool write, bool run)
                                  // the Propeller firmware only does 32kB EEPROMs
                                  // and this transaction is handled entirely by the firmware.
 
-    timeout.start(timeout_payload);
-    _elapsedtime.start();
+    totalTimeout.start(timeout_payload);
+    handshakeTimeout.start(device.calculateTimeout(request.size()));
+    elapsedTimer.start();
 
     device.reset();
 
@@ -545,47 +555,68 @@ bool PropellerSession::sendPayload(QByteArray payload)
 
     QEventLoop loop;
     connect(this,    SIGNAL(finished()),&loop, SLOT(quit()));
-    connect(&timeout,SIGNAL(timeout()), &loop, SLOT(quit()));
-
 
     loop.exec();
 
     if (!_version)
     {
-        // if handshake not received on first finish, try again
-        loop.exec();
+        // if handshake not received on first finish, wait for it
+        if (handshakeTimeout.remainingTime() == 0)
+        {
+            loop.exec();
 
-        if (!_version)
+            if (!_version)
+            {
+                error("Device not found");
+                return false;
+            }
+        }
+        else
         {
             error("Device not found");
             return false;
         }
+
     } 
 
     disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
     disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
 
-    if (timeout.remainingTime() <= 0)
+    return isUploadSuccessful();
+}
+
+bool PropellerSession::isUploadSuccessful()
+{
+    timeoutAlarm.stop();
+
+//    qDebug() << "SUCCESS?"
+//        << handshakeTimeout.remainingTime()
+//        << totalTimeout.remainingTime();
+    if (handshakeTimeout.remainingTime() == 0)
     {
-        error(QString("Download timed out after %1 ms").arg(_elapsedtime.elapsed()));
+        error("Device not found");
+        return false;
+    }
+    else if (totalTimeout.remainingTime() <= 0)
+    {
+        error(QString("Download timed out after %1 ms").arg(elapsedTimer.elapsed()));
         return false;
     }
     else if (device.error())
     {
+        error(QString("Device errored out: %1").arg(device.errorString()));
         return false;
     }
-    else
-    {
-        printTime();
-        return true;
-    }
+
+    timestamp();
+    return true;
 }
 
-void PropellerSession::printTime()
+void PropellerSession::timestamp()
 {
     message(QString("%1... %2 ms elapsed")
-            .arg(QString(40,QChar(' ')))
-            .arg(_elapsedtime.elapsed()));
+            .arg(QString(20,QChar(' ')))
+            .arg(elapsedTimer.elapsed()));
 }
 
 int PropellerSession::pollAcknowledge()
@@ -605,21 +636,13 @@ int PropellerSession::pollAcknowledge()
     disconnect(&poll,   SIGNAL(timeout()),  this,   SLOT(calibrate()));
     disconnect(&device, SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
 
+    return isUploadSuccessful();
+}
 
-    if (timeout.remainingTime() <= 0)
-    {
-        error(QString("Download timed out after %1 ms").arg(_elapsedtime.elapsed()));
-        return false;
-    }
-    else if (device.error())
-    {
-        return false;
-    }
-    else
-    {   
-        printTime();
-        return true;
-    }
+void PropellerSession::timeover()
+{
+    timeoutAlarm.setInterval(20);
+    timeoutAlarm.start();
 }
 
 void PropellerSession::read_acknowledge()

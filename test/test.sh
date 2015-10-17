@@ -7,15 +7,15 @@ TOTAL_TESTS=0
 
 test_header()
 {
-    echo TEST: $1
+    echo TEST: $1 $2
 }
 
 test_download()
 {
-    test_header "$2"
+    test_header "$2" "$1"
     test_pass $PROPMAN $3 $1
 
-    sleep 2
+    sleep 6
 }
 
 test_commandline()
@@ -24,12 +24,10 @@ test_commandline()
 
     if [[ -z `$PROPMAN 2>&1 | grep binary` ]] ; then
         echo "didn't complain about missing binary"
-        exit 1;
     fi
 
     if [[ -z `$PROPMAN -h | grep Parallax` ]] ; then
         echo "Help not printing"
-        exit 1;
     fi
 }
 
@@ -39,7 +37,6 @@ test_listdevices()
     echo TEST: list devices
     if [[ -z `$PROPMAN --list | grep 'ttyUSB\|cu.usbserial'` ]] ; then
         echo "No devices found"
-        exit 1;
     fi
 }
 
@@ -48,7 +45,6 @@ test_identifydevices()
     echo TEST: identify devices
     if [[ -z `$PROPMAN --identify | grep 'Propeller P8X32A'` ]] ; then
         echo "No Propeller devices found"
-        exit 1;
     fi
 }
 

@@ -10,7 +10,7 @@ PropellerDevice::PropellerDevice(QObject * parent)
  : QSerialPort(parent)
 {
     resource_error_count = 0;
-    _minimum_timeout = 300;
+    _minimum_timeout = 400;
 
     setSettingsRestoredOnClose(false);
     useDtrReset();
@@ -52,6 +52,7 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
             clearError();
             break;
         case QSerialPort::TimeoutError:                         // 12
+            emit finished();
             break;
         case QSerialPort::ParityError:                          // 4
         case QSerialPort::FramingError:                         // 5
@@ -113,7 +114,7 @@ void PropellerDevice::setMinimumTimeout(quint32 milliseconds)
 }
 
 /**
-    The timeout period is calculated as follows.
+    The total timeout period is calculated as follows.
     
         timeout = bytes * bits_per_character / bits_per_second
                         * (1000ms / 1s) * safety_factor / 10

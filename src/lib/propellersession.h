@@ -38,11 +38,12 @@ private:
 
     bool sendPayload(QByteArray payload);
     int pollAcknowledge();
-    void printTime();
 
-    QTimer timeout;
+    QTimer totalTimeout;
+    QTimer handshakeTimeout;
+    QTimer timeoutAlarm;
     QTimer poll;
-    QElapsedTimer _elapsedtime;
+    QElapsedTimer elapsedTimer;
     Input::Console console;
 
 signals:
@@ -55,6 +56,8 @@ private slots:
     void write_terminal(const QString & text);
 
     void calibrate();
+    void timeover();
+    void timestamp();
 
     void message(QString text);
     void error(QString text);
@@ -69,6 +72,7 @@ public:
     void close();
     int version();
     int upload(PropellerImage image, bool write=false, bool run=true);
+    bool isUploadSuccessful();
     int highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
     int terminal();
 };
