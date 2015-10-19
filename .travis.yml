@@ -3,14 +3,18 @@ services:
     - docker
 cache: apt
 language: cpp
-cache: apt
+addons:
+  apt:
+    packages:
+      - cppcheck
+      - libudev-dev
 matrix:
   include:
-  - compiler: gcc
-  - compiler: clang
+  - os: linux
+    compiler: clang
     env: QMAKESPEC=linux-clang
 before_install:
-- sudo -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install qt5-default libqt5serialport5-dev zlib1g-dev libudev-dev cppcheck
+- sudo -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install qt5-default libqt5serialport5-dev
 - qmake -v
 script:
 - qmake
