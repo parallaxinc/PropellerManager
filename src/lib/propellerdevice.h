@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QSerialPort>
+#include <QStringList>
 
 /**
     @class PropellerDevice

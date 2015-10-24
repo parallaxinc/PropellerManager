@@ -1,10 +1,7 @@
 #pragma once
 
 #include <QTimer>
-#include <QStringList>
-
-#include <QList>
-#include <QSerialPortInfo>
+#include "propellerdevice.h"
 
 
 class PortMonitor : public QObject
@@ -14,28 +11,14 @@ class PortMonitor : public QObject
     QTimer timer;
     QStringList ports;
 
-    QStringList enumeratePorts()
-    {
-        QStringList list;
-        QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-        foreach(QSerialPortInfo port, ports)
-        {
-            list.append(port.portName());
-        }
-        return list;
-    }
-
-
 private slots:
     void checkPorts()
     {
-        QStringList newports = enumeratePorts();
-
-        newports = enumeratePorts();
+        QStringList newports = PropellerDevice::list();
 
         if(ports != newports)
         {
-            emit portChanged();
+            emit portChanged(newports);
             ports = newports;
         }
     }
@@ -56,6 +39,6 @@ public:
     }
 
 signals:
-    void portChanged();
+    void portChanged(const QStringList &);
 
 };
