@@ -144,6 +144,23 @@ quint32 PropellerDevice::calculateTimeout(quint32 bytes, quint32 safety_factor)
 }
 
 /**
+    Set the reset strategy for your device.
+    */
+
+void PropellerDevice::useReset(const QString & name, int pin)
+{
+    if (_reset_defaults.contains(name))
+    {
+        _reset = name;
+        _reset_gpio = pin;
+    }
+    else
+    {
+        qDebug() << "Invalid reset type:" << name;
+    }
+}
+
+/**
     Use the default reset strategy for your device.
 
     Most Parallax products use DTR for reset,
@@ -158,7 +175,6 @@ void PropellerDevice::useDefaultReset()
 {
     foreach (QString s, _reset_defaults.keys())
     {
-        qDebug() << portName() << s;
         if (portName().startsWith(s))
         {
             _reset = _reset_defaults[s];
