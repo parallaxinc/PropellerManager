@@ -159,10 +159,8 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
         }
         else
         {
-            if (!session.open())
-                error("Failed to open "+device+"!");
-
             PropellerImage image = load_image(parser);
+
 
             if (parser.isSet(argClkFreq))
             {
@@ -186,6 +184,11 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
 
             if (!image.isValid())
                 error("Image is invalid!");
+
+
+            if (!session.open())
+                error("Failed to open "+device+"!");
+
 
             if (parser.isSet(argHighSpeed))
             {
