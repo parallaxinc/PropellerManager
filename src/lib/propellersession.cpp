@@ -15,23 +15,11 @@
   */
 
 PropellerSession::PropellerSession( QString port,
-                                    int reset_gpio,
-                                    bool useRtsReset,
                                     QObject * parent)
     : QObject(parent)
 {
     _version = 0;
     _ack     = 0;
-
-    if (reset_gpio > -1)
-    {
-        device.useGpioReset(reset_gpio);
-    }
-    else
-    {
-        if (useRtsReset)
-            device.useRtsReset();
-    }
 
     device.setPortName(port);
     device.setBaudRate(115200);
@@ -561,7 +549,7 @@ bool PropellerSession::sendPayload(QByteArray payload)
     if (!_version)
     {
         // if handshake not received on first finish, wait for it
-        if (handshakeTimeout.remainingTime() == 0)
+        if (handshakeTimeout.remainingTime() >= totalTimeout.remainingTime())
         {
             loop.exec();
 

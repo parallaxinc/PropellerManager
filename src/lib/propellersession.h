@@ -64,7 +64,7 @@ private slots:
 
 public:
 
-    PropellerSession(QString port, int reset_gpio=-1, bool useRtsReset = false, QObject * parent = 0);
+    PropellerSession(QString port, QObject * parent = 0);
     ~PropellerSession();
 
     bool open();

@@ -2,6 +2,7 @@
 
 #include <QSerialPort>
 #include <QStringList>
+#include <QHash>
 
 /**
     @class PropellerDevice
@@ -19,9 +20,11 @@ class PropellerDevice
     Q_OBJECT
 
     int resource_error_count;
-    int reset_gpio;
-    int use_rts_reset;
     quint32 _minimum_timeout;
+
+    QString _reset;
+    QHash<QString, QString> _reset_defaults;
+    int _reset_gpio;
 
 public:
     PropellerDevice(QObject * parent = 0);
@@ -30,9 +33,9 @@ public:
 
     static QStringList list();
     bool reset();
-    void useGpioReset(int pin);
-    void useRtsReset();
-    void useDtrReset();
+    void useReset(const QString & name, int pin = 17);
+    void useDefaultReset();
+    void setPortName(const QString & name);
 
     quint32 calculateTimeout(quint32 bytes, quint32 safety_factor = 15);
     quint32 minimumTimeout();

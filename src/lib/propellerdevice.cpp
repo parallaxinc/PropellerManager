@@ -13,7 +13,14 @@ PropellerDevice::PropellerDevice(QObject * parent)
     _minimum_timeout = 400;
 
     setSettingsRestoredOnClose(false);
-    useDtrReset();
+
+    _reset_defaults["ttyAMA"]   = "gpio";
+    _reset_defaults["ttyS"]     = "dtr";
+    _reset_defaults["ttyUSB"]   = "dtr";
+
+    _reset_gpio = 17;
+
+    useDefaultReset();
 
     connect(this,SIGNAL(error(QSerialPort::SerialPortError)),
             this,  SLOT(handleError(QSerialPort::SerialPortError))); 
@@ -35,6 +42,13 @@ void PropellerDevice::writeBufferEmpty()
         if (!bytesAvailable())
             emit finished();
     }
+}
+
+
+void PropellerDevice::setPortName(const QString & name)
+{
+    QSerialPort::setPortName(name);
+    useDefaultReset();
 }
 
 
@@ -130,42 +144,28 @@ quint32 PropellerDevice::calculateTimeout(quint32 bytes, quint32 safety_factor)
 }
 
 /**
-    Use a GPIO pin for hardware reset if available.
+    Use the default reset strategy for your device.
+
+    Most Parallax products use DTR for reset,
+    but some third-party boards use RTS as the reset pin.
 
     Raspberry Pi builds of PropellerManager are configured to use
     GPIO reset by default for as this is the hardware configuration
     of the Propeller HAT.
     */
-void PropellerDevice::useGpioReset(int pin)
+
+void PropellerDevice::useDefaultReset()
 {
-    reset_gpio = pin;
-    use_rts_reset = false;
-}
-
-/**
-    Use RTS for hardware reset if available. Most Parallax products use DTR for reset,
-    but some third-party boards use RTS as the reset pin.
-
-    Refer to your board schematic for more information.
-    */
-
-void PropellerDevice::useRtsReset()
-{
-    reset_gpio = -1;
-    use_rts_reset = true;
-}
-
-/**
-    Use DTR for hardware reset if available. Most Parallax products use DTR for reset,
-    but some third-party boards use RTS as the reset pin.
-
-    Refer to your board schematic for more information.
-    */
-
-void PropellerDevice::useDtrReset()
-{
-    reset_gpio = -1;
-    use_rts_reset = false;
+    foreach (QString s, _reset_defaults.keys())
+    {
+        qDebug() << portName() << s;
+        if (portName().startsWith(s))
+        {
+            _reset = _reset_defaults[s];
+            return;
+        }
+    }
+    _reset = "dtr";
 }
 
 /**
@@ -180,23 +180,27 @@ bool PropellerDevice::reset()
 {
     clear(QSerialPort::Output);
 
-    if (reset_gpio > -1)
+    if (_reset == "gpio")
     {
-        Gpio gpio(reset_gpio, Gpio::Out);
+        Gpio gpio(_reset_gpio, Gpio::Out);
         gpio.Write(Gpio::Low);
         gpio.Write(Gpio::High);
     }
     else
     {
-        if (use_rts_reset)
+        if (_reset == "rts")
         {
             setRequestToSend(true);
             setRequestToSend(false);
         }
-        else
+        else if (_reset == "dtr")
         {
             setDataTerminalReady(true);
             setDataTerminalReady(false);
+        } 
+        else
+        {
+            qDebug() << "Unknown reset strategy:" << _reset;
         }
     }
 

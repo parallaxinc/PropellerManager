@@ -9,20 +9,19 @@ class PortMonitor : public QObject
     Q_OBJECT
 
     QTimer timer;
-    QStringList ports;
+    QStringList _ports;
 
 private slots:
     void checkPorts()
     {
         QStringList newports = PropellerDevice::list();
 
-        if(ports != newports)
+        if(_ports != newports)
         {
-            emit portChanged(newports);
-            ports = newports;
+            _ports = newports;
+            emit portsChanged();
         }
     }
-
 
 public:
     explicit PortMonitor(QObject *parent = 0)
@@ -38,7 +37,12 @@ public:
         disconnect(&timer, SIGNAL(timeout()), this, SLOT(checkPorts()));
     }
 
+    const QStringList & ports()
+    {
+        return _ports;
+    }
+
 signals:
-    void portChanged(const QStringList &);
+    void portsChanged();
 
 };

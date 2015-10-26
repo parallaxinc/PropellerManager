@@ -25,6 +25,8 @@ void error(const QString & text);
 void message(const QString & text);
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
+int reset_pin = -1;
+
 QCommandLineOption argList      (QStringList() << "l" << "list",    QObject::tr("List available devices"));
 QCommandLineOption argWrite     (QStringList() << "w" << "write",   QObject::tr("Write program to EEPROM"));
 QCommandLineOption argDevice    (QStringList() << "d" << "device",  QObject::tr("Device to program (default: first system device)"), "DEV");
@@ -35,12 +37,6 @@ QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr(
 QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download (see Propeller datasheet for supported clock modes)"), "MODE");
 QCommandLineOption argClkFreq   (QStringList() << "clkfreq",        QObject::tr("Change clock frequency before download"), "FREQ");
 QCommandLineOption argHighSpeed (QStringList() << "ultrafast",      QObject::tr("Enable two-stage high-speed mode (experimental)"));
-
-#if defined(Q_PROCESSOR_ARM_V6) && defined(Q_OS_LINUX)
-    int reset_pin = 17;
-#else
-    int reset_pin = -1;
-#endif
 
 QStringList device_list = PropellerDevice::list();
 
@@ -81,8 +77,15 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+
     if (!parser.value(argPin).isEmpty())
-        reset_pin = parser.value(argPin).toInt();
+    {
+        bool ok;
+        reset_pin = parser.value(argPin).toInt(&ok);
+        if (!ok)
+            error("Invalid GPIO pin passed");
+    }
+
 
     if (reset_pin > -1)
         message("Using GPIO pin "+QString::number(reset_pin)+" for hardware reset");
@@ -95,7 +98,7 @@ int main(int argc, char *argv[])
 
         foreach (QString d, device_list)
         {
-            PropellerSession session(d,reset_pin);
+            PropellerSession session(d);
 
             if (!session.open())
                 continue;
@@ -139,7 +142,7 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
             error("Device '"+device+"' not available");
     }
 
-    PropellerSession session(device,reset_pin);
+    PropellerSession session(device);
 
     if (parser.isSet(argTerm))
     {

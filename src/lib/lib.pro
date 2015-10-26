@@ -8,6 +8,7 @@ CONFIG += staticlib
 CONFIG -= debug_and_release
 
 SOURCES += \
+    propellermanager.cpp \
     propellersession.cpp \
     propellerimage.cpp \
     propellerdevice.cpp \
@@ -15,6 +16,7 @@ SOURCES += \
     gpio.cpp \
 
 HEADERS += \
+    propellermanager.h \
     propellersession.h \
     propellerimage.h \
     propellerdevice.h \
