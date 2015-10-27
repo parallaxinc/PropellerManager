@@ -23,4 +23,3 @@ HEADERS += \
     propellerprotocol.h \
     gpio.h \
     input_console.h \
-    portmonitor.h \
