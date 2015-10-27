@@ -89,7 +89,7 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
 }
 
 /**
-    Open the PropellerSession for use.
+    Open the PropellerDevice for use.
   */
 bool PropellerDevice::open()
 {

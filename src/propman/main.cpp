@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "propellersession.h"
+#include "propellerloader.h"
 #include "propellerimage.h"
 #include "propellerdevice.h"
 
@@ -17,8 +17,8 @@
 #endif
 
 PropellerImage load_image(QCommandLineParser &parser);
-void open_session(QCommandLineParser &parser, QStringList device_list);
-void terminal(PropellerSession & session, QString device);
+void open_loader(QCommandLineParser &parser, QStringList device_list);
+void terminal(PropellerLoader & loader, QString device);
 void info(PropellerImage image);
 void list();
 void error(const QString & text);
@@ -98,12 +98,12 @@ int main(int argc, char *argv[])
 
         foreach (QString d, device_list)
         {
-            PropellerSession session(d);
+            PropellerLoader loader(d);
 
-            if (!session.open())
+            if (!loader.open())
                 continue;
 
-            switch (session.version())
+            switch (loader.version())
             {
                 case 1:
                     printf("[ %-30s ] %s\n", qPrintable(d), "Propeller P8X32A");
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
             }
 
             fflush(stdout);
-            session.close();
+            loader.close();
         }
     }
     else if (parser.isSet(argInfo))
@@ -123,13 +123,13 @@ int main(int argc, char *argv[])
     }
     else
     {
-        open_session(parser, device_list);
+        open_loader(parser, device_list);
     }
 
     return 0;
 }
 
-void open_session(QCommandLineParser &parser, QStringList device_list)
+void open_loader(QCommandLineParser &parser, QStringList device_list)
 {
     if (device_list.isEmpty())
         error("No device available for download!");
@@ -142,14 +142,14 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
             error("Device '"+device+"' not available");
     }
 
-    PropellerSession session(device);
+    PropellerLoader loader(device);
 
     if (parser.isSet(argTerm))
     {
-        if (!session.open())
+        if (!loader.open())
             error("Failed to open "+device+"!");
 
-        terminal(session, device);
+        terminal(loader, device);
     }
     else
     {
@@ -186,27 +186,27 @@ void open_session(QCommandLineParser &parser, QStringList device_list)
                 error("Image is invalid!");
 
 
-            if (!session.open())
+            if (!loader.open())
                 error("Failed to open "+device+"!");
 
 
             if (parser.isSet(argHighSpeed))
             {
-                if (session.highSpeedUpload(image, parser.isSet(argWrite)))
+                if (loader.highSpeedUpload(image, parser.isSet(argWrite)))
                     exit(1);
             }
             else
             {
-                if (session.upload(image, parser.isSet(argWrite)))
+                if (loader.upload(image, parser.isSet(argWrite)))
                     exit(1);
             }
 
             if (parser.isSet(argTerm))
-                terminal(session, device);
+                terminal(loader, device);
         }
     }
 
-    session.close();
+    loader.close();
 }
 
 void list()
@@ -217,14 +217,14 @@ void list()
     }
 }
 
-void terminal(PropellerSession & session, QString device)
+void terminal(PropellerLoader & loader, QString device)
 {
     message("--------------------------------------");
     message("Opening terminal: "+device);
     message("  (Ctrl+C to exit)");
     message("--------------------------------------");
 
-    session.terminal();
+    loader.terminal();
 }
 
 void info(PropellerImage image)

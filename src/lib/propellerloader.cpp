@@ -1,4 +1,4 @@
-#include "propellersession.h"
+#include "propellerloader.h"
 
 #include <QEventLoop>
 #include <QDebug>
@@ -14,7 +14,7 @@
   \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
   */
 
-PropellerSession::PropellerSession( QString port,
+PropellerLoader::PropellerLoader( QString port,
                                     QObject * parent)
     : QObject(parent)
 {
@@ -36,34 +36,34 @@ PropellerSession::PropellerSession( QString port,
     connect(&timeoutAlarm,      SIGNAL(timeout()), this, SLOT(timestamp()));
 
     connect(&device,&PropellerDevice::finished,
-            this,   &PropellerSession::finished);
+            this,   &PropellerLoader::finished);
 
     connect(&device,&PropellerDevice::sendError,
-            this,   &PropellerSession::error);
+            this,   &PropellerLoader::error);
 }
 
-PropellerSession::~PropellerSession()
+PropellerLoader::~PropellerLoader()
 {
     device.close();
 }
 
 /**
-  Open the PropellerSession for use.
+  Open the PropellerLoader for use.
   */
 
-void PropellerSession::message(QString text)
+void PropellerLoader::message(QString text)
 {
     text = "[PropellerManager] "+device.portName()+": "+text;
     fprintf(stderr, "%s\n", qPrintable(text));
     fflush(stderr);
 }
 
-void PropellerSession::error(QString text)
+void PropellerLoader::error(QString text)
 {
     message("ERROR: "+text);
 }
 
-bool PropellerSession::open()
+bool PropellerLoader::open()
 {
     if (!device.open())
     {
@@ -74,19 +74,19 @@ bool PropellerSession::open()
 }
 
 /**
-  Return whether the PropellerSession is now open.
+  Return whether the PropellerLoader is now open.
   */
 
-bool PropellerSession::isOpen()
+bool PropellerLoader::isOpen()
 {
     return device.isOpen();
 }
 
 /**
-  Close the PropellerSession; this function is called when the PropellerSession is destroyed.
+  Close the PropellerLoader; this function is called when the PropellerLoader is destroyed.
   */
 
-void PropellerSession::close()
+void PropellerLoader::close()
 {
     device.close();
 }
@@ -106,23 +106,23 @@ void PropellerSession::close()
     - TBD
   */
 
-void PropellerSession::calibrate()
+void PropellerLoader::calibrate()
 {
     writeByte(0xf9);
 }
 
-void PropellerSession::writeByte(quint8 value)
+void PropellerLoader::writeByte(quint8 value)
 {
     device.putChar(value);
 }
 
-void PropellerSession::writeLong(quint32 value)
+void PropellerLoader::writeLong(quint32 value)
 {
     device.write(protocol.encodeLong(value));
 }
 
 
-void PropellerSession::read_handshake()
+void PropellerLoader::read_handshake()
 {
 //    message(QString("Receiving handshake (%1/%2B)")
 //                    .arg(device.bytesAvailable())
@@ -160,7 +160,7 @@ void PropellerSession::read_handshake()
   
   \return The version number, or 0 if not found.
   */
-int PropellerSession::version()
+int PropellerLoader::version()
 {
     QByteArray payload = protocol.buildRequest(Command::Shutdown);
 
@@ -184,13 +184,13 @@ int PropellerSession::version()
     return _version;
 }
 
-void PropellerSession::write_terminal(const QString & text)
+void PropellerLoader::write_terminal(const QString & text)
 {
     device.write(qPrintable(text));
     device.write("\r");
 }
 
-void PropellerSession::read_terminal()
+void PropellerLoader::read_terminal()
 {
     foreach (char c, device.readAll())
     {
@@ -211,7 +211,7 @@ void PropellerSession::read_terminal()
   Open a device terminal on this device.
   */
 
-int PropellerSession::terminal()
+int PropellerLoader::terminal()
 {
     device.setBaudRate(115200);
 
@@ -232,7 +232,7 @@ int PropellerSession::terminal()
   Upload a PropellerImage object to the target.
   */
 
-int PropellerSession::upload(PropellerImage image, bool write, bool run)
+int PropellerLoader::upload(PropellerImage image, bool write, bool run)
 {
     device.setBaudRate(115200);
 
@@ -260,8 +260,6 @@ int PropellerSession::upload(PropellerImage image, bool write, bool run)
     totalTimeout.start(timeout_payload);
     handshakeTimeout.start(device.calculateTimeout(request.size()));
     elapsedTimer.start();
-
-    device.reset();
 
     message(QString("Downloading image (%1 bytes, %2 ms)").arg(image.imageSize()).arg(timeout_payload));
     if (!sendPayload(payload))
@@ -306,7 +304,7 @@ int PropellerSession::upload(PropellerImage image, bool write, bool run)
 }
 
 
-int PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run)
+int PropellerLoader::highSpeedUpload(PropellerImage image, bool write, bool run)
 {
     QFile file("miniloaders/miniloader.binary");
 
@@ -534,11 +532,12 @@ int PropellerSession::highSpeedUpload(PropellerImage image, bool write, bool run
     This function makes two attempts to receive the handshake and then gives up.
   */
 
-bool PropellerSession::sendPayload(QByteArray payload)
+bool PropellerLoader::sendPayload(QByteArray payload)
 {
     connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
     connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
+    device.reset();
     device.write(payload);
 
     QEventLoop loop;
@@ -573,10 +572,9 @@ bool PropellerSession::sendPayload(QByteArray payload)
     return isUploadSuccessful();
 }
 
-bool PropellerSession::isUploadSuccessful()
+bool PropellerLoader::isUploadSuccessful()
 {
     timeoutAlarm.stop();
-
 //    qDebug() << "SUCCESS?"
 //        << handshakeTimeout.remainingTime()
 //        << totalTimeout.remainingTime();
@@ -600,14 +598,14 @@ bool PropellerSession::isUploadSuccessful()
     return true;
 }
 
-void PropellerSession::timestamp()
+void PropellerLoader::timestamp()
 {
     message(QString("%1... %2 ms elapsed")
             .arg(QString(20,QChar(' ')))
             .arg(elapsedTimer.elapsed()));
 }
 
-int PropellerSession::pollAcknowledge()
+int PropellerLoader::pollAcknowledge()
 {
     connect(&device,    SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
     connect(&poll,      SIGNAL(timeout()),  this,   SLOT(calibrate()));
@@ -627,13 +625,13 @@ int PropellerSession::pollAcknowledge()
     return isUploadSuccessful();
 }
 
-void PropellerSession::timeover()
+void PropellerLoader::timeover()
 {
     timeoutAlarm.setInterval(20);
     timeoutAlarm.start();
 }
 
-void PropellerSession::read_acknowledge()
+void PropellerLoader::read_acknowledge()
 {
     if (device.bytesAvailable())
     {

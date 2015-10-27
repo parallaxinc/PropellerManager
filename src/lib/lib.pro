@@ -9,7 +9,7 @@ CONFIG -= debug_and_release
 
 SOURCES += \
     propellermanager.cpp \
-    propellersession.cpp \
+    propellerloader.cpp \
     propellerimage.cpp \
     propellerdevice.cpp \
     propellerprotocol.cpp \
@@ -17,7 +17,7 @@ SOURCES += \
 
 HEADERS += \
     propellermanager.h \
-    propellersession.h \
+    propellerloader.h \
     propellerimage.h \
     propellerdevice.h \
     propellerprotocol.h \

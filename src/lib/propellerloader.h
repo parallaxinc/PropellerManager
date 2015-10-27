@@ -9,11 +9,11 @@
 #include <QElapsedTimer>
 
 /**
-@class PropellerSession 
+@class PropellerLoader 
 
 @brief a high-level interface for managing a single PropellerDevice.
 
-PropellerSession provides a persistent environment from which to
+PropellerLoader provides a persistent environment from which to
 interact with the Propeller. Any functionality relevant to the Propeller
 can be performed from this class: RAM and EEPROM downloads, 
 terminal sessions, and identification of attached hardware, can all be
@@ -22,7 +22,7 @@ done without having to disconnect from the attached device.
 This ensures that the program always behaves as expected and makes it
 possible to debug the Propeller in RAM on non-Windows platforms.
 */
-class PropellerSession : public QObject
+class PropellerLoader : public QObject
 {
     Q_OBJECT
 
@@ -64,8 +64,8 @@ private slots:
 
 public:
 
-    PropellerSession(QString port, QObject * parent = 0);
-    ~PropellerSession();
+    PropellerLoader(QString port, QObject * parent = 0);
+    ~PropellerLoader();
 
     bool open();
     bool isOpen();

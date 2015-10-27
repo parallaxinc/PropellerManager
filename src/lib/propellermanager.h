@@ -26,6 +26,7 @@ public:
 //    bool attach(PropellerObject * object, const QString & portname);
 //    bool detach(PropellerObject * object, const QString & portname);
 
+
 public slots:
     void checkPorts();
 
