@@ -41,7 +41,7 @@ public:
     quint32 minimumTimeout();
     void setMinimumTimeout(quint32 milliseconds);
 
-private slots:
+public slots:
     void handleError(QSerialPort::SerialPortError e);
     void writeBufferEmpty();
     void timeOver();

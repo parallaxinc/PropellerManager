@@ -138,8 +138,8 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
     if (!parser.value(argDevice).isEmpty())
     {
         device = parser.value(argDevice);
-        if (!device_list.contains(device))
-            error("Device '"+device+"' not available");
+//        if (!device_list.contains(device))
+//            error("Device '"+device+"' not available");
     }
 
     PropellerLoader loader(device);

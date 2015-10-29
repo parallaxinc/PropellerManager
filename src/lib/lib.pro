@@ -6,9 +6,11 @@ TARGET = propellermanager
 CONFIG += staticlib
 
 CONFIG -= debug_and_release
+CONFIG += debug
 
 SOURCES += \
     propellermanager.cpp \
+    propellersession.cpp \
     propellerloader.cpp \
     propellerimage.cpp \
     propellerdevice.cpp \
@@ -17,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     propellermanager.h \
+    propellersession.h \
     propellerloader.h \
     propellerimage.h \
     propellerdevice.h \

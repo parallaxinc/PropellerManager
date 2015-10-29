@@ -37,8 +37,6 @@ void PropellerDevice::writeBufferEmpty()
 {
     if (!bytesToWrite())
     {
-//        qDebug() << "Download finished";
-
         if (!bytesAvailable())
             emit finished();
     }

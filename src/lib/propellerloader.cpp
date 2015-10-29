@@ -21,30 +21,30 @@ PropellerLoader::PropellerLoader( QString port,
     _version = 0;
     _ack     = 0;
 
-    device.setPortName(port);
-    device.setBaudRate(115200);
+    session = manager.newSession(port);
+    session->setBaudRate(115200);
 
     totalTimeout.setSingleShot(true);
     handshakeTimeout.setSingleShot(true);
 
-    connect(&totalTimeout,      SIGNAL(timeout()), &device, SLOT(timeOver()));
-    connect(&handshakeTimeout,  SIGNAL(timeout()), &device, SLOT(timeOver()));
+    connect(&totalTimeout,      SIGNAL(timeout()), session, SLOT(timeOver()));
+    connect(&handshakeTimeout,  SIGNAL(timeout()), session, SLOT(timeOver()));
 
     connect(&totalTimeout,      SIGNAL(timeout()), this, SLOT(timeover()));
 
     connect(&timeoutAlarm,      SIGNAL(timeout()), this, SIGNAL(finished()));
-    connect(&timeoutAlarm,      SIGNAL(timeout()), this, SLOT(timestamp()));
 
-    connect(&device,&PropellerDevice::finished,
+    connect(session,&PropellerSession::finished,
             this,   &PropellerLoader::finished);
 
-    connect(&device,&PropellerDevice::sendError,
+    connect(session,&PropellerSession::sendError,
             this,   &PropellerLoader::error);
 }
 
 PropellerLoader::~PropellerLoader()
 {
-    device.close();
+    session->close();
+    delete session;
 }
 
 /**
@@ -53,7 +53,7 @@ PropellerLoader::~PropellerLoader()
 
 void PropellerLoader::message(QString text)
 {
-    text = "[PropellerManager] "+device.portName()+": "+text;
+    text = "[PropellerManager] "+session->portName()+": "+text;
     fprintf(stderr, "%s\n", qPrintable(text));
     fflush(stderr);
 }
@@ -65,9 +65,9 @@ void PropellerLoader::error(QString text)
 
 bool PropellerLoader::open()
 {
-    if (!device.open())
+    if (!session->open())
     {
-        error("Device failed to open: "+device.errorString());
+        error("Device failed to open: "+session->errorString());
         return false;
     }
     return true;
@@ -79,7 +79,7 @@ bool PropellerLoader::open()
 
 bool PropellerLoader::isOpen()
 {
-    return device.isOpen();
+    return session->isOpen();
 }
 
 /**
@@ -88,11 +88,11 @@ bool PropellerLoader::isOpen()
 
 void PropellerLoader::close()
 {
-    device.close();
+    session->close();
 }
 
 /**
-  This function sends a reset to the connected device using
+  This function sends a reset to the connected session using
   whatever method is available.
 
   Methods supported:
@@ -113,31 +113,27 @@ void PropellerLoader::calibrate()
 
 void PropellerLoader::writeByte(quint8 value)
 {
-    device.putChar(value);
+    session->putChar(value);
 }
 
 void PropellerLoader::writeLong(quint32 value)
 {
-    device.write(protocol.encodeLong(value));
+    session->write(protocol.encodeLong(value));
 }
 
 
 void PropellerLoader::read_handshake()
 {
-//    message(QString("Receiving handshake (%1/%2B)")
-//                    .arg(device.bytesAvailable())
-//                    .arg(protocol.reply().size() + 4)
-//                    );
-    if (device.bytesAvailable() == protocol.reply().size() + 4)
+    if (session->bytesAvailable() == protocol.reply().size() + 4)
     {
         handshakeTimeout.stop();
-        if (device.read(protocol.reply().size()) != protocol.reply())
+        if (session->read(protocol.reply().size()) != protocol.reply())
         {
             error("Handshake invalid");
             emit finished();
         }
 
-        QByteArray versiondata = device.read(4);
+        QByteArray versiondata = session->read(4);
 
         _version = 0;
         for (int i = 0; i < 4; i++)
@@ -146,7 +142,7 @@ void PropellerLoader::read_handshake()
                         ((versiondata.at(i) >> 5) & 1);
         }
 
-        if (!device.bytesToWrite())
+        if (!session->bytesToWrite())
         {
             emit finished();
         }
@@ -156,7 +152,7 @@ void PropellerLoader::read_handshake()
 }
 
 /**
-  \brief Get the version of the connected device.
+  \brief Get the version of the connected session->
   
   \return The version number, or 0 if not found.
   */
@@ -164,14 +160,14 @@ int PropellerLoader::version()
 {
     QByteArray payload = protocol.buildRequest(Command::Shutdown);
 
-    int timeout_payload = device.calculateTimeout(payload.size());
+    int timeout_payload = session->calculateTimeout(payload.size());
     totalTimeout.start(timeout_payload);
     handshakeTimeout.start(timeout_payload);
 
-    device.reset();
-    device.write(payload);
+    session->reset();
+    session->write(payload);
 
-    connect(&device,    SIGNAL(readyRead()),this,   SLOT(read_handshake()));
+    connect(session,    SIGNAL(readyRead()),this,   SLOT(read_handshake()));
 
     QEventLoop loop;
 
@@ -179,20 +175,20 @@ int PropellerLoader::version()
 
     loop.exec();
 
-    disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
+    disconnect(session, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
     return _version;
 }
 
 void PropellerLoader::write_terminal(const QString & text)
 {
-    device.write(qPrintable(text));
-    device.write("\r");
+    session->write(qPrintable(text));
+    session->write("\r");
 }
 
 void PropellerLoader::read_terminal()
 {
-    foreach (char c, device.readAll())
+    foreach (char c, session->readAll())
     {
         switch (c)
         {
@@ -208,14 +204,14 @@ void PropellerLoader::read_terminal()
 }
 
 /**
-  Open a device terminal on this device.
+  Open a session terminal on this session->
   */
 
 int PropellerLoader::terminal()
 {
-    device.setBaudRate(115200);
+    session->setBaudRate(115200);
 
-    connect(&device, SIGNAL(readyRead()), this, SLOT(read_terminal()));
+    connect(session, SIGNAL(readyRead()), this, SLOT(read_terminal()));
     connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
 
     QEventLoop loop;
@@ -223,9 +219,9 @@ int PropellerLoader::terminal()
     loop.exec();
 
     disconnect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
-    disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_terminal()));
+    disconnect(session, SIGNAL(readyRead()), this, SLOT(read_terminal()));
 
-    return device.error();
+    return session->error();
 }
 
 /**
@@ -234,7 +230,7 @@ int PropellerLoader::terminal()
 
 int PropellerLoader::upload(PropellerImage image, bool write, bool run)
 {
-    device.setBaudRate(115200);
+    session->setBaudRate(115200);
 
     if (!image.isValid())
     {
@@ -251,14 +247,14 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     payload.append(protocol.encodeLong(image.imageSize() / 4));
     payload.append(protocol.encodeData(image.data()));
 
-    int timeout_payload = device.calculateTimeout(payload.size());
+    int timeout_payload = session->calculateTimeout(payload.size());
     if (write)
         timeout_payload += 5000; // ms (EEPROM write speed is constant.
                                  // the Propeller firmware only does 32kB EEPROMs
                                  // and this transaction is handled entirely by the firmware.
 
     totalTimeout.start(timeout_payload);
-    handshakeTimeout.start(device.calculateTimeout(request.size()));
+    handshakeTimeout.start(session->calculateTimeout(request.size()));
     elapsedTimer.start();
 
     message(QString("Downloading image (%1 bytes, %2 ms)").arg(image.imageSize()).arg(timeout_payload));
@@ -296,7 +292,7 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
 
     if (run)
     {
-        device.reset();
+        session->reset();
     }
 
     message("DOWNLOAD COMPLETE");
@@ -493,7 +489,7 @@ int PropellerLoader::highSpeedUpload(PropellerImage image, bool write, bool run)
 
 
 
-    device.setBaudRate(finalbaud);
+    session->setBaudRate(finalbaud);
 
     QByteArray data = image.data();
     qDebug() << data.size();
@@ -524,7 +520,7 @@ int PropellerLoader::highSpeedUpload(PropellerImage image, bool write, bool run)
 
 
 /**
-    \brief Transmit a complete data payload on this device.
+    \brief Transmit a complete data payload on this session->
     
     sendPayload will exit even when all of the data hasn't been written to the Propeller yet,
     which is why the timeout period only accounts for the length of the handshake.
@@ -534,11 +530,11 @@ int PropellerLoader::highSpeedUpload(PropellerImage image, bool write, bool run)
 
 bool PropellerLoader::sendPayload(QByteArray payload)
 {
-    connect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
-    connect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
+    connect(session, SIGNAL(bytesWritten(qint64)), session, SLOT(writeBufferEmpty()));
+    connect(session, SIGNAL(readyRead()), this, SLOT(read_handshake()));
 
-    device.reset();
-    device.write(payload);
+    session->reset();
+    session->write(payload);
 
     QEventLoop loop;
     connect(this,    SIGNAL(finished()),&loop, SLOT(quit()));
@@ -566,8 +562,8 @@ bool PropellerLoader::sendPayload(QByteArray payload)
 
     } 
 
-    disconnect(&device, SIGNAL(readyRead()), this, SLOT(read_handshake()));
-    disconnect(&device, SIGNAL(bytesWritten(qint64)), &device, SLOT(writeBufferEmpty()));
+    disconnect(session, SIGNAL(readyRead()), this, SLOT(read_handshake()));
+    disconnect(session, SIGNAL(bytesWritten(qint64)), session, SLOT(writeBufferEmpty()));
 
     return isUploadSuccessful();
 }
@@ -588,9 +584,9 @@ bool PropellerLoader::isUploadSuccessful()
         error(QString("Download timed out after %1 ms").arg(elapsedTimer.elapsed()));
         return false;
     }
-    else if (device.error())
+    else if (session->error())
     {
-        error(QString("Device errored out: %1").arg(device.errorString()));
+        error(QString("Device errored out: %1").arg(session->errorString()));
         return false;
     }
 
@@ -607,7 +603,7 @@ void PropellerLoader::timestamp()
 
 int PropellerLoader::pollAcknowledge()
 {
-    connect(&device,    SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
+    connect(session,    SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
     connect(&poll,      SIGNAL(timeout()),  this,   SLOT(calibrate()));
 
     poll.setInterval(20);
@@ -620,7 +616,7 @@ int PropellerLoader::pollAcknowledge()
 
     disconnect(&poll);
     disconnect(&poll,   SIGNAL(timeout()),  this,   SLOT(calibrate()));
-    disconnect(&device, SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
+    disconnect(session, SIGNAL(readyRead()),this,   SLOT(read_acknowledge()));
 
     return isUploadSuccessful();
 }
@@ -633,9 +629,9 @@ void PropellerLoader::timeover()
 
 void PropellerLoader::read_acknowledge()
 {
-    if (device.bytesAvailable())
+    if (session->bytesAvailable())
     {
-        _ack = QString(device.readAll().data()).toInt();
+        _ack = QString(session->readAll().data()).toInt();
 
         if (_ack)
             message(QString("Invalid ACK: %1").arg(_ack));

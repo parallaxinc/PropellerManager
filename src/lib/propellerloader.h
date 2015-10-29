@@ -2,7 +2,7 @@
 
 #include "input_console.h"
 #include "propellerimage.h"
-#include "propellerdevice.h"
+#include "propellersession.h"
 #include "propellerprotocol.h"
 
 #include <QTimer>
@@ -11,13 +11,13 @@
 /**
 @class PropellerLoader 
 
-@brief a high-level interface for managing a single PropellerDevice.
+@brief a high-level interface for managing a single PropellerSession.
 
 PropellerLoader provides a persistent environment from which to
 interact with the Propeller. Any functionality relevant to the Propeller
 can be performed from this class: RAM and EEPROM downloads, 
 terminal sessions, and identification of attached hardware, can all be
-done without having to disconnect from the attached device.
+done without having to disconnect from the attached session.
 
 This ensures that the program always behaves as expected and makes it
 possible to debug the Propeller in RAM on non-Windows platforms.
@@ -27,7 +27,8 @@ class PropellerLoader : public QObject
     Q_OBJECT
 
 private:
-    PropellerDevice device;
+    PropellerManager manager;
+    PropellerSession * session;
     PropellerProtocol protocol;
 
     void writeByte(quint8  value);
