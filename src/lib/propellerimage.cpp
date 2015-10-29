@@ -2,6 +2,7 @@
 
 PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
+    EEPROM_SIZE = 4096 * 8;
 
     _image  = image;
     _filename = filename;
