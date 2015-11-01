@@ -1,6 +1,5 @@
 #pragma once
 
-#include "input_console.h"
 #include "propellerimage.h"
 #include "propellersession.h"
 #include "propellerprotocol.h"
@@ -27,7 +26,6 @@ class PropellerLoader : public QObject
     Q_OBJECT
 
 private:
-    PropellerManager manager;
     PropellerSession * session;
     PropellerProtocol protocol;
 
@@ -45,7 +43,8 @@ private:
     QTimer timeoutAlarm;
     QTimer poll;
     QElapsedTimer elapsedTimer;
-    Input::Console console;
+
+    bool isUploadSuccessful();
 
 signals:
     void finished();
@@ -53,8 +52,6 @@ signals:
 private slots:
     void read_handshake();
     void read_acknowledge();
-    void read_terminal();
-    void write_terminal(const QString & text);
 
     void calibrate();
     void timeover();
@@ -65,7 +62,7 @@ private slots:
 
 public:
 
-    PropellerLoader(QString port, QObject * parent = 0);
+    PropellerLoader(PropellerSession * session, QObject * parent = 0);
     ~PropellerLoader();
 
     bool open();
@@ -73,8 +70,6 @@ public:
     void close();
     int version();
     int upload(PropellerImage image, bool write=false, bool run=true);
-    bool isUploadSuccessful();
     int highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
-    int terminal();
 };
 

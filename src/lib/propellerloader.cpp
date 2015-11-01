@@ -14,14 +14,14 @@
   \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
   */
 
-PropellerLoader::PropellerLoader( QString port,
+PropellerLoader::PropellerLoader(PropellerSession * session,
                                     QObject * parent)
     : QObject(parent)
 {
     _version = 0;
     _ack     = 0;
 
-    session = manager.newSession(port);
+    this->session = session;
     session->setBaudRate(115200);
 
     totalTimeout.setSingleShot(true);
@@ -180,56 +180,13 @@ int PropellerLoader::version()
     return _version;
 }
 
-void PropellerLoader::write_terminal(const QString & text)
-{
-    session->write(qPrintable(text));
-    session->write("\r");
-}
-
-void PropellerLoader::read_terminal()
-{
-    foreach (char c, session->readAll())
-    {
-        switch (c)
-        {
-            case 10:
-            case 13:
-                fprintf(stdout,"\n");
-                break;
-            default:
-                fprintf(stdout,"%c",c);
-        }
-    }
-    fflush(stdout);
-}
-
-/**
-  Open a session terminal on this session->
-  */
-
-int PropellerLoader::terminal()
-{
-    session->setBaudRate(115200);
-
-    connect(session, SIGNAL(readyRead()), this, SLOT(read_terminal()));
-    connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
-
-    QEventLoop loop;
-    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-
-    disconnect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write_terminal(const QString &)));
-    disconnect(session, SIGNAL(readyRead()), this, SLOT(read_terminal()));
-
-    return session->error();
-}
-
 /**
   Upload a PropellerImage object to the target.
   */
 
 int PropellerLoader::upload(PropellerImage image, bool write, bool run)
 {
+//    if (!session->reserve(
     session->setBaudRate(115200);
 
     if (!image.isValid())

@@ -12,6 +12,7 @@ SOURCES += \
     propellermanager.cpp \
     propellersession.cpp \
     propellerloader.cpp \
+    propellerterminal.cpp \
     propellerimage.cpp \
     propellerdevice.cpp \
     propellerprotocol.cpp \
@@ -21,6 +22,7 @@ HEADERS += \
     propellermanager.h \
     propellersession.h \
     propellerloader.h \
+    propellerterminal.h \
     propellerimage.h \
     propellerdevice.h \
     propellerprotocol.h \

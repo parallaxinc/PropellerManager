@@ -8,9 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "propellermanager.h"
 #include "propellerloader.h"
+#include "propellerterminal.h"
 #include "propellerimage.h"
-#include "propellerdevice.h"
 
 #ifndef VERSION
 #define VERSION "0.0.0"
@@ -18,7 +19,7 @@
 
 PropellerImage load_image(QCommandLineParser &parser);
 void open_loader(QCommandLineParser &parser, QStringList device_list);
-void terminal(PropellerLoader & loader, QString device);
+void terminal(PropellerSession * session);
 void info(PropellerImage image);
 void list();
 void error(const QString & text);
@@ -27,6 +28,9 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 
 int reset_pin = -1;
 
+PropellerManager manager;
+QStringList device_list = manager.listPorts();
+
 QCommandLineOption argList      (QStringList() << "l" << "list",    QObject::tr("List available devices"));
 QCommandLineOption argWrite     (QStringList() << "w" << "write",   QObject::tr("Write program to EEPROM"));
 QCommandLineOption argDevice    (QStringList() << "d" << "device",  QObject::tr("Device to program (default: first system device)"), "DEV");
@@ -34,11 +38,10 @@ QCommandLineOption argPin       (QStringList() << "p" << "pin",     QObject::tr(
 QCommandLineOption argTerm      (QStringList() << "t" << "terminal",QObject::tr("Drop into terminal after download"));
 QCommandLineOption argIdentify  (QStringList() << "i" << "identify",QObject::tr("Identify device connected at port"));
 QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr("Print info about downloadable image"));
-QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download (see Propeller datasheet for supported clock modes)"), "MODE");
+QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download"), "MODE");
 QCommandLineOption argClkFreq   (QStringList() << "clkfreq",        QObject::tr("Change clock frequency before download"), "FREQ");
 QCommandLineOption argHighSpeed (QStringList() << "ultrafast",      QObject::tr("Enable two-stage high-speed mode (experimental)"));
 
-QStringList device_list = PropellerDevice::list();
 
 int main(int argc, char *argv[])
 {
@@ -98,7 +101,8 @@ int main(int argc, char *argv[])
 
         foreach (QString d, device_list)
         {
-            PropellerLoader loader(d);
+            PropellerSession * session = manager.newSession(d);
+            PropellerLoader loader(session);
 
             if (!loader.open())
                 continue;
@@ -138,72 +142,72 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
     if (!parser.value(argDevice).isEmpty())
     {
         device = parser.value(argDevice);
-//        if (!device_list.contains(device))
-//            error("Device '"+device+"' not available");
     }
 
-    PropellerLoader loader(device);
+    PropellerSession * session = manager.newSession(device);
+    PropellerLoader loader(session);
 
-    if (parser.isSet(argTerm))
+    if (parser.positionalArguments().isEmpty())
     {
-        if (!loader.open())
-            error("Failed to open "+device+"!");
-
-        terminal(loader, device);
-    }
-    else
-    {
-        if (parser.positionalArguments().isEmpty())
+        if (parser.isSet(argTerm))
         {
-            error("Must provide name of binary");
-        }
-        else
-        {
-            PropellerImage image = load_image(parser);
-
-
-            if (parser.isSet(argClkFreq))
-            {
-                bool ok;
-                int freq = parser.value(argClkFreq).toInt(&ok);
-                if (!ok)
-                    error("Invalid clock frequency: "+parser.value(argClkFreq));
-
-                image.setClockFrequency(freq);
-                image.recalculateChecksum();
-            }
-
-            if (parser.isSet(argClkMode))
-            {
-                bool ok;
-                int mode = parser.value(argClkMode).toUInt(&ok, 16);
-                if (!image.setClockMode(mode) || !ok)
-                    error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
-                image.recalculateChecksum();
-            }
-
-            if (!image.isValid())
-                error("Image is invalid!");
-
-
             if (!loader.open())
                 error("Failed to open "+device+"!");
 
-
-            if (parser.isSet(argHighSpeed))
-            {
-                if (loader.highSpeedUpload(image, parser.isSet(argWrite)))
-                    exit(1);
-            }
-            else
-            {
-                if (loader.upload(image, parser.isSet(argWrite)))
-                    exit(1);
-            }
-
-            if (parser.isSet(argTerm))
-                terminal(loader, device);
+            terminal(session);
+            return;
         }
+        else
+        {
+            error("Must provide name of binary");
+        }
+    }
+    else
+    {
+        PropellerImage image = load_image(parser);
+
+
+        if (parser.isSet(argClkFreq))
+        {
+            bool ok;
+            int freq = parser.value(argClkFreq).toInt(&ok);
+            if (!ok)
+                error("Invalid clock frequency: "+parser.value(argClkFreq));
+
+            image.setClockFrequency(freq);
+            image.recalculateChecksum();
+        }
+
+        if (parser.isSet(argClkMode))
+        {
+            bool ok;
+            int mode = parser.value(argClkMode).toUInt(&ok, 16);
+            if (!image.setClockMode(mode) || !ok)
+                error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
+            image.recalculateChecksum();
+        }
+
+        if (!image.isValid())
+            error("Image is invalid!");
+
+
+        if (!loader.open())
+            error("Failed to open "+device+"!");
+
+
+        if (parser.isSet(argHighSpeed))
+        {
+            if (loader.highSpeedUpload(image, parser.isSet(argWrite)))
+                exit(1);
+        }
+        else
+        {
+            if (loader.upload(image, parser.isSet(argWrite)))
+                exit(1);
+        }
+
+        if (parser.isSet(argTerm))
+            terminal(session);
     }
 
     loader.close();
@@ -217,14 +221,16 @@ void list()
     }
 }
 
-void terminal(PropellerLoader & loader, QString device)
+void terminal(PropellerSession * session)
 {
     message("--------------------------------------");
-    message("Opening terminal: "+device);
+    message("Opening terminal: ");
     message("  (Ctrl+C to exit)");
     message("--------------------------------------");
 
-    loader.terminal();
+    PropellerTerminal t(session);
+    QEventLoop loop;
+    loop.exec();
 }
 
 void info(PropellerImage image)

@@ -22,8 +22,8 @@ public:
             QObject * parent = 0);
     ~PropellerSession();
 
-    const QString & portName();
-    void setPortName(const QString & portname);
+    const       QString & portName();
+    void        setPortName(const QString & portname);
 
 public:
     bool        open();
