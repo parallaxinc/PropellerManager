@@ -14,7 +14,7 @@ PropellerManager::~PropellerManager()
 
 }
 
-PropellerSession * PropellerManager::newSession(const QString & port)
+PropellerSession * PropellerManager::session(const QString & port)
 {
     PropellerSession * s = new PropellerSession(port, this);
     return _sessions[s] = s;

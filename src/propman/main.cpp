@@ -101,13 +101,13 @@ int main(int argc, char *argv[])
 
         foreach (QString d, device_list)
         {
-            PropellerSession * session = manager.newSession(d);
+            PropellerSession * session = manager.session(d);
             PropellerLoader loader(session);
 
             switch (loader.version())
             {
                 case 1:
-                    printf("[ %-30s ] %s\n", qPrintable(d), "Propeller P8X32A");
+                    printf("%s %s\n", qPrintable(d), "Propeller P8X32A");
                     break;
                 case 0:
                 default:
@@ -140,14 +140,11 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
         device = parser.value(argDevice);
     }
 
-    PropellerSession * session = manager.newSession(device);
-    PropellerLoader loader(session);
-
     if (parser.positionalArguments().isEmpty())
     {
         if (parser.isSet(argTerm))
         {
-            terminal(session);
+            terminal(manager.session(device));
             return;
         }
         else
@@ -155,49 +152,48 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
             error("Must provide name of binary");
         }
     }
+
+    PropellerSession * session = manager.session(device);
+    PropellerLoader loader(session);
+    PropellerImage image = load_image(parser);
+
+    if (parser.isSet(argClkFreq))
+    {
+        bool ok;
+        int freq = parser.value(argClkFreq).toInt(&ok);
+        if (!ok)
+            error("Invalid clock frequency: "+parser.value(argClkFreq));
+
+        image.setClockFrequency(freq);
+        image.recalculateChecksum();
+    }
+
+    if (parser.isSet(argClkMode))
+    {
+        bool ok;
+        int mode = parser.value(argClkMode).toUInt(&ok, 16);
+        if (!image.setClockMode(mode) || !ok)
+            error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
+        image.recalculateChecksum();
+    }
+
+    if (!image.isValid())
+        error("Image is invalid!");
+
+
+    if (parser.isSet(argHighSpeed))
+    {
+        if (loader.highSpeedUpload(image, parser.isSet(argWrite)))
+            exit(1);
+    }
     else
     {
-        PropellerImage image = load_image(parser);
-
-
-        if (parser.isSet(argClkFreq))
-        {
-            bool ok;
-            int freq = parser.value(argClkFreq).toInt(&ok);
-            if (!ok)
-                error("Invalid clock frequency: "+parser.value(argClkFreq));
-
-            image.setClockFrequency(freq);
-            image.recalculateChecksum();
-        }
-
-        if (parser.isSet(argClkMode))
-        {
-            bool ok;
-            int mode = parser.value(argClkMode).toUInt(&ok, 16);
-            if (!image.setClockMode(mode) || !ok)
-                error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
-            image.recalculateChecksum();
-        }
-
-        if (!image.isValid())
-            error("Image is invalid!");
-
-
-        if (parser.isSet(argHighSpeed))
-        {
-            if (loader.highSpeedUpload(image, parser.isSet(argWrite)))
-                exit(1);
-        }
-        else
-        {
-            if (loader.upload(image, parser.isSet(argWrite)))
-                exit(1);
-        }
-
-        if (parser.isSet(argTerm))
-            terminal(session);
+        if (loader.upload(image, parser.isSet(argWrite)))
+            exit(1);
     }
+
+    if (parser.isSet(argTerm))
+        terminal(session);
 }
 
 void list()

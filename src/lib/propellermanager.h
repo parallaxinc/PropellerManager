@@ -27,14 +27,15 @@ private:
     void detach(PropellerSession * session, PropellerDevice * device);
     bool portIsBusy(PropellerSession * session, const QString & name);
 
+    PropellerDevice * getDevice(const QString & port);
+    void deleteSession(PropellerSession * session);
+    void deleteDevice(const QString & port);
+
 public:
     PropellerManager(QObject *parent = 0);
     ~PropellerManager();
 
-    PropellerSession * newSession(const QString & port);
-    PropellerDevice * getDevice(const QString & port);
-    void deleteSession(PropellerSession * session);
-    void deleteDevice(const QString & port);
+    PropellerSession * session(const QString & port);
 
 /**
     @name Port Monitoring
