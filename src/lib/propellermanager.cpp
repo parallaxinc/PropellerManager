@@ -93,7 +93,7 @@ void PropellerManager::detach(PropellerSession * session, PropellerDevice * devi
         device->close();
 }
 
-void PropellerManager::deleteSession(PropellerSession * session)
+void PropellerManager::endSession(PropellerSession * session)
 {
     if (!session) return;
 

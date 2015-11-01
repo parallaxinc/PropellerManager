@@ -24,7 +24,6 @@ void info(PropellerImage image);
 void list();
 void error(const QString & text);
 void message(const QString & text);
-void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 int reset_pin = -1;
 

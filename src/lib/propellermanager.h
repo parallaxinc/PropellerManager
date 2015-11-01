@@ -28,7 +28,6 @@ private:
     bool portIsBusy(PropellerSession * session, const QString & name);
 
     PropellerDevice * getDevice(const QString & port);
-    void deleteSession(PropellerSession * session);
     void deleteDevice(const QString & port);
 
 public:
@@ -36,6 +35,7 @@ public:
     ~PropellerManager();
 
     PropellerSession * session(const QString & port);
+    void endSession(PropellerSession * session);
 
 /**
     @name Port Monitoring

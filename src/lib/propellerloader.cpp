@@ -44,7 +44,7 @@ PropellerLoader::PropellerLoader(PropellerSession * session,
 
 PropellerLoader::~PropellerLoader()
 {
-    delete session;
+
 }
 
 /**
