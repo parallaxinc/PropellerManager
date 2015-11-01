@@ -14,6 +14,7 @@ PropellerSession::PropellerSession(
 {
     setPortName(portname);
     this->manager = manager;
+    session = "Session";
 }
 
 PropellerSession::~PropellerSession()
@@ -26,24 +27,19 @@ const QString & PropellerSession::portName()
     return port;
 }
 
-void PropellerSession::setPortName(const QString & portname)
+void PropellerSession::setPortName(const QString & name)
 {
-    port = portname;
+    port = name;
 }
 
-bool PropellerSession::open()
+const QString & PropellerSession::sessionName()
 {
-    return manager->open(this, port);
+    return session;
 }
 
-void PropellerSession::close()
+void PropellerSession::setSessionName(const QString & name)
 {
-    manager->close(this, port);
-}
-
-bool PropellerSession::isOpen()
-{
-    return manager->isOpen(this, port);
+    session = name;
 }
 
 bool PropellerSession::clear()

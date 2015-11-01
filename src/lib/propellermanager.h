@@ -2,7 +2,7 @@
 
 #include <QTimer>
 #include <QStringList>
-#include <QMap>
+#include <QHash>
 
 #include "propellerdevice.h"
 #include "propellersession.h"
@@ -16,9 +16,11 @@ class PropellerManager : public QObject
 private:
     QTimer portMonitor;
     QStringList _ports;
-    QMap<QString, PropellerDevice *> _devices;
-    QMap<QString, PropellerSession *> _busy;
-    QMap<PropellerSession *, PropellerSession *> _sessions;
+    QHash<QString, PropellerDevice *> _devices;
+    QHash<PropellerDevice *, quint32> _active_sessions;
+    QHash<QString, PropellerSession *> _busy;
+    QHash<PropellerSession *, PropellerSession *> _sessions;
+    QHash<PropellerSession *, PropellerDevice *> _connections;
     
     void attach(PropellerSession * session, PropellerDevice * device);
     void attachByName(PropellerSession * session, const QString & port);
@@ -49,6 +51,7 @@ public:
 
 public slots:
     void checkPorts();
+    void message(const QString & message, const QString & port);
 
 signals:
     void portListChanged();
@@ -63,9 +66,6 @@ signals:
 
 /**@{*/
 public:
-    bool        open(PropellerSession * session, const QString & port);
-    bool        isOpen(PropellerSession * session, const QString & port);
-    void        close(PropellerSession * session, const QString & port);
     bool        clear(PropellerSession * session, const QString & port);
 
     bool        setBaudRate(PropellerSession * session, const QString & port, quint32 baudRate);

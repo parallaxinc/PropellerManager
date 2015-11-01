@@ -23,6 +23,7 @@ PropellerLoader::PropellerLoader(PropellerSession * session,
 
     this->session = session;
     session->setBaudRate(115200);
+    session->setSessionName("Loader");
 
     totalTimeout.setSingleShot(true);
     handshakeTimeout.setSingleShot(true);
@@ -43,7 +44,6 @@ PropellerLoader::PropellerLoader(PropellerSession * session,
 
 PropellerLoader::~PropellerLoader()
 {
-    session->close();
     delete session;
 }
 
@@ -61,34 +61,6 @@ void PropellerLoader::message(QString text)
 void PropellerLoader::error(QString text)
 {
     message("ERROR: "+text);
-}
-
-bool PropellerLoader::open()
-{
-    if (!session->open())
-    {
-        error("Device failed to open: "+session->errorString());
-        return false;
-    }
-    return true;
-}
-
-/**
-  Return whether the PropellerLoader is now open.
-  */
-
-bool PropellerLoader::isOpen()
-{
-    return session->isOpen();
-}
-
-/**
-  Close the PropellerLoader; this function is called when the PropellerLoader is destroyed.
-  */
-
-void PropellerLoader::close()
-{
-    session->close();
 }
 
 /**

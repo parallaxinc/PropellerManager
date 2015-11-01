@@ -65,9 +65,6 @@ public:
     PropellerLoader(PropellerSession * session, QObject * parent = 0);
     ~PropellerLoader();
 
-    bool open();
-    bool isOpen();
-    void close();
     int version();
     int upload(PropellerImage image, bool write=false, bool run=true);
     int highSpeedUpload(PropellerImage image, bool write=false, bool run=true);

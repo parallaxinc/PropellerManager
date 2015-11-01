@@ -104,9 +104,6 @@ int main(int argc, char *argv[])
             PropellerSession * session = manager.newSession(d);
             PropellerLoader loader(session);
 
-            if (!loader.open())
-                continue;
-
             switch (loader.version())
             {
                 case 1:
@@ -118,7 +115,6 @@ int main(int argc, char *argv[])
             }
 
             fflush(stdout);
-            loader.close();
         }
     }
     else if (parser.isSet(argInfo))
@@ -151,9 +147,6 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
     {
         if (parser.isSet(argTerm))
         {
-            if (!loader.open())
-                error("Failed to open "+device+"!");
-
             terminal(session);
             return;
         }
@@ -191,10 +184,6 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
             error("Image is invalid!");
 
 
-        if (!loader.open())
-            error("Failed to open "+device+"!");
-
-
         if (parser.isSet(argHighSpeed))
         {
             if (loader.highSpeedUpload(image, parser.isSet(argWrite)))
@@ -209,8 +198,6 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
         if (parser.isSet(argTerm))
             terminal(session);
     }
-
-    loader.close();
 }
 
 void list()

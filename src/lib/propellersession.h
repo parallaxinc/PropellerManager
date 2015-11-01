@@ -13,6 +13,7 @@ class PropellerSession : public QObject
 
 private:
     QString port;
+    QString session;
     PropellerManager * manager;
 
 public:
@@ -22,13 +23,12 @@ public:
             QObject * parent = 0);
     ~PropellerSession();
 
-    const       QString & portName();
-    void        setPortName(const QString & portname);
+    const QString & portName();
+    void            setPortName(const QString & name);
+    const QString & sessionName();
+    void            setSessionName(const QString & name);
 
 public:
-    bool        open();
-    void        close();
-    bool        isOpen();
     bool        clear();
 
     bool        setBaudRate(quint32 baudRate);
