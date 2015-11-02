@@ -1,10 +1,10 @@
 ---
 layout: project
-title: Propeller Manager
+title: PropellerManager
 permalink: /projects/propellermanager/
 
 tagline: An event-driven C++ API for Propeller devices
-excerpt: Propeller Manager is more than a download tool; it is a complete API and toolset for managing Propeller devices, no matter where they are.
+excerpt: PropellerManager is more than a download tool; it is a complete API and toolset for managing Propeller devices, no matter where they are.
 
 type: project
 apptype: other

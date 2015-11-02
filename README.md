@@ -1,4 +1,4 @@
-# Propeller Manager
+# PropellerManager
 
 *do more with the Propeller*
 
