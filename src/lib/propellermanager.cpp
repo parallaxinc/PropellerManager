@@ -64,7 +64,7 @@ void PropellerManager::attach(PropellerSession * session, PropellerDevice * devi
 
     // slots
     connect(session, &PropellerSession::timeover,           device,  &PropellerDevice::timeOver);
-    connect(session, &PropellerSession::_write_buffer_empty,   device,  &PropellerDevice::writeBufferEmpty);
+    connect(session, &PropellerSession::allBytesWritten,   device,  &PropellerDevice::writeBufferEmpty);
 
     _active_sessions[device]++;
     _connections[session] = device;
@@ -84,7 +84,7 @@ void PropellerManager::detach(PropellerSession * session, PropellerDevice * devi
 
     // slots
     disconnect(session, &PropellerSession::timeover,           device,  &PropellerDevice::timeOver);
-    disconnect(session, &PropellerSession::_write_buffer_empty,   device,  &PropellerDevice::writeBufferEmpty);
+    disconnect(session, &PropellerSession::allBytesWritten,   device,  &PropellerDevice::writeBufferEmpty);
 
     _active_sessions[device]--;
     _connections.remove(session);
@@ -156,6 +156,12 @@ bool PropellerManager::clear(PropellerSession * session, const QString & port)
 {
     if (portIsBusy(session, port)) return false;
     return getDevice(port)->clear();
+}
+
+bool PropellerManager::isOpen(PropellerSession * session, const QString & port)
+{
+    if (portIsBusy(session, port)) return false;
+    return getDevice(port)->isOpen();
 }
 
 bool PropellerManager::setBaudRate(PropellerSession * session, const QString & port, quint32 baudRate)

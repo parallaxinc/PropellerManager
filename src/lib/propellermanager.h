@@ -7,6 +7,17 @@
 #include "propellerdevice.h"
 #include "propellersession.h"
 
+/**
+@class PropellerManager
+
+@brief The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice instances.
+
+PropellerManager mediates access to hardware and allows it to be shared between applications seamlessly.
+
+PropellerManager works by acting as a signal router between PropellerSession and
+PropellerDevice instances, preventing them from interacting with each other directly.
+*/
+
 class PropellerSession;
 
 class PropellerManager : public QObject
@@ -67,6 +78,7 @@ signals:
 
 /**@{*/
 public:
+    bool        isOpen(PropellerSession * session, const QString & port);
     bool        clear(PropellerSession * session, const QString & port);
 
     bool        setBaudRate(PropellerSession * session, const QString & port, quint32 baudRate);

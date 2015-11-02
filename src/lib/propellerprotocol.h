@@ -5,7 +5,7 @@
 /**
 @class PropellerProtocol
 
-@brief this class contains various algorithms needed to interact with the Propeller firmware.
+@brief The PropellerProtocol class contains algorithms for interacting with the Propeller firmware.
 
 This class implements the Propeller LFSR handshake sequence, the bit stream translator,
 and other functions needed to implement the Propeller download sequence.

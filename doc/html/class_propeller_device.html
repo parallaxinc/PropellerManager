@@ -25,6 +25,7 @@ title: PropellerManager  - PropellerDevice Class Reference
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-slots">Public Slots</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
@@ -34,13 +35,22 @@ title: PropellerManager  - PropellerDevice Class Reference
 </div><!--header-->
 <div class="contents">
 
-<p>this class encapsulates a <a class="el" href="namespace_propeller.html">Propeller</a> hardware device.  
+<p>The <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> class provides access to serial <a class="el" href="namespace_propeller.html">Propeller</a> devices.  
  <a href="class_propeller_device.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellerdevice_8h_source.html">propellerdevice.h</a>&gt;</code></p>
 
 <p>Inherits QSerialPort.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
+Public Slots</h2></td></tr>
+<tr class="memitem:a76b23c9bb854939b6f480b54dad59dea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a76b23c9bb854939b6f480b54dad59dea">handleError</a> (QSerialPort::SerialPortError e)</td></tr>
+<tr class="separator:a76b23c9bb854939b6f480b54dad59dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2193aecad07ac450e4efda1d87b898e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a2193aecad07ac450e4efda1d87b898e8">writeBufferEmpty</a> ()</td></tr>
+<tr class="separator:a2193aecad07ac450e4efda1d87b898e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae46834a4b62a0c5147d3241f48b777f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#ae46834a4b62a0c5147d3241f48b777f4">timeOver</a> ()</td></tr>
+<tr class="separator:ae46834a4b62a0c5147d3241f48b777f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
 <tr class="memitem:a68bf1a41b3e41540a77f51b284477456"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a68bf1a41b3e41540a77f51b284477456">finished</a> ()</td></tr>
@@ -58,12 +68,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a73a40e6bb133e6670b99e4fe7b4ae624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdd17cfb7684e8b59e7aec2a9d2aac12"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#abdd17cfb7684e8b59e7aec2a9d2aac12">reset</a> ()</td></tr>
 <tr class="separator:abdd17cfb7684e8b59e7aec2a9d2aac12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1e0065fc80eca783421bcd9884c1bfb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#ac1e0065fc80eca783421bcd9884c1bfb">useGpioReset</a> (int pin)</td></tr>
-<tr class="separator:ac1e0065fc80eca783421bcd9884c1bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9311fb82add6fb17450b296d0b3f1f79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a9311fb82add6fb17450b296d0b3f1f79">useRtsReset</a> ()</td></tr>
-<tr class="separator:a9311fb82add6fb17450b296d0b3f1f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c5795fa0f563898934b41875e2534ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a5c5795fa0f563898934b41875e2534ad">useDtrReset</a> ()</td></tr>
-<tr class="separator:a5c5795fa0f563898934b41875e2534ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0090f7e0f9ece7676ff3e1b96ce6b6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#ab0090f7e0f9ece7676ff3e1b96ce6b6a">useReset</a> (const QString &amp;name, int pin=17)</td></tr>
+<tr class="separator:ab0090f7e0f9ece7676ff3e1b96ce6b6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf2b601d9ffade1e8436cf82e92fb8d1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#acf2b601d9ffade1e8436cf82e92fb8d1">useDefaultReset</a> ()</td></tr>
+<tr class="separator:acf2b601d9ffade1e8436cf82e92fb8d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a208cf339199e5a41acb14260e19698c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a208cf339199e5a41acb14260e19698c5">setPortName</a> (const QString &amp;name)</td></tr>
+<tr class="separator:a208cf339199e5a41acb14260e19698c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a508c7514bcbc7d75e421639a9ec1c420"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#a508c7514bcbc7d75e421639a9ec1c420">calculateTimeout</a> (quint32 bytes, quint32 safety_factor=15)</td></tr>
 <tr class="separator:a508c7514bcbc7d75e421639a9ec1c420"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa970a5feeecca0074d451d97cf5c430c"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_device.html#aa970a5feeecca0074d451d97cf5c430c">minimumTimeout</a> ()</td></tr>
@@ -77,7 +87,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:aa4fe3b7c8348dc7b3df1c888ea730978"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>this class encapsulates a <a class="el" href="namespace_propeller.html">Propeller</a> hardware device. </p>
+<div class="textblock"><p>The <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> class provides access to serial <a class="el" href="namespace_propeller.html">Propeller</a> devices. </p>
 <p>This class inherits from QSerialPort but provides <a class="el" href="namespace_propeller.html">Propeller</a> specific functionality such as hardware reset and download timeouts. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ae17b0402bf39bec8ab3746ddb4674ea0"></a>
@@ -135,7 +145,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The timeout period is calculated as follows. </p><pre class="fragment">timeout = bytes * bits_per_character / bits_per_second
+<p>The total timeout period is calculated as follows. </p><pre class="fragment">timeout = bytes * bits_per_character / bits_per_second
                   (1000ms / 1s) * safety_factor / 10
                 + minimumTimeout()
 </pre><p>safety_factor defaults to 10, and is divided by 10, allowing &lt;1 safety factors. </p>
@@ -159,6 +169,30 @@ Static Public Member Functions</h2></td></tr>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a76b23c9bb854939b6f480b54dad59dea"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerDevice::handleError </td>
+          <td>(</td>
+          <td class="paramtype">QSerialPort::SerialPortError&#160;</td>
+          <td class="paramname"><em>e</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -219,7 +253,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Open the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> for use. </p>
+<p>Open the <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> for use. </p>
 
 </div>
 </div>
@@ -282,55 +316,110 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5c5795fa0f563898934b41875e2534ad"></a>
+<a class="anchor" id="a208cf339199e5a41acb14260e19698c5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void PropellerDevice::useDtrReset </td>
+          <td class="memname">void PropellerDevice::setPortName </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae46834a4b62a0c5147d3241f48b777f4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerDevice::timeOver </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="acf2b601d9ffade1e8436cf82e92fb8d1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerDevice::useDefaultReset </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Use DTR for hardware reset if available. Most Parallax products use DTR for reset, but some third-party boards use RTS as the reset pin.</p>
-<p>Refer to your board schematic for more information. </p>
+<p>Use the default reset strategy for your device.</p>
+<p>Most Parallax products use DTR for reset, but some third-party boards use RTS as the reset pin.</p>
+<p>Raspberry Pi builds of <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> are configured to use GPIO reset by default for as this is the hardware configuration of the <a class="el" href="namespace_propeller.html">Propeller</a> HAT. </p>
 
 </div>
 </div>
-<a class="anchor" id="ac1e0065fc80eca783421bcd9884c1bfb"></a>
+<a class="anchor" id="ab0090f7e0f9ece7676ff3e1b96ce6b6a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void PropellerDevice::useGpioReset </td>
+          <td class="memname">void PropellerDevice::useReset </td>
           <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>pin</em></td><td>)</td>
+          <td class="paramname"><em>pin</em> = <code>17</code>&#160;</td>
+        </tr>
+        <tr>
           <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Use a GPIO pin for hardware reset if available.</p>
-<p>Raspberry Pi builds of PropellerManager are configured to use GPIO reset by default for as this is the hardware configuration of the <a class="el" href="namespace_propeller.html">Propeller</a> HAT. </p>
+<p>Set the reset strategy for your device. </p>
 
 </div>
 </div>
-<a class="anchor" id="a9311fb82add6fb17450b296d0b3f1f79"></a>
+<a class="anchor" id="a2193aecad07ac450e4efda1d87b898e8"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void PropellerDevice::useRtsReset </td>
+          <td class="memname">void PropellerDevice::writeBufferEmpty </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-<p>Use RTS for hardware reset if available. Most Parallax products use DTR for reset, but some third-party boards use RTS as the reset pin.</p>
-<p>Refer to your board schematic for more information. </p>
 
 </div>
 </div>

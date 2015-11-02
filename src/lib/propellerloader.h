@@ -8,19 +8,22 @@
 #include <QElapsedTimer>
 
 /**
-@class PropellerLoader 
+    @class PropellerLoader 
+    
+    @brief The PropellerLoader class implements the Propeller download protocol.
+    
+    PropellerLoader automatically selects the best download strategy based on the
+    given image to download and the target device.
+    
+    - If downloading to an XBee device, high-speed loading must be used. If a 
+      crystal oscillator is not defined, PropellerManager errors.
+    - If downloading through a serial connection, use high-speed download if a
+      crystal oscillator is defined, otherwise use the basic protocol.
+    
+    PropellerDevice selects the reset strategy based on the port name. This can be overridden via the useReset() function.
+    At present, all devices assume DTR reset as the default, except ttyAMA as this is specific to the ARM architecture and uses GPIO.
+    */
 
-@brief a high-level interface for managing a single PropellerSession.
-
-PropellerLoader provides a persistent environment from which to
-interact with the Propeller. Any functionality relevant to the Propeller
-can be performed from this class: RAM and EEPROM downloads, 
-terminal sessions, and identification of attached hardware, can all be
-done without having to disconnect from the attached session.
-
-This ensures that the program always behaves as expected and makes it
-possible to debug the Propeller in RAM on non-Windows platforms.
-*/
 class PropellerLoader : public QObject
 {
     Q_OBJECT
@@ -29,14 +32,8 @@ private:
     PropellerSession * session;
     PropellerProtocol protocol;
 
-    void writeByte(quint8  value);
-    void writeLong(quint32 value);
-
     int _version;
     int _ack;
-
-    bool sendPayload(QByteArray payload);
-    int pollAcknowledge();
 
     QTimer totalTimeout;
     QTimer handshakeTimeout;
@@ -44,6 +41,10 @@ private:
     QTimer poll;
     QElapsedTimer elapsedTimer;
 
+    void writeByte(quint8  value);
+    void writeLong(quint32 value);
+    bool sendPayload(QByteArray payload);
+    int pollAcknowledge();
     bool isUploadSuccessful();
 
 signals:
@@ -61,7 +62,6 @@ private slots:
     void error(QString text);
 
 public:
-
     PropellerLoader(PropellerSession * session, QObject * parent = 0);
     ~PropellerLoader();
 

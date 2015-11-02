@@ -8,7 +8,7 @@
 /**
 @class PropellerImage
 
-@brief this class encapsulates the Propeller binary format.
+@brief The PropellerImage class encapsulates Propeller binary images.
 
 - Converts between binary and EEPROM image formats
 - Extract information about binaries

@@ -5,6 +5,23 @@
 #include <QTimer>
 #include <QStringList>
 
+/**
+    @class PropellerSession
+      
+    @brief The PropellerSession class provides a persistent, always-on interface to Propeller hardware via PropellerManager.
+    
+    PropellerSession provides a persistent environment from which to
+    interact with the Propeller.
+    
+    Sessions can communicate with any available device without needing to 
+    manually open and close ports. Many sessions can be connected to a single
+    device at a time. However, sessions may also request exclusive access to
+    a device to complete a long-running operation.
+    
+    This ensures that the program always behaves as expected and makes it
+    possible to debug the Propeller in RAM on non-Windows platforms.
+    */
+
 class PropellerManager;
 
 class PropellerSession : public QObject
@@ -29,6 +46,7 @@ public:
     void            setSessionName(const QString & name);
 
 public:
+    bool        isOpen();
     bool        clear();
 
     bool        setBaudRate(quint32 baudRate);
@@ -58,7 +76,7 @@ signals:
     void        finished();
 
     void        timeover();
-    void        _write_buffer_empty();
+    void        allBytesWritten();
 
 public slots:
     void        timeOver();

@@ -25,6 +25,7 @@ title: PropellerManager  - PropellerSession Class Reference
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-slots">Public Slots</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_propeller_session-members.html">List of all members</a>  </div>
@@ -33,66 +34,107 @@ title: PropellerManager  - PropellerSession Class Reference
 </div><!--header-->
 <div class="contents">
 
-<p>a high-level interface for managing a single <a class="el" href="class_propeller_device.html" title="this class encapsulates a Propeller hardware device. ">PropellerDevice</a>.  
+<p>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...">PropellerSession</a> class provides a persistent, always-on interface to <a class="el" href="namespace_propeller.html">Propeller</a> hardware via <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>.  
  <a href="class_propeller_session.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellersession_8h_source.html">propellersession.h</a>&gt;</code></p>
 
 <p>Inherits QObject.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
+Public Slots</h2></td></tr>
+<tr class="memitem:a81ea288184d0aeec85c377525f85eba2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a81ea288184d0aeec85c377525f85eba2">timeOver</a> ()</td></tr>
+<tr class="separator:a81ea288184d0aeec85c377525f85eba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92e204374db4af1a19f3e79b192f116b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a92e204374db4af1a19f3e79b192f116b">writeBufferEmpty</a> ()</td></tr>
+<tr class="separator:a92e204374db4af1a19f3e79b192f116b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
+<tr class="memitem:a07f5f3269ded2ead52e8512ab34652f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a07f5f3269ded2ead52e8512ab34652f7">bytesWritten</a> (qint64 bytes)</td></tr>
+<tr class="separator:a07f5f3269ded2ead52e8512ab34652f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54f70c3574b16d8149424d68b472ff47"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a54f70c3574b16d8149424d68b472ff47">readyRead</a> ()</td></tr>
+<tr class="separator:a54f70c3574b16d8149424d68b472ff47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97193d592a351b802568fd26253955b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a97193d592a351b802568fd26253955b7">baudRateChanged</a> (qint32 baudRate)</td></tr>
+<tr class="separator:a97193d592a351b802568fd26253955b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ebbeee85d22a893c9af78022ba30f48"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a0ebbeee85d22a893c9af78022ba30f48">sendError</a> (const QString &amp;message)</td></tr>
+<tr class="separator:a0ebbeee85d22a893c9af78022ba30f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c8292dfffcef1c770ef2eaa70e66e13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a1c8292dfffcef1c770ef2eaa70e66e13">finished</a> ()</td></tr>
 <tr class="separator:a1c8292dfffcef1c770ef2eaa70e66e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3e095bb74204268923f69fc9cff0971"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#ab3e095bb74204268923f69fc9cff0971">timeover</a> ()</td></tr>
+<tr class="separator:ab3e095bb74204268923f69fc9cff0971"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58766b4922e28906ff1c366a7ab6b298"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a58766b4922e28906ff1c366a7ab6b298">allBytesWritten</a> ()</td></tr>
+<tr class="separator:a58766b4922e28906ff1c366a7ab6b298"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3e1763eef3663136bdc60683093be338"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a3e1763eef3663136bdc60683093be338">PropellerSession</a> (QString port, int reset_gpio=-1, bool useRtsReset=false, QObject *parent=0)</td></tr>
-<tr class="separator:a3e1763eef3663136bdc60683093be338"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13a1effc693bd8928f7dee5cbea02e8b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a13a1effc693bd8928f7dee5cbea02e8b">PropellerSession</a> (const QString &amp;portname, <a class="el" href="class_propeller_manager.html">PropellerManager</a> *manager, QObject *parent=0)</td></tr>
+<tr class="separator:a13a1effc693bd8928f7dee5cbea02e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90f8f755312349306c7fac07cd0a2841"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a90f8f755312349306c7fac07cd0a2841">~PropellerSession</a> ()</td></tr>
 <tr class="separator:a90f8f755312349306c7fac07cd0a2841"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08a7145b41c6d156c5596c185dec4b08"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a08a7145b41c6d156c5596c185dec4b08">open</a> ()</td></tr>
-<tr class="separator:a08a7145b41c6d156c5596c185dec4b08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afada5dff5464fed7a196d8096ae2aed2"><td class="memItemLeft" align="right" valign="top">const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#afada5dff5464fed7a196d8096ae2aed2">portName</a> ()</td></tr>
+<tr class="separator:afada5dff5464fed7a196d8096ae2aed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56ac4e62ad3eb3ae928eaee983581a54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a56ac4e62ad3eb3ae928eaee983581a54">setPortName</a> (const QString &amp;name)</td></tr>
+<tr class="separator:a56ac4e62ad3eb3ae928eaee983581a54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa4b2f74499567c4ac74d8bab69e1c36"><td class="memItemLeft" align="right" valign="top">const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#aaa4b2f74499567c4ac74d8bab69e1c36">sessionName</a> ()</td></tr>
+<tr class="separator:aaa4b2f74499567c4ac74d8bab69e1c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdb59d19f51009ac64fa1a96e28d50eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#afdb59d19f51009ac64fa1a96e28d50eb">setSessionName</a> (const QString &amp;name)</td></tr>
+<tr class="separator:afdb59d19f51009ac64fa1a96e28d50eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf2786fd5a06236f6b018cd53578954c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#abf2786fd5a06236f6b018cd53578954c">isOpen</a> ()</td></tr>
 <tr class="separator:abf2786fd5a06236f6b018cd53578954c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28c34b5fced451788e83d5fb1e3d5343"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a28c34b5fced451788e83d5fb1e3d5343">close</a> ()</td></tr>
-<tr class="separator:a28c34b5fced451788e83d5fb1e3d5343"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ccee672bef16ffa00f66e48770d21fb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a0ccee672bef16ffa00f66e48770d21fb">version</a> ()</td></tr>
-<tr class="memdesc:a0ccee672bef16ffa00f66e48770d21fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the version of the connected device.  <a href="#a0ccee672bef16ffa00f66e48770d21fb">More...</a><br /></td></tr>
-<tr class="separator:a0ccee672bef16ffa00f66e48770d21fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25f20bdf008deb99c8f4bda92d341257"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a25f20bdf008deb99c8f4bda92d341257">upload</a> (<a class="el" href="class_propeller_image.html">PropellerImage</a> image, bool write=false, bool run=true)</td></tr>
-<tr class="separator:a25f20bdf008deb99c8f4bda92d341257"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98b7a51ebede2bac26ad5ebb75178909"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a98b7a51ebede2bac26ad5ebb75178909">highSpeedUpload</a> (<a class="el" href="class_propeller_image.html">PropellerImage</a> image, bool write=false, bool run=true)</td></tr>
-<tr class="separator:a98b7a51ebede2bac26ad5ebb75178909"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5dbd94512dc45d167df9460f0580b54"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#af5dbd94512dc45d167df9460f0580b54">terminal</a> ()</td></tr>
-<tr class="separator:af5dbd94512dc45d167df9460f0580b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85a98f38f141f0d4be3b37ce2026a21c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a85a98f38f141f0d4be3b37ce2026a21c">clear</a> ()</td></tr>
+<tr class="separator:a85a98f38f141f0d4be3b37ce2026a21c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53e3d0aa0ff3c36b77be27b5be7b1417"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a53e3d0aa0ff3c36b77be27b5be7b1417">setBaudRate</a> (quint32 baudRate)</td></tr>
+<tr class="separator:a53e3d0aa0ff3c36b77be27b5be7b1417"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dfd0d6209f77f7733938238d4c4f990"><td class="memItemLeft" align="right" valign="top">qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a5dfd0d6209f77f7733938238d4c4f990">bytesToWrite</a> ()</td></tr>
+<tr class="separator:a5dfd0d6209f77f7733938238d4c4f990"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a704b23a3a7fa37141c648463c3e066"><td class="memItemLeft" align="right" valign="top">qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a5a704b23a3a7fa37141c648463c3e066">bytesAvailable</a> ()</td></tr>
+<tr class="separator:a5a704b23a3a7fa37141c648463c3e066"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8f27c4c5920cce8c8127f748eea9a83"><td class="memItemLeft" align="right" valign="top">QByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#ae8f27c4c5920cce8c8127f748eea9a83">read</a> (qint64 maxSize)</td></tr>
+<tr class="separator:ae8f27c4c5920cce8c8127f748eea9a83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ae0691ae599ca104d9c22e43a395618"><td class="memItemLeft" align="right" valign="top">QByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a1ae0691ae599ca104d9c22e43a395618">readAll</a> ()</td></tr>
+<tr class="separator:a1ae0691ae599ca104d9c22e43a395618"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fd21bde68f22c5c0feb454aba190ae8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a4fd21bde68f22c5c0feb454aba190ae8">putChar</a> (char c)</td></tr>
+<tr class="separator:a4fd21bde68f22c5c0feb454aba190ae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e5ff0bab739893113501f9176475fb0"><td class="memItemLeft" align="right" valign="top">qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a3e5ff0bab739893113501f9176475fb0">write</a> (const QByteArray &amp;byteArray)</td></tr>
+<tr class="separator:a3e5ff0bab739893113501f9176475fb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a832c9281137100bf729301fda006b7b4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a832c9281137100bf729301fda006b7b4">error</a> ()</td></tr>
+<tr class="separator:a832c9281137100bf729301fda006b7b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecf46cb4e48210aa98d034fce58c168b"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#aecf46cb4e48210aa98d034fce58c168b">errorString</a> ()</td></tr>
+<tr class="separator:aecf46cb4e48210aa98d034fce58c168b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7e10da8df3b48d6a594897a18309d49"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#af7e10da8df3b48d6a594897a18309d49">minimumTimeout</a> ()</td></tr>
+<tr class="separator:af7e10da8df3b48d6a594897a18309d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29d8fcc6dbfd84477837fad458f38263"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a29d8fcc6dbfd84477837fad458f38263">setMinimumTimeout</a> (quint32 milliseconds)</td></tr>
+<tr class="separator:a29d8fcc6dbfd84477837fad458f38263"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb480a2b4924736067041b62744489e3"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#adb480a2b4924736067041b62744489e3">calculateTimeout</a> (quint32 bytes)</td></tr>
+<tr class="separator:adb480a2b4924736067041b62744489e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeed338954af289e170f6ac4d0fd9ffdf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#aeed338954af289e170f6ac4d0fd9ffdf">useReset</a> (const QString &amp;name, int pin)</td></tr>
+<tr class="separator:aeed338954af289e170f6ac4d0fd9ffdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03c942de17124ada5d82002bc4be65cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a03c942de17124ada5d82002bc4be65cf">useDefaultReset</a> ()</td></tr>
+<tr class="separator:a03c942de17124ada5d82002bc4be65cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abacaf9ed8cb575d6ced75a6125499969"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#abacaf9ed8cb575d6ced75a6125499969">reset</a> ()</td></tr>
+<tr class="separator:abacaf9ed8cb575d6ced75a6125499969"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>a high-level interface for managing a single <a class="el" href="class_propeller_device.html" title="this class encapsulates a Propeller hardware device. ">PropellerDevice</a>. </p>
-<p><a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> provides a persistent environment from which to interact with the <a class="el" href="namespace_propeller.html">Propeller</a>. Any functionality relevant to the <a class="el" href="namespace_propeller.html">Propeller</a> can be performed from this class: RAM and EEPROM downloads, terminal sessions, and identification of attached hardware, can all be done without having to disconnect from the attached device.</p>
+<div class="textblock"><p>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...">PropellerSession</a> class provides a persistent, always-on interface to <a class="el" href="namespace_propeller.html">Propeller</a> hardware via <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>. </p>
+<p><a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...">PropellerSession</a> provides a persistent environment from which to interact with the <a class="el" href="namespace_propeller.html">Propeller</a>.</p>
+<p>Sessions can communicate with any available device without needing to manually open and close ports. Many sessions can be connected to a single device at a time. However, sessions may also request exclusive access to a device to complete a long-running operation.</p>
 <p>This ensures that the program always behaves as expected and makes it possible to debug the <a class="el" href="namespace_propeller.html">Propeller</a> in RAM on non-Windows platforms. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a3e1763eef3663136bdc60683093be338"></a>
+<a class="anchor" id="a13a1effc693bd8928f7dee5cbea02e8b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PropellerSession::PropellerSession </td>
           <td>(</td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>port</em>, </td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>portname</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>reset_gpio</em> = <code>-1</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>useRtsReset</em> = <code>false</code>, </td>
+          <td class="paramtype"><a class="el" href="class_propeller_manager.html">PropellerManager</a> *&#160;</td>
+          <td class="paramname"><em>manager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -107,14 +149,6 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">port</td><td>A string representing the port (e.g. '<code>/dev/ttyUSB0</code>', '<code>/./COM1</code>'). </td></tr>
-    <tr><td class="paramname">reset_gpio</td><td>Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset. </td></tr>
-    <tr><td class="paramname">useRtsReset</td><td>Use RTS for hardware reset instead of DTR; overridden by reset_gpio. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -134,19 +168,165 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a28c34b5fced451788e83d5fb1e3d5343"></a>
+<a class="anchor" id="a58766b4922e28906ff1c366a7ab6b298"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::allBytesWritten </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a97193d592a351b802568fd26253955b7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::baudRateChanged </td>
+          <td>(</td>
+          <td class="paramtype">qint32&#160;</td>
+          <td class="paramname"><em>baudRate</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a5a704b23a3a7fa37141c648463c3e066"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void PropellerSession::close </td>
+          <td class="memname">qint64 PropellerSession::bytesAvailable </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Close the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a>; this function is called when the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> is destroyed. </p>
+
+</div>
+</div>
+<a class="anchor" id="a5dfd0d6209f77f7733938238d4c4f990"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">qint64 PropellerSession::bytesToWrite </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a07f5f3269ded2ead52e8512ab34652f7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::bytesWritten </td>
+          <td>(</td>
+          <td class="paramtype">qint64&#160;</td>
+          <td class="paramname"><em>bytes</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="adb480a2b4924736067041b62744489e3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">quint32 PropellerSession::calculateTimeout </td>
+          <td>(</td>
+          <td class="paramtype">quint32&#160;</td>
+          <td class="paramname"><em>bytes</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a85a98f38f141f0d4be3b37ce2026a21c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool PropellerSession::clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a832c9281137100bf729301fda006b7b4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int PropellerSession::error </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aecf46cb4e48210aa98d034fce58c168b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QString PropellerSession::errorString </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -173,38 +353,6 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a98b7a51ebede2bac26ad5ebb75178909"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int PropellerSession::highSpeedUpload </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_propeller_image.html">PropellerImage</a>&#160;</td>
-          <td class="paramname"><em>image</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>write</em> = <code>false</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>run</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="abf2786fd5a06236f6b018cd53578954c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -217,16 +365,15 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Return whether the <a class="el" href="class_propeller_session.html" title="a high-level interface for managing a single PropellerDevice. ">PropellerSession</a> is now open. </p>
 
 </div>
 </div>
-<a class="anchor" id="a08a7145b41c6d156c5596c185dec4b08"></a>
+<a class="anchor" id="af7e10da8df3b48d6a594897a18309d49"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool PropellerSession::open </td>
+          <td class="memname">quint32 PropellerSession::minimumTimeout </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -236,43 +383,285 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af5dbd94512dc45d167df9460f0580b54"></a>
+<a class="anchor" id="afada5dff5464fed7a196d8096ae2aed2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int PropellerSession::terminal </td>
+          <td class="memname">const QString &amp; PropellerSession::portName </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Open a device terminal on this device. </p>
 
 </div>
 </div>
-<a class="anchor" id="a25f20bdf008deb99c8f4bda92d341257"></a>
+<a class="anchor" id="a4fd21bde68f22c5c0feb454aba190ae8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int PropellerSession::upload </td>
+          <td class="memname">bool PropellerSession::putChar </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_propeller_image.html">PropellerImage</a>&#160;</td>
-          <td class="paramname"><em>image</em>, </td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae8f27c4c5920cce8c8127f748eea9a83"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QByteArray PropellerSession::read </td>
+          <td>(</td>
+          <td class="paramtype">qint64&#160;</td>
+          <td class="paramname"><em>maxSize</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a1ae0691ae599ca104d9c22e43a395618"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QByteArray PropellerSession::readAll </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a54f70c3574b16d8149424d68b472ff47"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::readyRead </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abacaf9ed8cb575d6ced75a6125499969"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool PropellerSession::reset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a0ebbeee85d22a893c9af78022ba30f48"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::sendError </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aaa4b2f74499567c4ac74d8bab69e1c36"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const QString &amp; PropellerSession::sessionName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a53e3d0aa0ff3c36b77be27b5be7b1417"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool PropellerSession::setBaudRate </td>
+          <td>(</td>
+          <td class="paramtype">quint32&#160;</td>
+          <td class="paramname"><em>baudRate</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a29d8fcc6dbfd84477837fad458f38263"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::setMinimumTimeout </td>
+          <td>(</td>
+          <td class="paramtype">quint32&#160;</td>
+          <td class="paramname"><em>milliseconds</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a56ac4e62ad3eb3ae928eaee983581a54"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::setPortName </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="afdb59d19f51009ac64fa1a96e28d50eb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::setSessionName </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ab3e095bb74204268923f69fc9cff0971"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::timeover </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a81ea288184d0aeec85c377525f85eba2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::timeOver </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a03c942de17124ada5d82002bc4be65cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::useDefaultReset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aeed338954af289e170f6ac4d0fd9ffdf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::useReset </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>write</em> = <code>false</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>run</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pin</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -281,25 +670,45 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Upload a <a class="el" href="class_propeller_image.html" title="this class encapsulates the Propeller binary format. ">PropellerImage</a> object to the target. </p>
 
 </div>
 </div>
-<a class="anchor" id="a0ccee672bef16ffa00f66e48770d21fb"></a>
+<a class="anchor" id="a3e5ff0bab739893113501f9176475fb0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int PropellerSession::version </td>
+          <td class="memname">qint64 PropellerSession::write </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const QByteArray &amp;&#160;</td>
+          <td class="paramname"><em>byteArray</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get the version of the connected device. </p>
-<dl class="section return"><dt>Returns</dt><dd>The version number, or 0 if not found. </dd></dl>
+</div>
+</div>
+<a class="anchor" id="a92e204374db4af1a19f3e79b192f116b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::writeBufferEmpty </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">slot</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

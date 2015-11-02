@@ -9,9 +9,8 @@
 #include <stdio.h>
 
 /**
-  \param port A string representing the port (e.g. '`/dev/ttyUSB0`', '`/./COM1`').
-  \param reset_gpio Enable GPIO reset on the selected pin. The default value of -1 disables GPIO reset.
-  \param useRtsReset Use RTS for hardware reset instead of DTR; overridden by reset_gpio.
+  \param session The PropellerSession instance to attach to.
+  \param parent The parent QObject.
   */
 
 PropellerLoader::PropellerLoader(PropellerSession * session,
@@ -47,10 +46,6 @@ PropellerLoader::~PropellerLoader()
 
 }
 
-/**
-  Open the PropellerLoader for use.
-  */
-
 void PropellerLoader::message(QString text)
 {
     text = "[PropellerManager] "+session->portName()+": "+text;
@@ -62,21 +57,6 @@ void PropellerLoader::error(QString text)
 {
     message("ERROR: "+text);
 }
-
-/**
-  This function sends a reset to the connected session using
-  whatever method is available.
-
-  Methods supported:
-
-  - Serial
-    - Data Terminal Ready (DTR)
-    - Request To Send (RTS)
-    - GPIO (Linux only)
-
-  - Wireless
-    - TBD
-  */
 
 void PropellerLoader::calibrate()
 {
@@ -124,7 +104,7 @@ void PropellerLoader::read_handshake()
 }
 
 /**
-  \brief Get the version of the connected session->
+  Get the version of the connected device.
   
   \return The version number, or 0 if not found.
   */
@@ -154,10 +134,19 @@ int PropellerLoader::version()
 
 /**
   Upload a PropellerImage object to the target.
+
+  \param image The PropellerImage to upload.
+  \param write Write the image to the EEPROM.
+  \param run Run the image after downloading.
   */
 
 int PropellerLoader::upload(PropellerImage image, bool write, bool run)
 {
+    if (!session->isOpen())
+    {
+        error("Device not open");
+        return 1;
+    }
 //    if (!session->reserve(
     session->setBaudRate(115200);
 
@@ -473,7 +462,8 @@ bool PropellerLoader::sendPayload(QByteArray payload)
     if (!_version)
     {
         // if handshake not received on first finish, wait for it
-        if (handshakeTimeout.remainingTime() >= totalTimeout.remainingTime())
+        if (handshakeTimeout.remainingTime() >= totalTimeout.remainingTime() 
+                || handshakeTimeout.remainingTime() > 0)
         {
             loop.exec();
 

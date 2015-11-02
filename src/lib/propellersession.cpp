@@ -42,6 +42,11 @@ void PropellerSession::setSessionName(const QString & name)
     session = name;
 }
 
+bool PropellerSession::isOpen()
+{
+    return manager->isOpen(this, port);
+}
+
 bool PropellerSession::clear()
 {
     return manager->clear(this, port);
@@ -129,5 +134,5 @@ void PropellerSession::timeOver()
 
 void PropellerSession::writeBufferEmpty()
 {
-    emit _write_buffer_empty();
+    emit allBytesWritten();
 }

@@ -33,7 +33,7 @@ title: PropellerManager  - PropellerImage Class Reference
 </div><!--header-->
 <div class="contents">
 
-<p>this class encapsulates the <a class="el" href="namespace_propeller.html">Propeller</a> binary format.  
+<p>The <a class="el" href="class_propeller_image.html" title="The PropellerImage class encapsulates Propeller binary images. ">PropellerImage</a> class encapsulates <a class="el" href="namespace_propeller.html">Propeller</a> binary images.  
  <a href="class_propeller_image.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellerimage_8h_source.html">propellerimage.h</a>&gt;</code></p>
@@ -136,7 +136,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae4e30a4c97ef79cc9d82ece83e4337b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>this class encapsulates the <a class="el" href="namespace_propeller.html">Propeller</a> binary format. </p>
+<div class="textblock"><p>The <a class="el" href="class_propeller_image.html" title="The PropellerImage class encapsulates Propeller binary images. ">PropellerImage</a> class encapsulates <a class="el" href="namespace_propeller.html">Propeller</a> binary images. </p>
 <ul>
 <li>Converts between binary and EEPROM image formats</li>
 <li>Extract information about binaries</li>
@@ -166,7 +166,7 @@ Public Member Functions</h2></td></tr>
 <td>word </td><td>14 </td><td>Current Stack Space pointer (points to first run-time usable space of stack) </td></tr>
 </table>
 <h3>What Gets Downloaded</h3>
-<p>To save time, PropellerManager does not download the entire application image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the <a class="el" href="namespace_propeller.html">Propeller</a> chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well. </p>
+<p>To save time, <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> does not download the entire application image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the <a class="el" href="namespace_propeller.html">Propeller</a> chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well. </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860"></a>
 <div class="memitem">
@@ -205,7 +205,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>An enumeration containing all <a class="el" href="namespace_propeller.html">Propeller</a> image types that PropellerManager supports. </p>
+<p>An enumeration containing all <a class="el" href="namespace_propeller.html">Propeller</a> image types that <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> supports. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a5d6dcf94ae656814c5776fbe3147e867aab2bac6165c788db1f410bd629db2c72"></a>Invalid&#160;</td><td class="fielddoc">
 <p>Not a valid image file. </p>

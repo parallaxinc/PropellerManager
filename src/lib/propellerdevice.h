@@ -7,7 +7,7 @@
 /**
     @class PropellerDevice
   
-    @brief this class encapsulates a Propeller hardware device.
+    @brief The PropellerDevice class provides access to serial Propeller devices.
 
     This class inherits from QSerialPort but provides Propeller
     specific functionality such as hardware reset and download
