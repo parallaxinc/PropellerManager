@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QStringList>
 #include <QHash>
+#include <QBuffer>
 
 #include "propellerdevice.h"
 #include "propellersession.h"
@@ -32,6 +33,8 @@ private:
     QHash<QString, PropellerSession *> _busy;
     QHash<PropellerSession *, PropellerSession *> _sessions;
     QHash<PropellerSession *, PropellerDevice *> _connections;
+    QHash<PropellerSession *, QBuffer *> _buffers;
+    QHash<PropellerSession *, QByteArray *> _buffer_arrays;
     
     void attach(PropellerSession * session, PropellerDevice * device);
     void attachByName(PropellerSession * session, const QString & port);
@@ -40,6 +43,9 @@ private:
 
     PropellerDevice * getDevice(const QString & port);
     void deleteDevice(const QString & port);
+
+private slots:
+    void readyBuffer();
 
 public:
     PropellerManager(QObject *parent = 0);
@@ -100,6 +106,9 @@ public:
     void        useReset(PropellerSession * session, const QString & port, const QString & name, int pin);
     void        useDefaultReset(PropellerSession * session, const QString & port);
     bool        reset(PropellerSession * session, const QString & port);
+
+signals:
+    void readyRead();
 /**@}*/
 
 };

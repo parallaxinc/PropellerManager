@@ -53,18 +53,42 @@ void PropellerManager::attachByName(PropellerSession * session, const QString & 
     }
 }
 
+void PropellerManager::readyBuffer()
+{
+    PropellerDevice * device = (PropellerDevice *) sender();
+    QByteArray newdata = device->readAll();
+
+    foreach (PropellerSession * session, _connections.keys(device))
+    {
+        _buffers[session]->close();
+        _buffers[session]->open(QIODevice::Append);
+        _buffers[session]->write(newdata);
+        _buffers[session]->seek(0);
+        _buffers[session]->close();
+        _buffers[session]->open(QIODevice::ReadOnly);
+    }
+}
+
 void PropellerManager::attach(PropellerSession * session, PropellerDevice * device)
 {
     // signals
+    // buffered
+    _buffer_arrays[session] = new QByteArray();
+    _buffers[session] = new QBuffer(_buffer_arrays[session]);
+    _buffers[session]->open(QIODevice::ReadWrite);
+
+    connect(device,     &PropellerDevice::readyRead,   this,     &PropellerManager::readyBuffer);
+    connect(_buffers[session],  &QBuffer::readyRead,   session,  &PropellerSession::readyRead);
+
+    // pass-through
     connect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
     connect(device,  &PropellerDevice::sendError,       session,  &PropellerSession::sendError);
     connect(device,  &PropellerDevice::bytesWritten,    session,  &PropellerSession::bytesWritten);
-    connect(device,  &PropellerDevice::readyRead,       session,  &PropellerSession::readyRead);
     connect(device,  &PropellerDevice::baudRateChanged, session,  &PropellerSession::baudRateChanged);
 
     // slots
-    connect(session, &PropellerSession::timeover,           device,  &PropellerDevice::timeOver);
-    connect(session, &PropellerSession::allBytesWritten,   device,  &PropellerDevice::writeBufferEmpty);
+    connect(session, &PropellerSession::timeover,        device,  &PropellerDevice::timeOver);
+    connect(session, &PropellerSession::allBytesWritten, device,  &PropellerDevice::writeBufferEmpty);
 
     _active_sessions[device]++;
     _connections[session] = device;
@@ -76,15 +100,26 @@ void PropellerManager::attach(PropellerSession * session, PropellerDevice * devi
 void PropellerManager::detach(PropellerSession * session, PropellerDevice * device)
 {
     // signals
+    // buffered
+    disconnect(device,     &PropellerDevice::readyRead,   this,     &PropellerManager::readyBuffer);
+    disconnect(_buffers[session],  &QBuffer::readyRead,   session,  &PropellerSession::readyRead);
+
+    _buffers[session]->close();
+    delete _buffers[session];
+    delete _buffer_arrays[session];
+
+    _buffers.remove(session);
+    _buffer_arrays.remove(session);
+
+    // pass-through
     disconnect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
     disconnect(device,  &PropellerDevice::sendError,       session,  &PropellerSession::sendError);
     disconnect(device,  &PropellerDevice::bytesWritten,    session,  &PropellerSession::bytesWritten);
-    disconnect(device,  &PropellerDevice::readyRead,       session,  &PropellerSession::readyRead);
     disconnect(device,  &PropellerDevice::baudRateChanged, session,  &PropellerSession::baudRateChanged);
 
     // slots
-    disconnect(session, &PropellerSession::timeover,           device,  &PropellerDevice::timeOver);
-    disconnect(session, &PropellerSession::allBytesWritten,   device,  &PropellerDevice::writeBufferEmpty);
+    disconnect(session, &PropellerSession::timeover,        device,  &PropellerDevice::timeOver);
+    disconnect(session, &PropellerSession::allBytesWritten, device,  &PropellerDevice::writeBufferEmpty);
 
     _active_sessions[device]--;
     _connections.remove(session);
@@ -179,19 +214,19 @@ qint64 PropellerManager::bytesToWrite(PropellerSession * session, const QString 
 qint64 PropellerManager::bytesAvailable(PropellerSession * session, const QString & port)
 {
     if (portIsBusy(session, port)) return 0;
-    return getDevice(port)->bytesAvailable();
+    return _buffers[session]->bytesAvailable();
 }
 
 QByteArray PropellerManager::read(PropellerSession * session, const QString & port, qint64 maxSize)
 {
     if (portIsBusy(session, port)) return QByteArray();
-    return getDevice(port)->read(maxSize);
+    return _buffers[session]->read(maxSize);
 }
 
 QByteArray PropellerManager::readAll(PropellerSession * session, const QString & port)
 {
     if (portIsBusy(session, port)) return QByteArray();
-    return getDevice(port)->readAll();
+    return _buffers[session]->readAll();
 }
 
 bool PropellerManager::putChar(PropellerSession * session, const QString & port, char c)
