@@ -66,8 +66,6 @@ void PropellerManager::readyBuffer()
         _buffers[session]->seek(0);
         _buffers[session]->close();
         _buffers[session]->open(QIODevice::ReadOnly);
-
-        qDebug() << session << newdata;
     }
 }
 
