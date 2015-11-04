@@ -5,6 +5,7 @@
 #include <QSerialPortInfo>
 
 #include "gpio.h"
+#include "logging.h"
 
 PropellerDevice::PropellerDevice(QObject * parent)
  : QSerialPort(parent)
@@ -155,7 +156,7 @@ void PropellerDevice::useReset(const QString & name, int pin)
     }
     else
     {
-        qDebug() << "Invalid reset type:" << name;
+        qCDebug(pdevice) << "Invalid reset type:" << name;
     }
 }
 
@@ -215,7 +216,7 @@ bool PropellerDevice::reset()
         } 
         else
         {
-            qDebug() << "Unknown reset strategy:" << _reset;
+            qCDebug(pdevice) << "Unknown reset strategy:" << _reset;
         }
     }
 

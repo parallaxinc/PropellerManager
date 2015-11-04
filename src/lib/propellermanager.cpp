@@ -71,12 +71,19 @@ void PropellerManager::readyBuffer()
 
 void PropellerManager::attach(PropellerSession * session, PropellerDevice * device)
 {
-    qCDebug(pmanager) << "attaching" << session << "to" << _devices.key(device);
-    // signals
-    // buffered
+    if (!device->isOpen())
+    {
+        qCDebug(pmanager) << "opening" << _devices.key(device);
+        device->open();
+    }
+
     _buffers[session] = new ReadBuffer();
 
-    connect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
+    _connections[session] = device;
+    _active_sessions[device]++;
+
+    qCDebug(pmanager) << "attaching" << session << "to" << _devices.key(device);
+    // signals
 
     // pass-through
     connect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
@@ -84,29 +91,19 @@ void PropellerManager::attach(PropellerSession * session, PropellerDevice * devi
     connect(device,  &PropellerDevice::bytesWritten,    session,  &PropellerSession::bytesWritten);
     connect(device,  &PropellerDevice::baudRateChanged, session,  &PropellerSession::baudRateChanged);
 
+    // buffered
+    connect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
+
     // slots
     connect(session, &PropellerSession::timeover,        device,  &PropellerDevice::timeOver);
     connect(session, &PropellerSession::allBytesWritten, device,  &PropellerDevice::writeBufferEmpty);
 
-    _active_sessions[device]++;
-    _connections[session] = device;
-
-    if (!device->isOpen())
-    {
-        qCDebug(pmanager) << "opening" << _devices.key(device);
-        device->open();
-    }
 }
 
 void PropellerManager::detach(PropellerSession * session, PropellerDevice * device)
 {
     qCDebug(pmanager) << "detaching" << session << "from" << _devices.key(device);
     // signals
-    // buffered
-    disconnect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
-
-    delete _buffers[session];
-    _buffers.remove(session);
 
     // pass-through
     disconnect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
@@ -114,12 +111,19 @@ void PropellerManager::detach(PropellerSession * session, PropellerDevice * devi
     disconnect(device,  &PropellerDevice::bytesWritten,    session,  &PropellerSession::bytesWritten);
     disconnect(device,  &PropellerDevice::baudRateChanged, session,  &PropellerSession::baudRateChanged);
 
+    // buffered
+    disconnect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
+
     // slots
     disconnect(session, &PropellerSession::timeover,        device,  &PropellerDevice::timeOver);
     disconnect(session, &PropellerSession::allBytesWritten, device,  &PropellerDevice::writeBufferEmpty);
 
     _active_sessions[device]--;
     _connections.remove(session);
+
+    delete _buffers[session];
+    _buffers.remove(session);
+
 
     if (!_active_sessions[device])
     {
