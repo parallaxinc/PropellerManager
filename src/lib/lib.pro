@@ -17,6 +17,7 @@ SOURCES += \
     propellerdevice.cpp \
     propellerprotocol.cpp \
     gpio.cpp \
+    logging.cpp \
 
 HEADERS += \
     propellermanager.h \
@@ -27,5 +28,6 @@ HEADERS += \
     propellerdevice.h \
     propellerprotocol.h \
     gpio.h \
+    logging.h \
     input_console.h \
     readbuffer.h \

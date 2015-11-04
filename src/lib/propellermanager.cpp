@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include "logging.h"
+
 
 PropellerManager::PropellerManager(QObject * parent)
     : QObject(parent)
@@ -26,6 +28,9 @@ PropellerDevice * PropellerManager::getDevice(const QString & port)
     {
         _devices[port] = new PropellerDevice();
         _devices[port]->setPortName(port);
+
+        connect(_devices[port], &PropellerDevice::readyRead,
+                          this, &PropellerManager::readyBuffer);
     }
 
     if (!_ports.contains(port))
@@ -66,12 +71,11 @@ void PropellerManager::readyBuffer()
 
 void PropellerManager::attach(PropellerSession * session, PropellerDevice * device)
 {
-    qDebug() << "[PropellerManager]: Attach" << session << "to" << device;
+    qCDebug(pmanager) << "attaching" << session << "to" << _devices.key(device);
     // signals
     // buffered
     _buffers[session] = new ReadBuffer();
 
-    connect(device,     &PropellerDevice::readyRead,   this,     &PropellerManager::readyBuffer);
     connect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
 
     // pass-through
@@ -88,15 +92,17 @@ void PropellerManager::attach(PropellerSession * session, PropellerDevice * devi
     _connections[session] = device;
 
     if (!device->isOpen())
+    {
+        qCDebug(pmanager) << "opening" << _devices.key(device);
         device->open();
+    }
 }
 
 void PropellerManager::detach(PropellerSession * session, PropellerDevice * device)
 {
-    qDebug() << "[PropellerManager]: Detach" << session << "from" << device;
+    qCDebug(pmanager) << "detaching" << session << "from" << _devices.key(device);
     // signals
     // buffered
-    disconnect(device,     &PropellerDevice::readyRead,   this,     &PropellerManager::readyBuffer);
     disconnect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
 
     delete _buffers[session];
@@ -116,7 +122,10 @@ void PropellerManager::detach(PropellerSession * session, PropellerDevice * devi
     _connections.remove(session);
 
     if (!_active_sessions[device])
+    {
+        qCDebug(pmanager) << "closing" << _devices.key(device);
         device->close();
+    }
 }
 
 void PropellerManager::endSession(PropellerSession * session)
@@ -138,6 +147,9 @@ void PropellerManager::deleteDevice(const QString & port)
         if (port == s->portName())
             detach(_sessions[s], _devices[port]);
     }
+
+    disconnect(_devices[port], &PropellerDevice::readyRead,
+                         this, &PropellerManager::readyBuffer);
     _devices.remove(port);
 }
 
