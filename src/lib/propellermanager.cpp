@@ -186,6 +186,8 @@ void PropellerManager::checkPorts()
 
 bool PropellerManager::portIsBusy(PropellerSession * session, const QString & name)
 {
+    if (isPaused(session)) return true;
+
     PropellerDevice * device = getDevice(name);
     if (_busy.contains(device) && _busy[device] != session)
         return true;
@@ -204,6 +206,8 @@ bool PropellerManager::reserve(PropellerSession * session, const QString & port)
     {
         _saved_connections[oldsession] = device;
         detach(oldsession, device);
+
+        emit oldsession->deviceBusy();
     }
 
     attach(session, device);
@@ -235,10 +239,26 @@ void PropellerManager::release(PropellerSession * session, const QString & port)
     foreach (PropellerSession * oldsession, _saved_connections.keys(device))
     {
         attach(oldsession, device);
+        emit oldsession->deviceFree();
         _saved_connections.remove(oldsession);
     }
 
     _active_sessions[device]--; // prevent port from closing while releasing device
+}
+
+void PropellerManager::pause(PropellerSession * session)
+{
+    _paused[session] = session;
+}
+
+bool PropellerManager::isPaused(PropellerSession * session)
+{
+    return _paused.contains(session);
+}
+
+void PropellerManager::unpause(PropellerSession * session)
+{
+    _paused.remove(session);
 }
 
 bool PropellerManager::clear(PropellerSession * session, const QString & port)
@@ -344,8 +364,6 @@ QString PropellerManager::errorString(PropellerSession * session, const QString 
     if (portIsBusy(session, port)) return QString();
     return getDevice(port)->errorString();
 }
-
-
 
 
 void PropellerManager::message(const QString & message, const QString & port)

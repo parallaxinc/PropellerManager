@@ -47,9 +47,14 @@ public:
 
 public:
     bool        isOpen();
+
     bool        reserve();
     bool        isReserved();
     void        release();
+
+    void        pause();
+    bool        isPaused();
+    void        unpause();
 
     bool        clear();
     bool        setBaudRate(quint32 baudRate);
@@ -77,6 +82,8 @@ signals:
     void        baudRateChanged(qint32 baudRate);
     void        sendError(const QString & message);
     void        finished();
+    void        deviceFree();
+    void        deviceBusy();
 
     void        timeover();
     void        allBytesWritten();
@@ -84,5 +91,6 @@ signals:
 public slots:
     void        timeOver();
     void        writeBufferEmpty();
+
 };
 

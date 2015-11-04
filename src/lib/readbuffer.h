@@ -48,6 +48,5 @@ public:
 
 signals:
     void readyRead();
-
 };
 

@@ -62,6 +62,21 @@ void PropellerSession::release()
     manager->release(this, port);
 }
 
+void PropellerSession::pause()
+{
+    manager->pause(this);
+}
+
+bool PropellerSession::isPaused()
+{
+    return manager->isPaused(this);
+}
+
+void PropellerSession::unpause()
+{
+    manager->unpause(this);
+}
+
 bool PropellerSession::clear()
 {
     return manager->clear(this, port);

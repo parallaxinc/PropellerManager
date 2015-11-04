@@ -98,6 +98,7 @@ bool PropellerDevice::open()
         return false;
     }
 
+    reset();
     setBaudRate(115200);
 
     return true;
