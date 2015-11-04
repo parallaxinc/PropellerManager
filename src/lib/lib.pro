@@ -28,3 +28,4 @@ HEADERS += \
     propellerprotocol.h \
     gpio.h \
     input_console.h \
+    readbuffer.h \

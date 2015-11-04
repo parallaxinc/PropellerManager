@@ -3,10 +3,10 @@
 #include <QTimer>
 #include <QStringList>
 #include <QHash>
-#include <QBuffer>
 
 #include "propellerdevice.h"
 #include "propellersession.h"
+#include "readbuffer.h"
 
 /**
 @class PropellerManager
@@ -20,6 +20,7 @@ PropellerDevice instances, preventing them from interacting with each other dire
 */
 
 class PropellerSession;
+
 
 class PropellerManager : public QObject
 {
@@ -36,8 +37,7 @@ private:
     QHash<PropellerSession *, PropellerDevice *> _connections;
     QHash<PropellerSession *, PropellerDevice *> _saved_connections;
 
-    QHash<PropellerSession *, QBuffer *> _buffers;
-    QHash<PropellerSession *, QByteArray *> _buffer_arrays;
+    QHash<PropellerSession *, ReadBuffer *> _buffers;
     
     void attach(PropellerSession * session, PropellerDevice * device);
     void attachByName(PropellerSession * session, const QString & port);

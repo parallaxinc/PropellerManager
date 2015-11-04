@@ -153,7 +153,7 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
         error("Device not open");
         return 1;
     }
-//    if (!session->reserve(
+
     session->setBaudRate(115200);
 
     if (!image.isValid())
@@ -182,8 +182,11 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     elapsedTimer.start();
 
     message(QString("Downloading image (%1 bytes, %2 ms)").arg(image.imageSize()).arg(timeout_payload));
+
+    // THIS WHOLE SECTION IS A GREAT OPPORTUNITY FOR QSTATEMACHINE
     if (!sendPayload(payload))
     {
+        session->release();
         return 1;
     }
 
@@ -191,12 +194,14 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     if (!pollAcknowledge())
     {
         error("Verify RAM Failed");
+        session->release();
         return 1;
     }
 
     if (!write)
     {
         message("DOWNLOAD COMPLETE");
+        session->release();
         return 0;
     }
     
@@ -204,6 +209,7 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     if (!pollAcknowledge())
     {
         error("Write EEPROM Failed");
+        session->release();
         return 1;
     }
 
@@ -211,17 +217,18 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     if (!pollAcknowledge())
     {
         error("Verify EEPROM Failed");
+        session->release();
         return 1;
     }
 
     if (run)
     {
         session->reset();
+        session->release();
     }
 
     message("DOWNLOAD COMPLETE");
 
-    session->release();
     return 0;
 }
 

@@ -60,25 +60,19 @@ void PropellerManager::readyBuffer()
 
     foreach (PropellerSession * session, _connections.keys(device))
     {
-        _buffers[session]->close();
-        _buffers[session]->open(QIODevice::Append);
-        _buffers[session]->write(newdata);
-        _buffers[session]->seek(0);
-        _buffers[session]->close();
-        _buffers[session]->open(QIODevice::ReadOnly);
+        _buffers[session]->append(newdata);
     }
 }
 
 void PropellerManager::attach(PropellerSession * session, PropellerDevice * device)
 {
+    qDebug() << "[PropellerManager]: Attach" << session << "to" << device;
     // signals
     // buffered
-    _buffer_arrays[session] = new QByteArray();
-    _buffers[session] = new QBuffer(_buffer_arrays[session]);
-    _buffers[session]->open(QIODevice::ReadWrite);
+    _buffers[session] = new ReadBuffer();
 
     connect(device,     &PropellerDevice::readyRead,   this,     &PropellerManager::readyBuffer);
-    connect(_buffers[session],  &QBuffer::readyRead,   session,  &PropellerSession::readyRead);
+    connect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
 
     // pass-through
     connect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
@@ -99,17 +93,14 @@ void PropellerManager::attach(PropellerSession * session, PropellerDevice * devi
 
 void PropellerManager::detach(PropellerSession * session, PropellerDevice * device)
 {
+    qDebug() << "[PropellerManager]: Detach" << session << "from" << device;
     // signals
     // buffered
     disconnect(device,     &PropellerDevice::readyRead,   this,     &PropellerManager::readyBuffer);
-    disconnect(_buffers[session],  &QBuffer::readyRead,   session,  &PropellerSession::readyRead);
+    disconnect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
 
-    _buffers[session]->close();
     delete _buffers[session];
-    delete _buffer_arrays[session];
-
     _buffers.remove(session);
-    _buffer_arrays.remove(session);
 
     // pass-through
     disconnect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
@@ -351,3 +342,4 @@ void PropellerManager::message(const QString & message, const QString & port)
     fprintf(stderr, "%s\n", qPrintable(text));
     fflush(stderr);
 }
+
