@@ -30,9 +30,12 @@ private:
     QStringList _ports;
     QHash<QString, PropellerDevice *> _devices;
     QHash<PropellerDevice *, quint32> _active_sessions;
-    QHash<QString, PropellerSession *> _busy;
+    QHash<PropellerDevice *, PropellerSession *> _busy;
     QHash<PropellerSession *, PropellerSession *> _sessions;
+
     QHash<PropellerSession *, PropellerDevice *> _connections;
+    QHash<PropellerSession *, PropellerDevice *> _saved_connections;
+
     QHash<PropellerSession *, QBuffer *> _buffers;
     QHash<PropellerSession *, QByteArray *> _buffer_arrays;
     
@@ -107,8 +110,13 @@ public:
     void        useDefaultReset(PropellerSession * session, const QString & port);
     bool        reset(PropellerSession * session, const QString & port);
 
+    bool        reserve(PropellerSession * session, const QString & port);
+    bool        isReserved(PropellerSession * session, const QString & port);
+    void        release(PropellerSession * session, const QString & port);
+
 signals:
     void readyRead();
+    void deviceFree();
+    void deviceBusy();
 /**@}*/
-
 };

@@ -47,8 +47,11 @@ public:
 
 public:
     bool        isOpen();
-    bool        clear();
+    bool        reserve();
+    bool        isReserved();
+    void        release();
 
+    bool        clear();
     bool        setBaudRate(quint32 baudRate);
 
     qint64      bytesToWrite();

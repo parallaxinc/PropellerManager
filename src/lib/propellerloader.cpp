@@ -142,6 +142,12 @@ int PropellerLoader::version()
 
 int PropellerLoader::upload(PropellerImage image, bool write, bool run)
 {
+    if (!session->reserve())
+    {
+        error("Device is busy");
+        return 1;
+    }
+
     if (!session->isOpen())
     {
         error("Device not open");
@@ -214,6 +220,8 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     }
 
     message("DOWNLOAD COMPLETE");
+
+    session->release();
     return 0;
 }
 

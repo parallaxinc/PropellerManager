@@ -66,6 +66,8 @@ void PropellerManager::readyBuffer()
         _buffers[session]->seek(0);
         _buffers[session]->close();
         _buffers[session]->open(QIODevice::ReadOnly);
+
+        qDebug() << session << newdata;
     }
 }
 
@@ -183,8 +185,59 @@ void PropellerManager::checkPorts()
 
 bool PropellerManager::portIsBusy(PropellerSession * session, const QString & name)
 {
+    PropellerDevice * device = getDevice(name);
+    if (_busy.contains(device) && _busy[device] != session)
+        return true;
+
     attachByName(session, name);
     return false;
+}
+
+bool PropellerManager::reserve(PropellerSession * session, const QString & port)
+{
+    if (portIsBusy(session, port)) return false;
+    PropellerDevice * device = getDevice(port);
+    _active_sessions[device]++; // prevent port from closing while reserving device
+
+    foreach (PropellerSession * oldsession, _connections.keys(device))
+    {
+        _saved_connections[oldsession] = device;
+        detach(oldsession, device);
+    }
+
+    attach(session, device);
+
+    _active_sessions[device]--; // prevent port from closing while reserving device
+    return true;
+}
+
+bool PropellerManager::isReserved(PropellerSession * session, const QString & port)
+{
+    if (portIsBusy(session, port)) return false;
+
+    PropellerDevice * device = getDevice(port);
+    if (_connections.keys(device).size() != 1) return false;
+
+    return true;
+}
+
+void PropellerManager::release(PropellerSession * session, const QString & port)
+{
+    if (portIsBusy(session, port)) return;
+    if (!isReserved(session, port)) return;
+
+    PropellerDevice * device = getDevice(port);
+    _active_sessions[device]++; // prevent port from closing while releasing device
+
+    detach(session, device);
+
+    foreach (PropellerSession * oldsession, _saved_connections.keys(device))
+    {
+        attach(oldsession, device);
+        _saved_connections.remove(oldsession);
+    }
+
+    _active_sessions[device]--; // prevent port from closing while releasing device
 }
 
 bool PropellerManager::clear(PropellerSession * session, const QString & port)

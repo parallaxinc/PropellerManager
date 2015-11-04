@@ -47,6 +47,21 @@ bool PropellerSession::isOpen()
     return manager->isOpen(this, port);
 }
 
+bool PropellerSession::reserve()
+{
+    return manager->reserve(this, port);
+}
+
+bool PropellerSession::isReserved()
+{
+    return manager->isReserved(this, port);
+}
+
+void PropellerSession::release()
+{
+    manager->release(this, port);
+}
+
 bool PropellerSession::clear()
 {
     return manager->clear(this, port);
