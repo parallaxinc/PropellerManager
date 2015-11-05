@@ -35,7 +35,7 @@ private:
 public:
     PropellerSession(
             PropellerManager * manager,
-            const QString & portname, 
+            const QString & portname = QString(), 
             QObject * parent = 0);
     ~PropellerSession();
 
