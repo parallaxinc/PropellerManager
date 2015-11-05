@@ -30,20 +30,17 @@ class PropellerSession : public QObject
 
 private:
     QString port;
-    QString session;
     PropellerManager * manager;
 
 public:
     PropellerSession(
-            const QString & portname, 
             PropellerManager * manager,
+            const QString & portname, 
             QObject * parent = 0);
     ~PropellerSession();
 
     const QString & portName();
     void            setPortName(const QString & name);
-    const QString & sessionName();
-    void            setSessionName(const QString & name);
 
 public:
     bool        isOpen();

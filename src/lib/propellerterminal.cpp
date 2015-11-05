@@ -2,11 +2,12 @@
 
 #include <QEventLoop>
 
-PropellerTerminal::PropellerTerminal(PropellerSession * session,
+PropellerTerminal::PropellerTerminal(PropellerManager * manager,
+                                    const QString & portname,
                                     QObject * parent)
     : QObject(parent)
 {
-    this->session = session;
+    this->session = new PropellerSession(manager, portname);
 
     connect(session, SIGNAL(readyRead()), this, SLOT(read()));
     connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write(const QString &)));
@@ -17,7 +18,7 @@ PropellerTerminal::~PropellerTerminal()
     disconnect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write(const QString &)));
     disconnect(session, SIGNAL(readyRead()), this, SLOT(read()));
 
-    this->session = NULL;
+    delete session;
 }
 
 void PropellerTerminal::write(const QString & text)

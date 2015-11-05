@@ -27,7 +27,9 @@ private slots:
     void write(const QString & text);
 
 public:
-    PropellerTerminal(PropellerSession * session, QObject * parent = 0);
+    PropellerTerminal(PropellerManager * manager,
+                      const QString & portname,
+                      QObject * parent = 0);
     ~PropellerTerminal();
 };
 

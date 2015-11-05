@@ -55,7 +55,7 @@ public:
     PropellerManager(QObject *parent = 0);
     ~PropellerManager();
 
-    PropellerSession * session(const QString & port = QString());
+    bool beginSession(PropellerSession * session);
     void endSession(PropellerSession * session);
 
 /**

@@ -62,7 +62,9 @@ private slots:
     void error(QString text);
 
 public:
-    PropellerLoader(PropellerSession * session, QObject * parent = 0);
+    PropellerLoader(PropellerManager * manager,
+                    const QString & portname,
+                    QObject * parent = 0);
     ~PropellerLoader();
 
     int version();

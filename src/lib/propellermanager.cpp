@@ -16,11 +16,25 @@ PropellerManager::~PropellerManager()
 
 }
 
-PropellerSession * PropellerManager::session(const QString & port)
+bool PropellerManager::beginSession(PropellerSession * session)
 {
-    PropellerSession * s = new PropellerSession(port, this);
-    return _sessions[s] = s;
+    if (!session) return false;
+
+    _sessions[session] = session;
+    return true;
 }
+
+void PropellerManager::endSession(PropellerSession * session)
+{
+    if (!session) return;
+
+    QString port = session->portName();
+    if (!_devices.contains(port)) return;
+
+    detach(_sessions[session], _devices[port]);
+    _sessions.remove(session);
+}
+
 
 PropellerDevice * PropellerManager::getDevice(const QString & port)
 {
@@ -130,18 +144,6 @@ void PropellerManager::detach(PropellerSession * session, PropellerDevice * devi
         qCDebug(pmanager) << "closing" << _devices.key(device);
         device->close();
     }
-}
-
-void PropellerManager::endSession(PropellerSession * session)
-{
-    if (!session) return;
-
-    QString port = session->portName();
-    if (!_devices.contains(port)) return;
-
-    detach(_sessions[session], _devices[port]);
-    delete _sessions[session];
-    _sessions.remove(session);
 }
 
 void PropellerManager::deleteDevice(const QString & port)

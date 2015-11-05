@@ -19,7 +19,7 @@
 
 PropellerImage load_image(QCommandLineParser &parser);
 void open_loader(QCommandLineParser &parser, QStringList device_list);
-void terminal(PropellerSession * session);
+void terminal(const QString & device);
 void info(PropellerImage image);
 void list();
 void error(const QString & text);
@@ -100,8 +100,7 @@ int main(int argc, char *argv[])
 
         foreach (QString d, device_list)
         {
-            PropellerSession * session = manager.session(d);
-            PropellerLoader loader(session);
+            PropellerLoader loader(&manager, d);
 
             switch (loader.version())
             {
@@ -143,7 +142,7 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
     {
         if (parser.isSet(argTerm))
         {
-            terminal(manager.session(device));
+            terminal(device);
             return;
         }
         else
@@ -152,8 +151,7 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
         }
     }
 
-    PropellerSession * session = manager.session(device);
-    PropellerLoader loader(session);
+    PropellerLoader loader(&manager, device);
     PropellerImage image = load_image(parser);
 
     if (parser.isSet(argClkFreq))
@@ -192,7 +190,7 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
     }
 
     if (parser.isSet(argTerm))
-        terminal(session);
+        terminal(device);
 }
 
 void list()
@@ -203,14 +201,14 @@ void list()
     }
 }
 
-void terminal(PropellerSession * session)
+void terminal(const QString & device)
 {
     message("--------------------------------------");
     message("Opening terminal: ");
     message("  (Ctrl+C to exit)");
     message("--------------------------------------");
 
-    PropellerTerminal t(session);
+    PropellerTerminal t(&manager, device);
     QEventLoop loop;
     loop.exec();
 }

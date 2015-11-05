@@ -7,19 +7,20 @@
 class PropellerManager;
 
 PropellerSession::PropellerSession(
-        const QString & portname, 
         PropellerManager * manager,
+        const QString & portname, 
         QObject * parent)
     : QObject(parent)
 {
     setPortName(portname);
     this->manager = manager;
-    session = "Session";
+
+    manager->beginSession(this);
 }
 
 PropellerSession::~PropellerSession()
 {
-
+    manager->endSession(this);
 }
 
 const QString & PropellerSession::portName()
@@ -30,16 +31,6 @@ const QString & PropellerSession::portName()
 void PropellerSession::setPortName(const QString & name)
 {
     port = name;
-}
-
-const QString & PropellerSession::sessionName()
-{
-    return session;
-}
-
-void PropellerSession::setSessionName(const QString & name)
-{
-    session = name;
 }
 
 bool PropellerSession::isOpen()

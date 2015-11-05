@@ -13,16 +13,16 @@
   \param parent The parent QObject.
   */
 
-PropellerLoader::PropellerLoader(PropellerSession * session,
-                                    QObject * parent)
+PropellerLoader::PropellerLoader(PropellerManager * manager,
+                                 const QString & portname,
+                                 QObject * parent)
     : QObject(parent)
 {
     _version = 0;
     _ack     = 0;
 
-    this->session = session;
+    this->session = new PropellerSession(manager, portname);
     session->setBaudRate(115200);
-    session->setSessionName("Loader");
 
     totalTimeout.setSingleShot(true);
     handshakeTimeout.setSingleShot(true);
@@ -43,7 +43,7 @@ PropellerLoader::PropellerLoader(PropellerSession * session,
 
 PropellerLoader::~PropellerLoader()
 {
-
+    delete session;
 }
 
 void PropellerLoader::message(QString text)
