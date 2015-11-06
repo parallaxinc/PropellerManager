@@ -6,9 +6,11 @@
 /**
 @class PropellerTerminal 
 
-@brief The PropellerTerminal class implements a minimal reference implementation of a PropellerManager-based terminal.
+@brief The PropellerTerminal class provides a minimal implementation of a PropellerManager-based terminal.
 
 Usage is easy; create an instance of PropellerTerminal and it will set up an event loop. Exit with Ctrl+C.
+
+\see PropellerLoader
 */
 
 /**

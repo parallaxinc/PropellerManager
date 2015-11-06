@@ -12,7 +12,7 @@ docurl: /projects/propellermanager/
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="examples.html"><span>Examples</span></a></li>
@@ -37,7 +37,7 @@ docurl: /projects/propellermanager/
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_propeller_image.html" title="The PropellerImage class encapsulates Propeller binary images. ">PropellerImage</a> class encapsulates <a class="el" href="namespace_propeller.html">Propeller</a> binary images.  
+<p>The <a class="el" href="class_propeller_image.html" title="The PropellerImage class encapsulates Propeller binary images. ">PropellerImage</a> class encapsulates Propeller binary images.  
  <a href="class_propeller_image.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellerimage_8h_source.html">propellerimage.h</a>&gt;</code></p>
@@ -49,26 +49,12 @@ Public Types</h2></td></tr>
 <a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867a633062e9e08a84e033406dd239efb5d9">Eeprom</a>
  }</td></tr>
 <tr class="separator:a5d6dcf94ae656814c5776fbe3147e867"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1871d19e1a791e4c5ad8b0491ade860"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860">ImageFormat</a> { <br />
-&#160;&#160;<a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860aa9f162fa83a8e3ba8e97937f67a10801">_long_clockfrequency</a> = 0, 
-<a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860a0870b5fa8014ff1283a36ecf4e00c175">_byte_clockmode</a> = 4, 
-<a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860a2ce74cd6a46f2bd51784a07fce33eebc">_byte_checksum</a> = 5, 
-<a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860a625b48c8a3625c78a75b18f1917c1b74">_word_code</a> = 6, 
-<br />
-&#160;&#160;<a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860a777a34bb418af1c50f6eff1a9f18a40f">_word_variables</a> = 8, 
-<a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860a20235dc5b9db1e3c3a0918430604fa5f">_word_stackspace</a> = 10, 
-<a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860ad060a3a00626d8d6e0e02807f834104e">_size_eeprom</a> = 32768
-<br />
- }</td></tr>
-<tr class="separator:ab1871d19e1a791e4c5ad8b0491ade860"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:adfa809aec9aee800d64501aa24de3eb9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#adfa809aec9aee800d64501aa24de3eb9">PropellerImage</a> (QByteArray image=QByteArray(), QString filename=&quot;&quot;)</td></tr>
 <tr class="separator:adfa809aec9aee800d64501aa24de3eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Image Validation</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><p>Apply some data integrity measures locally. </p>
-</div></td></tr>
 <tr class="memitem:aa40c90c26076b7d2887e09f4b2465c32"><td class="memItemLeft" align="right" valign="top">quint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#aa40c90c26076b7d2887e09f4b2465c32">checksum</a> ()</td></tr>
 <tr class="separator:aa40c90c26076b7d2887e09f4b2465c32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac249ec1db3d87fa6ade1a791e6b459ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#ac249ec1db3d87fa6ade1a791e6b459ff">checksumIsValid</a> ()</td></tr>
@@ -78,22 +64,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad3a34a420ac509dd051f57f592100251"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#ad3a34a420ac509dd051f57f592100251">recalculateChecksum</a> ()</td></tr>
 <tr class="separator:ad3a34a420ac509dd051f57f592100251"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Image Information</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><p>Extract information about the current image. </p>
-</div></td></tr>
 <tr class="memitem:ad2a55c0ea938fc8eb5b7d5cbe43396be"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#ad2a55c0ea938fc8eb5b7d5cbe43396be">fileName</a> ()</td></tr>
 <tr class="separator:ad2a55c0ea938fc8eb5b7d5cbe43396be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb1133d862d14e6f3c4021770112bd4c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867">ImageType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#acb1133d862d14e6f3c4021770112bd4c">imageType</a> ()</td></tr>
 <tr class="separator:acb1133d862d14e6f3c4021770112bd4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a678f70a38a4e25653b8ede86c0c5ea07"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a678f70a38a4e25653b8ede86c0c5ea07">imageTypeText</a> ()</td></tr>
 <tr class="separator:a678f70a38a4e25653b8ede86c0c5ea07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1883734ffee1a0b3ba7dcb4772fbd899"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a1883734ffee1a0b3ba7dcb4772fbd899">imageSize</a> ()</td></tr>
-<tr class="separator:a1883734ffee1a0b3ba7dcb4772fbd899"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c037c6151894dc5ea3bebc2c96d0afe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a9c037c6151894dc5ea3bebc2c96d0afe">programSize</a> ()</td></tr>
-<tr class="separator:a9c037c6151894dc5ea3bebc2c96d0afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a105e2cd3a92d1d93dcccc99c0ac20aa5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a105e2cd3a92d1d93dcccc99c0ac20aa5">variableSize</a> ()</td></tr>
-<tr class="separator:a105e2cd3a92d1d93dcccc99c0ac20aa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0ed50fb9002604db8a88e21e26b2927"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#ad0ed50fb9002604db8a88e21e26b2927">stackSize</a> ()</td></tr>
-<tr class="separator:ad0ed50fb9002604db8a88e21e26b2927"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64afcf82ab4137ded852e81ecc354326"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a64afcf82ab4137ded852e81ecc354326">imageSize</a> ()</td></tr>
+<tr class="separator:a64afcf82ab4137ded852e81ecc354326"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24b766dd4607c167248a40d550c6a700"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a24b766dd4607c167248a40d550c6a700">programSize</a> ()</td></tr>
+<tr class="separator:a24b766dd4607c167248a40d550c6a700"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25c72b4823e1f7b9536ad6bee04467f3"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a25c72b4823e1f7b9536ad6bee04467f3">variableSize</a> ()</td></tr>
+<tr class="separator:a25c72b4823e1f7b9536ad6bee04467f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a880bf0a3aaa2fd4d3d2b872f6e443249"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a880bf0a3aaa2fd4d3d2b872f6e443249">stackSize</a> ()</td></tr>
+<tr class="separator:a880bf0a3aaa2fd4d3d2b872f6e443249"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e5e07d2c13bee9153e8ac31b341b258"><td class="memItemLeft" align="right" valign="top">quint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a6e5e07d2c13bee9153e8ac31b341b258">startOfCode</a> ()</td></tr>
 <tr class="separator:a6e5e07d2c13bee9153e8ac31b341b258"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a076ad505dedab176ab30ffcc8dfa0bf7"><td class="memItemLeft" align="right" valign="top">quint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a076ad505dedab176ab30ffcc8dfa0bf7">startOfVariables</a> ()</td></tr>
@@ -101,8 +85,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4004019dba00066b61605b59b683ae9f"><td class="memItemLeft" align="right" valign="top">quint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a4004019dba00066b61605b59b683ae9f">startOfStackSpace</a> ()</td></tr>
 <tr class="separator:a4004019dba00066b61605b59b683ae9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Low-Level Functions</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><p>Read and write data to/from the image. </p>
-</div></td></tr>
 <tr class="memitem:ac20d717d57aef98a3abace8b7c0c1f10"><td class="memItemLeft" align="right" valign="top">QByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#ac20d717d57aef98a3abace8b7c0c1f10">data</a> ()</td></tr>
 <tr class="separator:ac20d717d57aef98a3abace8b7c0c1f10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedb2c5988a8caa463637461df5ef87fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#aedb2c5988a8caa463637461df5ef87fe">setData</a> (QByteArray image)</td></tr>
@@ -120,19 +102,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a256e834a1c78281c233c255776bb38da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a256e834a1c78281c233c255776bb38da">writeLong</a> (int pos, quint32 value)</td></tr>
 <tr class="separator:a256e834a1c78281c233c255776bb38da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Clock Settings</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><p>Read and write data to/from the image. </p>
-</div></td></tr>
 <tr class="memitem:a6c564997c0969a159e67097fca000c1d"><td class="memItemLeft" align="right" valign="top">quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a6c564997c0969a159e67097fca000c1d">clockFrequency</a> ()</td></tr>
-<tr class="memdesc:a6c564997c0969a159e67097fca000c1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current clock frequency of the image.  <a href="#a6c564997c0969a159e67097fca000c1d">More...</a><br /></td></tr>
 <tr class="separator:a6c564997c0969a159e67097fca000c1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a180786afdc1b19c702cb3180f9a2bc2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a180786afdc1b19c702cb3180f9a2bc2e">setClockFrequency</a> (quint32 frequency)</td></tr>
-<tr class="memdesc:a180786afdc1b19c702cb3180f9a2bc2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a new clock frequency to the image.  <a href="#a180786afdc1b19c702cb3180f9a2bc2e">More...</a><br /></td></tr>
 <tr class="separator:a180786afdc1b19c702cb3180f9a2bc2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02da6195e6a2aff3aff66ab75e1ce185"><td class="memItemLeft" align="right" valign="top">quint8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#a02da6195e6a2aff3aff66ab75e1ce185">clockMode</a> ()</td></tr>
-<tr class="memdesc:a02da6195e6a2aff3aff66ab75e1ce185"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an 8-bit integer containing the current clock mode.  <a href="#a02da6195e6a2aff3aff66ab75e1ce185">More...</a><br /></td></tr>
 <tr class="separator:a02da6195e6a2aff3aff66ab75e1ce185"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf0c44fc3dca928b1864b5bc346ca1f9"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#abf0c44fc3dca928b1864b5bc346ca1f9">clockModeText</a> ()</td></tr>
-<tr class="memdesc:abf0c44fc3dca928b1864b5bc346ca1f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a human-readable string of the current clock mode.  <a href="#abf0c44fc3dca928b1864b5bc346ca1f9">More...</a><br /></td></tr>
 <tr class="separator:abf0c44fc3dca928b1864b5bc346ca1f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeeaed281f0966ebf852cb0262afbd0e6"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_image.html#aeeaed281f0966ebf852cb0262afbd0e6">clockModeText</a> (quint8 value)</td></tr>
 <tr class="separator:aeeaed281f0966ebf852cb0262afbd0e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,15 +116,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae4e30a4c97ef79cc9d82ece83e4337b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The <a class="el" href="class_propeller_image.html" title="The PropellerImage class encapsulates Propeller binary images. ">PropellerImage</a> class encapsulates <a class="el" href="namespace_propeller.html">Propeller</a> binary images. </p>
+<div class="textblock"><p>The <a class="el" href="class_propeller_image.html" title="The PropellerImage class encapsulates Propeller binary images. ">PropellerImage</a> class encapsulates Propeller binary images. </p>
 <ul>
 <li>Converts between binary and EEPROM image formats</li>
 <li>Extract information about binaries</li>
 <li>Ability to customize and retarget binaries</li>
 <li>Can validate images for accuracy</li>
 </ul>
-<h3><a class="el" href="namespace_propeller.html">Propeller</a> Application Format</h3>
-<p>The <a class="el" href="namespace_propeller.html">Propeller</a> Application image consists of data blocks for initialization, program, variables, and data/stack space. The first block, initialization, describes the application's startup parameters, including the position of the other blocks within the image, as shown below.</p>
+<h3>Propeller Application Format</h3>
+<p>The Propeller Application image consists of data blocks for initialization, program, variables, and data/stack space. The first block, initialization, describes the application's startup parameters, including the position of the other blocks within the image, as shown below.</p>
 <table class="doxtable">
 <tr>
 <th>data size </th><th>address </th><th>description  </th></tr>
@@ -170,37 +146,9 @@ Public Member Functions</h2></td></tr>
 <td>word </td><td>14 </td><td>Current Stack Space pointer (points to first run-time usable space of stack) </td></tr>
 </table>
 <h3>What Gets Downloaded</h3>
-<p>To save time, <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> does not download the entire application image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the <a class="el" href="namespace_propeller.html">Propeller</a> chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well. </p>
+<p>To save time, <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> does not download the entire application image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the Propeller chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="download_2main_8cpp-example.html#_a3">download/main.cpp</a>, and <a class="el" href="imageinfo_2main_8cpp-example.html#_a0">imageinfo/main.cpp</a>.</dd>
 </dl></div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="class_propeller_image.html#ab1871d19e1a791e4c5ad8b0491ade860">PropellerImage::ImageFormat</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860aa9f162fa83a8e3ba8e97937f67a10801"></a>_long_clockfrequency&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860a0870b5fa8014ff1283a36ecf4e00c175"></a>_byte_clockmode&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860a2ce74cd6a46f2bd51784a07fce33eebc"></a>_byte_checksum&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860a625b48c8a3625c78a75b18f1917c1b74"></a>_word_code&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860a777a34bb418af1c50f6eff1a9f18a40f"></a>_word_variables&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860a20235dc5b9db1e3c3a0918430604fa5f"></a>_word_stackspace&#160;</td><td class="fielddoc">
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860ad060a3a00626d8d6e0e02807f834104e"></a>_size_eeprom&#160;</td><td class="fielddoc">
-</td></tr>
-</table>
-
-</div>
-</div>
 <a class="anchor" id="a5d6dcf94ae656814c5776fbe3147e867"></a>
 <div class="memitem">
 <div class="memproto">
@@ -210,7 +158,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>An enumeration containing all <a class="el" href="namespace_propeller.html">Propeller</a> image types that <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> supports. </p>
+<p>An enumeration containing all Propeller image types that <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> supports. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a5d6dcf94ae656814c5776fbe3147e867aab2bac6165c788db1f410bd629db2c72"></a>Invalid&#160;</td><td class="fielddoc">
 <p>Not a valid image file. </p>
@@ -265,6 +213,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns the checksum of the image.</p>
+<p>A valid checksum has a value of zero. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a4">imageinfo/main.cpp</a>.</dd>
 </dl>
 </div>
@@ -281,6 +231,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns whether the checksum of the image is valid.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if valid, otherwise false. </dd></dl>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a5">imageinfo/main.cpp</a>.</dd>
 </dl>
 </div>
@@ -297,9 +249,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Get the current clock frequency of the image. </p>
-<p>Get the clock frequency.</p>
+<p>Returns the current clock frequency of the image.</p>
 <dl class="section return"><dt>Returns</dt><dd>a 32-bit unsigned value containing the clock frequency in Hertz. </dd></dl>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a11">imageinfo/main.cpp</a>.</dd>
 </dl>
@@ -317,7 +267,6 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
 <p>Get an 8-bit integer containing the current clock mode. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a10">imageinfo/main.cpp</a>.</dd>
 </dl>
@@ -335,7 +284,6 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
 <p>Get a human-readable string of the current clock mode. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a9">imageinfo/main.cpp</a>.</dd>
 </dl>
@@ -354,6 +302,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Get a human-readable string of any known clock mode. </p>
 
 </div>
 </div>
@@ -369,6 +318,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns the raw binary data of the image. </p>
 
 </div>
 </div>
@@ -384,16 +334,17 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns the filename associated with this image. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a1">imageinfo/main.cpp</a>.</dd>
 </dl>
 </div>
 </div>
-<a class="anchor" id="a1883734ffee1a0b3ba7dcb4772fbd899"></a>
+<a class="anchor" id="a64afcf82ab4137ded852e81ecc354326"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int PropellerImage::imageSize </td>
+          <td class="memname">quint32 PropellerImage::imageSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -417,6 +368,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns the ImageType of the image, or ImageType::Invalid. </p>
 
 </div>
 </div>
@@ -432,6 +384,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns a human-readable string of the ImageType. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a2">imageinfo/main.cpp</a>.</dd>
 </dl>
 </div>
@@ -448,15 +401,17 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns whether the image appears to be valid.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if valid, otherwise returns false. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a9c037c6151894dc5ea3bebc2c96d0afe"></a>
+<a class="anchor" id="a24b766dd4607c167248a40d550c6a700"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int PropellerImage::programSize </td>
+          <td class="memname">quint32 PropellerImage::programSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -483,12 +438,6 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Read a byte from address pos of the image.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pos</td><td>The address in bytes to read from.</td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>an 8-bit unsigned value. </dd></dl>
 
 </div>
@@ -507,14 +456,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Read a long from address pos of the image.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pos</td><td>The address in bytes to read from.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a 32-bit unsigned value.</dd></dl>
-<p>This function does not perform long-align on the address passed.* </p>
+<dl class="section note"><dt>Note</dt><dd>This function does not perform long-align on the address passed.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>a 32-bit unsigned value. </dd></dl>
 
 </div>
 </div>
@@ -532,14 +475,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Read a word from address pos of the image.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pos</td><td>The address in bytes to read from.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a 16-bit unsigned value.</dd></dl>
-<p>This function does not perform word-align on the address passed.* </p>
+<dl class="section note"><dt>Note</dt><dd>This function does not perform word-align on the address passed.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>a 16-bit unsigned value. </dd></dl>
 
 </div>
 </div>
@@ -571,9 +508,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Assign a new clock frequency to the image. </p>
-<p>Replace the current clock frequency with another value. </p>
+<p>Sets a new clock frequency for the image. </p>
 
 </div>
 </div>
@@ -590,6 +525,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets a new clock mode for the image. </p>
 
 </div>
 </div>
@@ -601,26 +537,28 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void PropellerImage::setData </td>
           <td>(</td>
           <td class="paramtype">QByteArray&#160;</td>
-          <td class="paramname"><em>image</em></td><td>)</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets the raw binary data of the image. </p>
 
 </div>
 </div>
-<a class="anchor" id="ad0ed50fb9002604db8a88e21e26b2927"></a>
+<a class="anchor" id="a880bf0a3aaa2fd4d3d2b872f6e443249"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int PropellerImage::stackSize </td>
+          <td class="memname">quint32 PropellerImage::stackSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Size in bytes of portion of image data used for stack space, or otherwise free. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a8">imageinfo/main.cpp</a>.</dd>
 </dl>
 </div>
@@ -673,18 +611,19 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a105e2cd3a92d1d93dcccc99c0ac20aa5"></a>
+<a class="anchor" id="a25c72b4823e1f7b9536ad6bee04467f3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int PropellerImage::variableSize </td>
+          <td class="memname">quint32 PropellerImage::variableSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Returns the size in bytes of image data used for variables. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a7">imageinfo/main.cpp</a>.</dd>
 </dl>
 </div>
@@ -712,6 +651,7 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Write a byte-sized value to the image at pos. </p>
 
 </div>
 </div>
@@ -738,6 +678,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Write a long-sized value to the image at pos.</p>
+<dl class="section note"><dt>Note</dt><dd>This function does not perform long-align on the address passed. </dd></dl>
 
 </div>
 </div>
@@ -764,6 +706,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Write a word-sized value to the image at pos.</p>
+<dl class="section note"><dt>Note</dt><dd>This function does not perform word-align on the address passed. </dd></dl>
 
 </div>
 </div>

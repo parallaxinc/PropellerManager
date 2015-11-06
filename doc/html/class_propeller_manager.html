@@ -12,7 +12,7 @@ docurl: /projects/propellermanager/
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="examples.html"><span>Examples</span></a></li>
@@ -126,7 +126,7 @@ Public Member Functions</h2></td></tr>
 <li>Does not require multi-threading, which is not always available.</li>
 <li>Applications can immediately leverage new download strategies without changing code.</li>
 <li>Cleanly shares devices without ever disconnecting, side-stepping a host of platform usability issues.</li>
-<li>Build your applications on a battle-hardened <a class="el" href="namespace_propeller.html">Propeller</a> implementation instead of rolling your own.</li>
+<li>Build your applications on a battle-hardened Propeller implementation instead of rolling your own.</li>
 </ul>
 <p><a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> mediates access to hardware and allows it to be shared between applications seamlessly.</p>
 <p><a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> works by acting as a signal router between <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> and <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> instances, preventing them from interacting with each other directly. </p><pre class="fragment">PropellerManager manager;
@@ -174,10 +174,11 @@ session.write(data);
 <div class="line"></div>
 <div class="line">};</div>
 <div class="line"></div>
-</div><!-- fragment --><p>And that's it! Now your application knows what <a class="el" href="namespace_propeller.html">Propeller</a> devices are connected at any given time.</p>
+</div><!-- fragment --><p>And that's it! Now your application knows what Propeller devices are connected at any given time.</p>
 <h3><a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> Interface</h3>
 <p>These functions implement the interface between <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> and <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>.</p>
-<dl class="section warning"><dt>Warning</dt><dd>It is not recommended to use these functions directly. Use <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> to interface with <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>It is not recommended to use these functions directly. Use <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> to interface with <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> </dd></dl>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="download_2main_8cpp-example.html#_a0">download/main.cpp</a>, <a class="el" href="identify_2main_8cpp-example.html#_a0">identify/main.cpp</a>, <a class="el" href="portmonitor_2main_8cpp-example.html#_a0">portmonitor/main.cpp</a>, and <a class="el" href="terminal_2main_8cpp-example.html#_a0">terminal/main.cpp</a>.</dd>
 </dl></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a1b5744a2d7705209e6be3477e166e3db"></a>
@@ -548,6 +549,7 @@ session.write(data);
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Lists all available devices on the current system via any interface. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="download_2main_8cpp-example.html#a1">download/main.cpp</a>, <a class="el" href="identify_2main_8cpp-example.html#a1">identify/main.cpp</a>, <a class="el" href="portmonitor_2main_8cpp-example.html#a1">portmonitor/main.cpp</a>, and <a class="el" href="terminal_2main_8cpp-example.html#a1">terminal/main.cpp</a>.</dd>
 </dl>
 </div>

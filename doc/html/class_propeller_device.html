@@ -12,7 +12,7 @@ docurl: /projects/propellermanager/
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="examples.html"><span>Examples</span></a></li>
@@ -39,7 +39,7 @@ docurl: /projects/propellermanager/
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> class provides access to serial <a class="el" href="namespace_propeller.html">Propeller</a> devices.  
+<p>The <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> class provides access to serial Propeller devices.  
  <a href="class_propeller_device.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellerdevice_8h_source.html">propellerdevice.h</a>&gt;</code></p>
@@ -91,8 +91,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:aa4fe3b7c8348dc7b3df1c888ea730978"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> class provides access to serial <a class="el" href="namespace_propeller.html">Propeller</a> devices. </p>
-<p>This class inherits from QSerialPort but provides <a class="el" href="namespace_propeller.html">Propeller</a> specific functionality such as hardware reset and download timeouts. </p>
+<div class="textblock"><p>The <a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> class provides access to serial Propeller devices. </p>
+<p>This class inherits from QSerialPort but provides Propeller specific functionality such as hardware reset and download timeouts. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ae17b0402bf39bec8ab3746ddb4674ea0"></a>
 <div class="memitem">
@@ -224,7 +224,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>List all available hardware devices.</p>
-<p>This function does not check whether <a class="el" href="namespace_propeller.html">Propeller</a> hardware attached to the given devices. </p>
+<p>This function does not check whether Propeller hardware attached to the given devices. </p>
 
 </div>
 </div>
@@ -240,7 +240,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Return the minimum timeout for downloading to the <a class="el" href="namespace_propeller.html">Propeller</a>.</p>
+<p>Return the minimum timeout for downloading to the Propeller.</p>
 <p>The default value is 200 ms. </p>
 
 </div>
@@ -273,7 +273,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Reset your attached <a class="el" href="namespace_propeller.html">Propeller</a> hardware using the configured hardware reset.</p>
+<p>Reset your attached Propeller hardware using the configured hardware reset.</p>
 <p>DTR is the default hardware reset on all PropellerIDE distributions, with the exception of Raspberry Pi, where it is GPIO reset. </p>
 
 </div>
@@ -315,7 +315,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Set the minimum timeout for downloading to the <a class="el" href="namespace_propeller.html">Propeller</a>.</p>
+<p>Set the minimum timeout for downloading to the Propeller.</p>
 <p>The default value is 200 ms. </p>
 
 </div>
@@ -373,7 +373,7 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Use the default reset strategy for your device.</p>
 <p>Most Parallax products use DTR for reset, but some third-party boards use RTS as the reset pin.</p>
-<p>Raspberry Pi builds of <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> are configured to use GPIO reset by default for as this is the hardware configuration of the <a class="el" href="namespace_propeller.html">Propeller</a> HAT. </p>
+<p>Raspberry Pi builds of <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> are configured to use GPIO reset by default for as this is the hardware configuration of the Propeller HAT. </p>
 
 </div>
 </div>

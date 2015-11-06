@@ -14,6 +14,12 @@ PropellerImage::PropellerImage(QByteArray image, QString filename)
     _typenames[Eeprom] = "EEPROM";
 }
 
+/**
+    Returns the checksum of the image.
+
+    A valid checksum has a value of zero.
+    */
+
 quint8 PropellerImage::checksum()
 {
     quint8 sum = 0;
@@ -25,6 +31,12 @@ quint8 PropellerImage::checksum()
 
     return sum;
 }
+
+/**
+    Returns whether the checksum of the image is valid.
+
+    \returns true if valid, otherwise false.
+    */
 
 bool PropellerImage::checksumIsValid()
 {
@@ -43,14 +55,28 @@ bool PropellerImage::recalculateChecksum()
     return checksumIsValid();
 }
 
+/**
+    Returns the raw binary data of the image.
+    */
+
 QByteArray PropellerImage::data()
 {
     return _image;
 }
 
+/**
+    Sets the raw binary data of the image.
+    */
+
 void PropellerImage::setData(QByteArray data) {
     _image = data;
 }
+
+/**
+    Returns whether the image appears to be valid.
+
+    \returns true if valid, otherwise returns false.
+    */
 
 bool PropellerImage::isValid()
 {
@@ -59,9 +85,9 @@ bool PropellerImage::isValid()
 
 /**
 Total size of stored image file on disk.
-*/
+    */
 
-int PropellerImage::imageSize()
+quint32 PropellerImage::imageSize()
 {
     return _image.size();
 }
@@ -70,19 +96,27 @@ int PropellerImage::imageSize()
 Size of the application code. This value will be larger than the total file size for PropellerImage::Binary images.
 
 This value is equivalent to startOfStackSpace().
-*/
+    */
 
-int PropellerImage::programSize()
+quint32 PropellerImage::programSize()
 {
     return startOfStackSpace();
 }
 
-int PropellerImage::variableSize()
+/**
+Returns the size in bytes of image data used for variables.
+    */
+
+quint32 PropellerImage::variableSize()
 {
     return startOfStackSpace() - 8 - startOfVariables();
 }
 
-int PropellerImage::stackSize()
+/**
+Size in bytes of portion of image data used for stack space, or otherwise free.
+    */
+
+quint32 PropellerImage::stackSize()
 {
     return EEPROM_SIZE - startOfStackSpace();
 }
@@ -122,8 +156,6 @@ quint16 PropellerImage::startOfStackSpace()
 /**
 Read a byte from address pos of the image.
 
-@param pos The address in bytes to read from.
-
 @return an 8-bit unsigned value.
 */
 
@@ -135,11 +167,9 @@ quint8  PropellerImage::readByte(int pos)
 /**
 Read a word from address pos of the image.
 
-@param pos The address in bytes to read from.
+\note This function does not perform word-align on the address passed.
 
 @return a 16-bit unsigned value.
-
-*This function does not perform word-align on the address passed.*
 */
 
 quint16 PropellerImage::readWord(int pos)
@@ -151,11 +181,9 @@ quint16 PropellerImage::readWord(int pos)
 /**
 Read a long from address pos of the image.
 
-@param pos The address in bytes to read from.
+\note This function does not perform long-align on the address passed.
 
 @return a 32-bit unsigned value.
-
-*This function does not perform long-align on the address passed.*
 */
 
 quint32 PropellerImage::readLong(int pos)
@@ -166,17 +194,32 @@ quint32 PropellerImage::readLong(int pos)
         (readByte(pos+3) << 24);
 }
 
+/**
+Write a byte-sized value to the image at pos.
+    */
 
 void PropellerImage::writeByte(int pos, quint8 value)
 {
     _image[pos] = value;
 }
 
+/**
+Write a word-sized value to the image at pos.
+
+\note This function does not perform word-align on the address passed.
+    */
+
 void PropellerImage::writeWord(int pos, quint16 value)
 {
     for (int i = 0; i < 2; i++)
         writeByte(pos+i, (value >> (i * 8)) & 0xFF);
 }
+
+/**
+Write a long-sized value to the image at pos.
+
+\note This function does not perform long-align on the address passed.
+    */
 
 void PropellerImage::writeLong(int pos, quint32 value)
 {
@@ -186,13 +229,17 @@ void PropellerImage::writeLong(int pos, quint32 value)
 
 
 /**
-Replace the current clock frequency with another value.
+Sets a new clock frequency for the image.
 */
 
 void PropellerImage::setClockFrequency(quint32 frequency)
 {
     writeLong(_long_clockfrequency, frequency);
 }
+
+/**
+Sets a new clock mode for the image.
+*/
 
 bool PropellerImage::setClockMode(quint8 value)
 {
@@ -207,15 +254,19 @@ bool PropellerImage::setClockMode(quint8 value)
 
 
 /**
-Get the clock frequency.
+Returns the current clock frequency of the image.
 
 @return a 32-bit unsigned value containing the clock frequency in Hertz.
-*/
+    */
 
 quint32 PropellerImage::clockFrequency()
 {
     return readLong(_long_clockfrequency);
 }
+
+/**
+Get an 8-bit integer containing the current clock mode.
+    */
 
 quint8 PropellerImage::clockMode()
 {
@@ -226,10 +277,18 @@ quint8 PropellerImage::clockMode()
         return 0x80;
 }
 
+/**
+Get a human-readable string of the current clock mode.
+    */
+
 QString PropellerImage::clockModeText()
 {
     return clockModeText(clockMode());
 }
+
+/**
+Get a human-readable string of any known clock mode.
+    */
 
 QString PropellerImage::clockModeText(quint8 value)
 {
@@ -276,10 +335,18 @@ QHash<quint8, QString> PropellerImage::initClockModeSettings()
     return clkmode;
 }
 
+/**
+Returns the filename associated with this image.
+    */
+
 QString PropellerImage::fileName()
 {
     return _filename;
 }
+
+/**
+Returns the ImageType of the image, or ImageType::Invalid.
+    */
 
 PropellerImage::ImageType PropellerImage::imageType()
 {
@@ -309,6 +376,10 @@ PropellerImage::ImageType PropellerImage::imageType()
     }
     return _type;
 }
+
+/**
+Returns a human-readable string of the ImageType.
+    */
 
 QString PropellerImage::imageTypeText()
 {

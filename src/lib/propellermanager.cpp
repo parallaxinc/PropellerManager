@@ -159,6 +159,10 @@ void PropellerManager::deleteDevice(const QString & port)
     _devices.remove(port);
 }
 
+/**
+    Lists all available devices on the current system via any interface.
+    */
+
 const QStringList & PropellerManager::listPorts()
 {
     return _ports;

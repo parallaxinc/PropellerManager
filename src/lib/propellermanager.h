@@ -56,6 +56,8 @@ and PropellerManager.
 
 \warning It is not recommended to use these functions directly.
          Use PropellerSession to interface with PropellerManager.
+
+\see PropellerSession
 */
 
 /**

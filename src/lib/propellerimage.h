@@ -53,18 +53,6 @@ Here we extract various pieces of information from a Propeller binary image.
 
 class PropellerImage
 {
-
-public:
-
-    /**
-      An enumeration containing all Propeller image types that PropellerManager supports.
-      */
-    enum ImageType {
-        Invalid,        ///< Not a valid image file
-        Binary,         ///< Program data-only image files (usually have a `.binary` extension)
-        Eeprom          ///< Complete EEPROM images        (usually have a `.eeprom` extension)
-    };
-
     enum ImageFormat {
         _long_clockfrequency = 0,
         _byte_clockmode = 4,
@@ -76,6 +64,17 @@ public:
     };
 
 
+
+public:
+
+    /**
+      An enumeration containing all Propeller image types that PropellerManager supports.
+      */
+    enum ImageType {
+        Invalid,        ///< Not a valid image file
+        Binary,         ///< Program data-only image files (usually have a `.binary` extension)
+        Eeprom          ///< Complete EEPROM images        (usually have a `.eeprom` extension)
+    };
 
 private:
 
@@ -94,8 +93,6 @@ public:
 
     /**
         @name Image Validation
-
-        Apply some data integrity measures locally.
       */
 
     /**@{*/
@@ -107,8 +104,6 @@ public:
 
     /**
         @name Image Information
-
-        Extract information about the current image.
       */
 
     /**@{*/
@@ -116,10 +111,10 @@ public:
     ImageType   imageType();
     QString     imageTypeText();
 
-    int         imageSize();
-    int         programSize();
-    int         variableSize();
-    int         stackSize();
+    quint32     imageSize();
+    quint32     programSize();
+    quint32     variableSize();
+    quint32     stackSize();
 
     quint16     startOfCode();
     quint16     startOfVariables();
@@ -128,9 +123,8 @@ public:
 
     /**
         @name Low-Level Functions
-
-        Read and write data to/from the image.
       */
+
     /**@{*/
     QByteArray  data();
     void        setData(QByteArray image);
@@ -147,17 +141,15 @@ public:
 
     /**
         @name Clock Settings
-
-        Read and write data to/from the image.
       */
 
     /**@{*/
 
-    quint32     clockFrequency();                           ///< Get the current clock frequency of the image.
-    void        setClockFrequency(quint32 frequency);       ///< Assign a new clock frequency to the image.
+    quint32     clockFrequency();
+    void        setClockFrequency(quint32 frequency);
 
-    quint8      clockMode();                                ///< Get an 8-bit integer containing the current clock mode.
-    QString     clockModeText();                            ///< Get a human-readable string of the current clock mode.
+    quint8      clockMode();
+    QString     clockModeText();
     QString     clockModeText(quint8 value);
     bool        setClockMode(quint8 value);
 

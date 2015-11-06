@@ -22,6 +22,8 @@ given image to download and the target device.
 
 PropellerDevice selects the reset strategy based on the port name. This can be overridden via the useReset() function.
 At present, all devices assume DTR reset as the default, except ttyAMA as this is specific to the ARM architecture and uses GPIO.
+
+\see PropellerTerminal
 */
 
 /**

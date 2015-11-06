@@ -12,7 +12,7 @@ docurl: /projects/propellermanager/
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="examples.html"><span>Examples</span></a></li>
@@ -37,7 +37,7 @@ docurl: /projects/propellermanager/
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_propeller_loader.html" title="The PropellerLoader class implements the Propeller download protocol. ">PropellerLoader</a> class implements the <a class="el" href="namespace_propeller.html">Propeller</a> download protocol.  
+<p>The <a class="el" href="class_propeller_loader.html" title="The PropellerLoader class implements the Propeller download protocol. ">PropellerLoader</a> class implements the Propeller download protocol.  
  <a href="class_propeller_loader.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellerloader_8h_source.html">propellerloader.h</a>&gt;</code></p>
@@ -63,13 +63,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9bc88b91f8b87d48009387f1a31604d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The <a class="el" href="class_propeller_loader.html" title="The PropellerLoader class implements the Propeller download protocol. ">PropellerLoader</a> class implements the <a class="el" href="namespace_propeller.html">Propeller</a> download protocol. </p>
+<div class="textblock"><p>The <a class="el" href="class_propeller_loader.html" title="The PropellerLoader class implements the Propeller download protocol. ">PropellerLoader</a> class implements the Propeller download protocol. </p>
 <p><a class="el" href="class_propeller_loader.html" title="The PropellerLoader class implements the Propeller download protocol. ">PropellerLoader</a> automatically selects the best download strategy based on the given image to download and the target device.</p>
 <ul>
 <li>If downloading to an XBee device, high-speed loading must be used. If a crystal oscillator is not defined, <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> errors.</li>
 <li>If downloading through a serial connection, use high-speed download if a crystal oscillator is defined, otherwise use the basic protocol.</li>
 </ul>
-<p><a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> selects the reset strategy based on the port name. This can be overridden via the useReset() function. At present, all devices assume DTR reset as the default, except ttyAMA as this is specific to the ARM architecture and uses GPIO. </p>
+<p><a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> selects the reset strategy based on the port name. This can be overridden via the useReset() function. At present, all devices assume DTR reset as the default, except ttyAMA as this is specific to the ARM architecture and uses GPIO.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_propeller_terminal.html" title="The PropellerTerminal class provides a minimal implementation of a PropellerManager-based terminal...">PropellerTerminal</a> </dd></dl>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="download_2main_8cpp-example.html#_a2">download/main.cpp</a>, and <a class="el" href="identify_2main_8cpp-example.html#_a2">identify/main.cpp</a>.</dd>
 </dl></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ac0c52d72d3faf76f92646943dc5f383f"></a>
