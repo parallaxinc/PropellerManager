@@ -8,21 +8,33 @@
 #include <QElapsedTimer>
 
 /**
-    @class PropellerLoader 
-    
-    @brief The PropellerLoader class implements the Propeller download protocol.
-    
-    PropellerLoader automatically selects the best download strategy based on the
-    given image to download and the target device.
-    
-    - If downloading to an XBee device, high-speed loading must be used. If a 
-      crystal oscillator is not defined, PropellerManager errors.
-    - If downloading through a serial connection, use high-speed download if a
-      crystal oscillator is defined, otherwise use the basic protocol.
-    
-    PropellerDevice selects the reset strategy based on the port name. This can be overridden via the useReset() function.
-    At present, all devices assume DTR reset as the default, except ttyAMA as this is specific to the ARM architecture and uses GPIO.
-    */
+@class PropellerLoader 
+
+@brief The PropellerLoader class implements the Propeller download protocol.
+
+PropellerLoader automatically selects the best download strategy based on the
+given image to download and the target device.
+
+- If downloading to an XBee device, high-speed loading must be used. If a 
+  crystal oscillator is not defined, PropellerManager errors.
+- If downloading through a serial connection, use high-speed download if a
+  crystal oscillator is defined, otherwise use the basic protocol.
+
+PropellerDevice selects the reset strategy based on the port name. This can be overridden via the useReset() function.
+At present, all devices assume DTR reset as the default, except ttyAMA as this is specific to the ARM architecture and uses GPIO.
+*/
+
+/**
+@example identify/main.cpp
+
+This example queries all available ports for connected Propeller devices.
+*/
+
+/**
+@example download/main.cpp
+
+This example downloads a Propeller image to the first availabe device.
+*/
 
 class PropellerLoader : public QObject
 {

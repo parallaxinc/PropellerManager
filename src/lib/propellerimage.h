@@ -44,6 +44,13 @@ inserts the initial call frame in the proper location. This effectively clears
 and free space to zero (0) as well.
 */
 
+/**
+@example imageinfo/main.cpp
+
+Here we extract various pieces of information from a Propeller binary image.
+*/
+
+
 class PropellerImage
 {
 

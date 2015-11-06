@@ -15,6 +15,7 @@ docurl: /projects/propellermanager/
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
     </ul>
   </div>
   <div id="navrow2" class="tabs2">
@@ -29,7 +30,6 @@ docurl: /projects/propellermanager/
 <div class="header">
   <div class="summary">
 <a href="#pub-slots">Public Slots</a> &#124;
-<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_propeller_session-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -37,7 +37,7 @@ docurl: /projects/propellermanager/
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...">PropellerSession</a> class provides a persistent, always-on interface to <a class="el" href="namespace_propeller.html">Propeller</a> hardware via <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>.  
+<p>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> class provides a persistent interface to <a class="el" href="namespace_propeller.html">Propeller</a> hardware via <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>.  
  <a href="class_propeller_session.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellersession_8h_source.html">propellersession.h</a>&gt;</code></p>
@@ -53,6 +53,7 @@ Public Slots</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Signals</div></td></tr>
 <tr class="memitem:a07f5f3269ded2ead52e8512ab34652f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a07f5f3269ded2ead52e8512ab34652f7">bytesWritten</a> (qint64 bytes)</td></tr>
 <tr class="separator:a07f5f3269ded2ead52e8512ab34652f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54f70c3574b16d8149424d68b472ff47"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a54f70c3574b16d8149424d68b472ff47">readyRead</a> ()</td></tr>
@@ -63,6 +64,10 @@ Signals</h2></td></tr>
 <tr class="separator:a0ebbeee85d22a893c9af78022ba30f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c8292dfffcef1c770ef2eaa70e66e13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a1c8292dfffcef1c770ef2eaa70e66e13">finished</a> ()</td></tr>
 <tr class="separator:a1c8292dfffcef1c770ef2eaa70e66e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a311b5bfb906204e0f742479b68b9da04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a311b5bfb906204e0f742479b68b9da04">deviceFree</a> ()</td></tr>
+<tr class="separator:a311b5bfb906204e0f742479b68b9da04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0daaa96bd7c308e81e49b9a3f3228c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#ae0daaa96bd7c308e81e49b9a3f3228c2">deviceBusy</a> ()</td></tr>
+<tr class="separator:ae0daaa96bd7c308e81e49b9a3f3228c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3e095bb74204268923f69fc9cff0971"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#ab3e095bb74204268923f69fc9cff0971">timeover</a> ()</td></tr>
 <tr class="separator:ab3e095bb74204268923f69fc9cff0971"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58766b4922e28906ff1c366a7ab6b298"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a58766b4922e28906ff1c366a7ab6b298">allBytesWritten</a> ()</td></tr>
@@ -70,20 +75,28 @@ Signals</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a13a1effc693bd8928f7dee5cbea02e8b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a13a1effc693bd8928f7dee5cbea02e8b">PropellerSession</a> (const QString &amp;portname, <a class="el" href="class_propeller_manager.html">PropellerManager</a> *manager, QObject *parent=0)</td></tr>
-<tr class="separator:a13a1effc693bd8928f7dee5cbea02e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dd6a508df1b20b2ecc2dfd3dcfd0793"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a2dd6a508df1b20b2ecc2dfd3dcfd0793">PropellerSession</a> (<a class="el" href="class_propeller_manager.html">PropellerManager</a> *manager, const QString &amp;portname=QString(), QObject *parent=0)</td></tr>
+<tr class="separator:a2dd6a508df1b20b2ecc2dfd3dcfd0793"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90f8f755312349306c7fac07cd0a2841"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a90f8f755312349306c7fac07cd0a2841">~PropellerSession</a> ()</td></tr>
 <tr class="separator:a90f8f755312349306c7fac07cd0a2841"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afada5dff5464fed7a196d8096ae2aed2"><td class="memItemLeft" align="right" valign="top">const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#afada5dff5464fed7a196d8096ae2aed2">portName</a> ()</td></tr>
 <tr class="separator:afada5dff5464fed7a196d8096ae2aed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56ac4e62ad3eb3ae928eaee983581a54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a56ac4e62ad3eb3ae928eaee983581a54">setPortName</a> (const QString &amp;name)</td></tr>
 <tr class="separator:a56ac4e62ad3eb3ae928eaee983581a54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa4b2f74499567c4ac74d8bab69e1c36"><td class="memItemLeft" align="right" valign="top">const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#aaa4b2f74499567c4ac74d8bab69e1c36">sessionName</a> ()</td></tr>
-<tr class="separator:aaa4b2f74499567c4ac74d8bab69e1c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdb59d19f51009ac64fa1a96e28d50eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#afdb59d19f51009ac64fa1a96e28d50eb">setSessionName</a> (const QString &amp;name)</td></tr>
-<tr class="separator:afdb59d19f51009ac64fa1a96e28d50eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf2786fd5a06236f6b018cd53578954c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#abf2786fd5a06236f6b018cd53578954c">isOpen</a> ()</td></tr>
 <tr class="separator:abf2786fd5a06236f6b018cd53578954c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a55dcf68fb79ef698061589e1fbab9c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a9a55dcf68fb79ef698061589e1fbab9c">reserve</a> ()</td></tr>
+<tr class="separator:a9a55dcf68fb79ef698061589e1fbab9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac416bcaaa9245570216922aab644e5cf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#ac416bcaaa9245570216922aab644e5cf">isReserved</a> ()</td></tr>
+<tr class="separator:ac416bcaaa9245570216922aab644e5cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcdd3e0ff930fdc50d4358407454d0ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#adcdd3e0ff930fdc50d4358407454d0ee">release</a> ()</td></tr>
+<tr class="separator:adcdd3e0ff930fdc50d4358407454d0ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5154d7d4931ff2a64986c648af4b7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a1b5154d7d4931ff2a64986c648af4b7b">pause</a> ()</td></tr>
+<tr class="separator:a1b5154d7d4931ff2a64986c648af4b7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a476ce5037e53bc6b17c20417c29a835b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a476ce5037e53bc6b17c20417c29a835b">isPaused</a> ()</td></tr>
+<tr class="separator:a476ce5037e53bc6b17c20417c29a835b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c4558f6c35ca6939978d1a4609ff752"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a1c4558f6c35ca6939978d1a4609ff752">unpause</a> ()</td></tr>
+<tr class="separator:a1c4558f6c35ca6939978d1a4609ff752"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85a98f38f141f0d4be3b37ce2026a21c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a85a98f38f141f0d4be3b37ce2026a21c">clear</a> ()</td></tr>
 <tr class="separator:a85a98f38f141f0d4be3b37ce2026a21c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53e3d0aa0ff3c36b77be27b5be7b1417"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_session.html#a53e3d0aa0ff3c36b77be27b5be7b1417">setBaudRate</a> (quint32 baudRate)</td></tr>
@@ -118,26 +131,30 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abacaf9ed8cb575d6ced75a6125499969"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...">PropellerSession</a> class provides a persistent, always-on interface to <a class="el" href="namespace_propeller.html">Propeller</a> hardware via <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>. </p>
-<p><a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...">PropellerSession</a> provides a persistent environment from which to interact with the <a class="el" href="namespace_propeller.html">Propeller</a>.</p>
+<div class="textblock"><p>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> class provides a persistent interface to <a class="el" href="namespace_propeller.html">Propeller</a> hardware via <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>. </p>
 <p>Sessions can communicate with any available device without needing to manually open and close ports. Many sessions can be connected to a single device at a time. However, sessions may also request exclusive access to a device to complete a long-running operation.</p>
-<p>This ensures that the program always behaves as expected and makes it possible to debug the <a class="el" href="namespace_propeller.html">Propeller</a> in RAM on non-Windows platforms. </p>
+<h1><a class="anchor" id="Usage"></a>
+Usage</h1>
+<pre class="fragment">PropellerManager manager;
+PropellerSession session(&amp;manager);
+session.setPortName("ttyUSB0");
+</pre><p>When <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> goes of scope, it automatically detaches from <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> cleanly, so manual closing of sessions is unnecessary. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a13a1effc693bd8928f7dee5cbea02e8b"></a>
+<a class="anchor" id="a2dd6a508df1b20b2ecc2dfd3dcfd0793"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PropellerSession::PropellerSession </td>
           <td>(</td>
-          <td class="paramtype">const QString &amp;&#160;</td>
-          <td class="paramname"><em>portname</em>, </td>
+          <td class="paramtype"><a class="el" href="class_propeller_manager.html">PropellerManager</a> *&#160;</td>
+          <td class="paramname"><em>manager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_propeller_manager.html">PropellerManager</a> *&#160;</td>
-          <td class="paramname"><em>manager</em>, </td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>portname</em> = <code>QString()</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -303,6 +320,52 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ae0daaa96bd7c308e81e49b9a3f3228c2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::deviceBusy </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a311b5bfb906204e0f742479b68b9da04"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::deviceFree </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a832c9281137100bf729301fda006b7b4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -371,12 +434,57 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a476ce5037e53bc6b17c20417c29a835b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool PropellerSession::isPaused </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ac416bcaaa9245570216922aab644e5cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool PropellerSession::isReserved </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="af7e10da8df3b48d6a594897a18309d49"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">quint32 PropellerSession::minimumTimeout </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a1b5154d7d4931ff2a64986c648af4b7b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::pause </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -471,6 +579,36 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="adcdd3e0ff930fdc50d4358407454d0ee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::release </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a9a55dcf68fb79ef698061589e1fbab9c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool PropellerSession::reserve </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="abacaf9ed8cb575d6ced75a6125499969"></a>
 <div class="memitem">
 <div class="memproto">
@@ -506,21 +644,6 @@ Public Member Functions</h2></td></tr>
 <span class="mlabels"><span class="mlabel">signal</span></span>  </td>
   </tr>
 </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aaa4b2f74499567c4ac74d8bab69e1c36"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const QString &amp; PropellerSession::sessionName </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
 </div><div class="memdoc">
 
 </div>
@@ -573,22 +696,6 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="afdb59d19f51009ac64fa1a96e28d50eb"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PropellerSession::setSessionName </td>
-          <td>(</td>
-          <td class="paramtype">const QString &amp;&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="ab3e095bb74204268923f69fc9cff0971"></a>
 <div class="memitem">
 <div class="memproto">
@@ -631,6 +738,21 @@ Public Member Functions</h2></td></tr>
 <span class="mlabels"><span class="mlabel">slot</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a1c4558f6c35ca6939978d1a4609ff752"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PropellerSession::unpause </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>

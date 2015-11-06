@@ -15,6 +15,7 @@ docurl: /projects/propellermanager/
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
     </ul>
   </div>
   <div id="navrow2" class="tabs2">
@@ -50,8 +51,8 @@ Signals</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9b5eb1a93d0d23cd57c494b4e7f3c875"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_loader.html#a9b5eb1a93d0d23cd57c494b4e7f3c875">PropellerLoader</a> (<a class="el" href="class_propeller_session.html">PropellerSession</a> *session, QObject *parent=0)</td></tr>
-<tr class="separator:a9b5eb1a93d0d23cd57c494b4e7f3c875"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0c52d72d3faf76f92646943dc5f383f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_loader.html#ac0c52d72d3faf76f92646943dc5f383f">PropellerLoader</a> (<a class="el" href="class_propeller_manager.html">PropellerManager</a> *manager, const QString &amp;portname, QObject *parent=0)</td></tr>
+<tr class="separator:ac0c52d72d3faf76f92646943dc5f383f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2d8e20344d324113814e81ae8cd057f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_loader.html#ab2d8e20344d324113814e81ae8cd057f">~PropellerLoader</a> ()</td></tr>
 <tr class="separator:ab2d8e20344d324113814e81ae8cd057f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53fea8e928e1822b939d830c4811a4c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_loader.html#a53fea8e928e1822b939d830c4811a4c6">version</a> ()</td></tr>
@@ -69,16 +70,23 @@ Public Member Functions</h2></td></tr>
 <li>If downloading through a serial connection, use high-speed download if a crystal oscillator is defined, otherwise use the basic protocol.</li>
 </ul>
 <p><a class="el" href="class_propeller_device.html" title="The PropellerDevice class provides access to serial Propeller devices. ">PropellerDevice</a> selects the reset strategy based on the port name. This can be overridden via the useReset() function. At present, all devices assume DTR reset as the default, except ttyAMA as this is specific to the ARM architecture and uses GPIO. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a9b5eb1a93d0d23cd57c494b4e7f3c875"></a>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="download_2main_8cpp-example.html#_a2">download/main.cpp</a>, and <a class="el" href="identify_2main_8cpp-example.html#_a2">identify/main.cpp</a>.</dd>
+</dl></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="ac0c52d72d3faf76f92646943dc5f383f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PropellerLoader::PropellerLoader </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_propeller_session.html">PropellerSession</a> *&#160;</td>
-          <td class="paramname"><em>session</em>, </td>
+          <td class="paramtype"><a class="el" href="class_propeller_manager.html">PropellerManager</a> *&#160;</td>
+          <td class="paramname"><em>manager</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>portname</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -95,7 +103,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">session</td><td>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...">PropellerSession</a> instance to attach to. </td></tr>
+    <tr><td class="paramname">session</td><td>The <a class="el" href="class_propeller_session.html" title="The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...">PropellerSession</a> instance to attach to. </td></tr>
     <tr><td class="paramname">parent</td><td>The parent QObject. </td></tr>
   </table>
   </dd>
@@ -212,7 +220,8 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="download_2main_8cpp-example.html#a4">download/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="a53fea8e928e1822b939d830c4811a4c6"></a>
@@ -229,7 +238,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the version of the connected device.</p>
 <dl class="section return"><dt>Returns</dt><dd>The version number, or 0 if not found. </dd></dl>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="identify_2main_8cpp-example.html#a3">identify/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>

@@ -15,6 +15,7 @@ docurl: /projects/propellermanager/
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
     </ul>
   </div>
   <div id="navrow2" class="tabs2">
@@ -28,7 +29,6 @@ docurl: /projects/propellermanager/
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_propeller_terminal-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -36,38 +36,40 @@ docurl: /projects/propellermanager/
 </div><!--header-->
 <div class="contents">
 
-<p>a small reference implementation of a serial terminal with <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>.  
+<p>The <a class="el" href="class_propeller_terminal.html" title="The PropellerTerminal class implements a minimal reference implementation of a PropellerManager-based...">PropellerTerminal</a> class implements a minimal reference implementation of a PropellerManager-based terminal.  
  <a href="class_propeller_terminal.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="propellerterminal_8h_source.html">propellerterminal.h</a>&gt;</code></p>
 
 <p>Inherits QObject.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
-Signals</h2></td></tr>
-<tr class="memitem:a797255708b9f33ccea1f89ecbe8e7ed4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_terminal.html#a797255708b9f33ccea1f89ecbe8e7ed4">finished</a> ()</td></tr>
-<tr class="separator:a797255708b9f33ccea1f89ecbe8e7ed4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a10f6c9d5f64fd236f67427af284b8a43"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_terminal.html#a10f6c9d5f64fd236f67427af284b8a43">PropellerTerminal</a> (<a class="el" href="class_propeller_session.html">PropellerSession</a> *session, QObject *parent=0)</td></tr>
-<tr class="separator:a10f6c9d5f64fd236f67427af284b8a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a465a6390b51867a8a6c5333cebef8847"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_terminal.html#a465a6390b51867a8a6c5333cebef8847">PropellerTerminal</a> (<a class="el" href="class_propeller_manager.html">PropellerManager</a> *manager, const QString &amp;portname, QObject *parent=0)</td></tr>
+<tr class="separator:a465a6390b51867a8a6c5333cebef8847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d6d7b24f6d7143e54af2122be2e3008"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_propeller_terminal.html#a2d6d7b24f6d7143e54af2122be2e3008">~PropellerTerminal</a> ()</td></tr>
 <tr class="separator:a2d6d7b24f6d7143e54af2122be2e3008"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>a small reference implementation of a serial terminal with <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a>. </p>
-<p>Initializing </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a10f6c9d5f64fd236f67427af284b8a43"></a>
+<div class="textblock"><p>The <a class="el" href="class_propeller_terminal.html" title="The PropellerTerminal class implements a minimal reference implementation of a PropellerManager-based...">PropellerTerminal</a> class implements a minimal reference implementation of a PropellerManager-based terminal. </p>
+<p>Usage is easy; create an instance of <a class="el" href="class_propeller_terminal.html" title="The PropellerTerminal class implements a minimal reference implementation of a PropellerManager-based...">PropellerTerminal</a> and it will set up an event loop. Exit with Ctrl+C. </p>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="terminal_2main_8cpp-example.html#_a2">terminal/main.cpp</a>.</dd>
+</dl></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a465a6390b51867a8a6c5333cebef8847"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PropellerTerminal::PropellerTerminal </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_propeller_session.html">PropellerSession</a> *&#160;</td>
-          <td class="paramname"><em>session</em>, </td>
+          <td class="paramtype"><a class="el" href="class_propeller_manager.html">PropellerManager</a> *&#160;</td>
+          <td class="paramname"><em>manager</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>portname</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -96,30 +98,6 @@ Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a797255708b9f33ccea1f89ecbe8e7ed4"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PropellerTerminal::finished </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>

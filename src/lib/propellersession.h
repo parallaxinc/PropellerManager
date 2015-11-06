@@ -6,20 +6,24 @@
 #include <QStringList>
 
 /**
-    @class PropellerSession
-      
-    @brief The PropellerSession class provides a persistent, always-on interface to Propeller hardware via PropellerManager.
-    
-    PropellerSession provides a persistent environment from which to
-    interact with the Propeller.
-    
-    Sessions can communicate with any available device without needing to 
-    manually open and close ports. Many sessions can be connected to a single
-    device at a time. However, sessions may also request exclusive access to
-    a device to complete a long-running operation.
-    
-    This ensures that the program always behaves as expected and makes it
-    possible to debug the Propeller in RAM on non-Windows platforms.
+@class PropellerSession
+  
+@brief The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager.
+
+Sessions can communicate with any available device without needing to 
+manually open and close ports. Many sessions can be connected to a single
+device at a time. However, sessions may also request exclusive access to
+a device to complete a long-running operation.
+
+\section Usage
+
+    PropellerManager manager;
+    PropellerSession session(&manager);
+    session.setPortName("ttyUSB0");
+
+When PropellerSession goes of scope, it automatically detaches from PropellerManager cleanly, so manual
+closing of sessions is unnecessary.
+
     */
 
 class PropellerManager;
@@ -73,6 +77,11 @@ public:
     void        useDefaultReset();
     bool        reset();
 
+/**
+    @name Signals
+  */
+
+/**@{*/
 signals:
     void        bytesWritten(qint64 bytes);
     void        readyRead();
@@ -84,6 +93,7 @@ signals:
 
     void        timeover();
     void        allBytesWritten();
+/**@}*/
 
 public slots:
     void        timeOver();

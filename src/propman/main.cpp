@@ -19,7 +19,6 @@
 
 PropellerImage load_image(QCommandLineParser &parser);
 void open_loader(QCommandLineParser &parser, QStringList device_list);
-void terminal(const QString & device);
 void info(PropellerImage image);
 void list();
 void error(const QString & text);
@@ -142,7 +141,7 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
     {
         if (parser.isSet(argTerm))
         {
-            terminal(device);
+            PropellerTerminal terminal(&manager, device);
             return;
         }
         else
@@ -190,7 +189,7 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
     }
 
     if (parser.isSet(argTerm))
-        terminal(device);
+        PropellerTerminal terminal(&manager, device);
 }
 
 void list()
@@ -199,18 +198,6 @@ void list()
     {
         printf("%s\n",qPrintable(device_list[i]));
     }
-}
-
-void terminal(const QString & device)
-{
-    message("--------------------------------------");
-    message("Opening terminal: ");
-    message("  (Ctrl+C to exit)");
-    message("--------------------------------------");
-
-    PropellerTerminal t(&manager, device);
-    QEventLoop loop;
-    loop.exec();
 }
 
 void info(PropellerImage image)

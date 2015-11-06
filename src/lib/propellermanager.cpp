@@ -48,7 +48,7 @@ PropellerDevice * PropellerManager::getDevice(const QString & port)
     }
 
     if (!_ports.contains(port))
-        message("Device does not exist!", port);
+        qCDebug(pmanager) << "ERROR: Device does not exist:" << port;
 
     return _devices[port];
 }
@@ -370,12 +370,3 @@ QString PropellerManager::errorString(PropellerSession * session, const QString 
     if (portIsBusy(session, port)) return QString();
     return getDevice(port)->errorString();
 }
-
-
-void PropellerManager::message(const QString & message, const QString & port)
-{
-    QString text = "PropellerManager "+port+": "+message;
-    fprintf(stderr, "%s\n", qPrintable(text));
-    fflush(stderr);
-}
-

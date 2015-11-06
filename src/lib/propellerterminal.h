@@ -6,11 +6,17 @@
 /**
 @class PropellerTerminal 
 
-@brief a small reference implementation of a serial terminal with PropellerManager.
+@brief The PropellerTerminal class implements a minimal reference implementation of a PropellerManager-based terminal.
 
-Initializing 
-
+Usage is easy; create an instance of PropellerTerminal and it will set up an event loop. Exit with Ctrl+C.
 */
+
+/**
+@example terminal/main.cpp
+
+This example sets up the PropellerTerminal for use.
+*/
+
 class PropellerTerminal : public QObject
 {
     Q_OBJECT
@@ -18,9 +24,6 @@ class PropellerTerminal : public QObject
 private:
     PropellerSession * session;
     Input::Console console;
-
-signals:
-    void finished();
 
 private slots:
     void read();

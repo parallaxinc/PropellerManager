@@ -1,25 +1,18 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-#include "propellersession.h"
-#include "propellerdevice.h"
+#include "propellermanager.h"
+#include "propellerloader.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    QStringList device_list = PropellerDevice::list();
-
-    foreach (QString d, device_list)
+    PropellerManager manager;
+    foreach (QString d, manager.listPorts())
     {
-        PropellerSession session(d);
-
-        if (!session.open())
-            continue;
-
-        qDebug() << d << session.version();
-
-        session.close();
+        PropellerLoader loader(&manager, d);
+        qDebug() << d << loader.version();
     }
 
     return 0;

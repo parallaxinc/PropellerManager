@@ -15,6 +15,7 @@ docurl: /projects/propellermanager/
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
     </ul>
   </div>
   <div id="navrow2" class="tabs2">
@@ -170,7 +171,8 @@ Public Member Functions</h2></td></tr>
 </table>
 <h3>What Gets Downloaded</h3>
 <p>To save time, <a class="el" href="class_propeller_manager.html" title="The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...">PropellerManager</a> does not download the entire application image. Instead, it downloads only the parts of the image from long 0 through the end of code (up to the start of variables) and then the <a class="el" href="namespace_propeller.html">Propeller</a> chip itself writes zeros (0) to the rest of the RAM/EEPROM, after the end of code (up to 32 Kbytes), and inserts the initial call frame in the proper location. This effectively clears (initializes) all global variables to zero (0) and sets all available stack and free space to zero (0) as well. </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="download_2main_8cpp-example.html#_a3">download/main.cpp</a>, and <a class="el" href="imageinfo_2main_8cpp-example.html#_a0">imageinfo/main.cpp</a>.</dd>
+</dl></div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a class="anchor" id="ab1871d19e1a791e4c5ad8b0491ade860"></a>
 <div class="memitem">
 <div class="memproto">
@@ -263,7 +265,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a4">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="ac249ec1db3d87fa6ade1a791e6b459ff"></a>
@@ -278,7 +281,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a5">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="a6c564997c0969a159e67097fca000c1d"></a>
@@ -297,7 +301,8 @@ Public Member Functions</h2></td></tr>
 <p>Get the current clock frequency of the image. </p>
 <p>Get the clock frequency.</p>
 <dl class="section return"><dt>Returns</dt><dd>a 32-bit unsigned value containing the clock frequency in Hertz. </dd></dl>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a11">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="a02da6195e6a2aff3aff66ab75e1ce185"></a>
@@ -314,7 +319,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get an 8-bit integer containing the current clock mode. </p>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a10">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="abf0c44fc3dca928b1864b5bc346ca1f9"></a>
@@ -331,7 +337,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get a human-readable string of the current clock mode. </p>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a9">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="aeeaed281f0966ebf852cb0262afbd0e6"></a>
@@ -377,7 +384,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a1">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="a1883734ffee1a0b3ba7dcb4772fbd899"></a>
@@ -393,7 +401,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Total size of stored image file on disk. </p>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a3">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="acb1133d862d14e6f3c4021770112bd4c"></a>
@@ -423,7 +432,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a2">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="aa183778fa7aff35873696c16aac086a7"></a>
@@ -455,7 +465,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Size of the application code. This value will be larger than the total file size for <a class="el" href="class_propeller_image.html#a5d6dcf94ae656814c5776fbe3147e867a4aada0d7a79e6ed8ff97940597c479fd" title="Program data-only image files (usually have a .binary extension) ">PropellerImage::Binary</a> images.</p>
 <p>This value is equivalent to <a class="el" href="class_propeller_image.html#a4004019dba00066b61605b59b683ae9f">startOfStackSpace()</a>. </p>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a6">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="a73c0bbc35e11394e34321370d9b8fc7e"></a>
@@ -610,7 +621,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a8">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="a6e5e07d2c13bee9153e8ac31b341b258"></a>
@@ -673,7 +685,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="imageinfo_2main_8cpp-example.html#a7">imageinfo/main.cpp</a>.</dd>
+</dl>
 </div>
 </div>
 <a class="anchor" id="ad8bd15db5db5c0dbee439b7f35f59d59"></a>

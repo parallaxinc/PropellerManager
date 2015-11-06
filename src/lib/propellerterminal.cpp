@@ -9,8 +9,15 @@ PropellerTerminal::PropellerTerminal(PropellerManager * manager,
 {
     this->session = new PropellerSession(manager, portname);
 
+    printf("Entering terminal on %s\n",qPrintable(portname));
+    printf("Press Ctrl+C to exit\n");
+    printf("--------------------------------------\n");
+
     connect(session, SIGNAL(readyRead()), this, SLOT(read()));
     connect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write(const QString &)));
+
+    QEventLoop loop;
+    loop.exec();
 }
 
 PropellerTerminal::~PropellerTerminal()

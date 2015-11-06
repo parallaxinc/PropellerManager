@@ -15,6 +15,7 @@ docurl: /projects/propellermanager/
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
     </ul>
   </div>
   <div id="navrow2" class="tabs2">
@@ -37,33 +38,32 @@ docurl: /projects/propellermanager/
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="input__console_8h.html">input_console.h</a>&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="propellersession_8h.html">propellersession.h</a>&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="class_propeller_terminal.html">   14</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_propeller_terminal.html">PropellerTerminal</a> : <span class="keyword">public</span> QObject</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;{</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    Q_OBJECT</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <a class="code" href="class_propeller_session.html">PropellerSession</a> * session;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    Input::Console console;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;signals:</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_propeller_terminal.html#a797255708b9f33ccea1f89ecbe8e7ed4">finished</a>();</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">private</span> slots:</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">void</span> read();</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">void</span> write(<span class="keyword">const</span> QString &amp; text);</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="class_propeller_terminal.html#a10f6c9d5f64fd236f67427af284b8a43">PropellerTerminal</a>(<a class="code" href="class_propeller_session.html">PropellerSession</a> * session, QObject * parent = 0);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="class_propeller_terminal.html#a2d6d7b24f6d7143e54af2122be2e3008">~PropellerTerminal</a>();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;};</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="ttc" id="class_propeller_terminal_html_a797255708b9f33ccea1f89ecbe8e7ed4"><div class="ttname"><a href="class_propeller_terminal.html#a797255708b9f33ccea1f89ecbe8e7ed4">PropellerTerminal::finished</a></div><div class="ttdeci">void finished()</div></div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="class_propeller_terminal.html">   20</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_propeller_terminal.html">PropellerTerminal</a> : <span class="keyword">public</span> QObject</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    Q_OBJECT</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <a class="code" href="class_propeller_session.html">PropellerSession</a> * session;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    Input::Console console;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">private</span> slots:</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">void</span> read();</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">void</span> write(<span class="keyword">const</span> QString &amp; text);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <a class="code" href="class_propeller_terminal.html#a465a6390b51867a8a6c5333cebef8847">PropellerTerminal</a>(<a class="code" href="class_propeller_manager.html">PropellerManager</a> * manager,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                      <span class="keyword">const</span> QString &amp; portname,</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                      QObject * parent = 0);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="class_propeller_terminal.html#a2d6d7b24f6d7143e54af2122be2e3008">~PropellerTerminal</a>();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;};</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="ttc" id="class_propeller_terminal_html_a465a6390b51867a8a6c5333cebef8847"><div class="ttname"><a href="class_propeller_terminal.html#a465a6390b51867a8a6c5333cebef8847">PropellerTerminal::PropellerTerminal</a></div><div class="ttdeci">PropellerTerminal(PropellerManager *manager, const QString &amp;portname, QObject *parent=0)</div><div class="ttdef"><b>Definition:</b> propellerterminal.cpp:5</div></div>
 <div class="ttc" id="propellersession_8h_html"><div class="ttname"><a href="propellersession_8h.html">propellersession.h</a></div></div>
-<div class="ttc" id="class_propeller_session_html"><div class="ttname"><a href="class_propeller_session.html">PropellerSession</a></div><div class="ttdoc">The PropellerSession class provides a persistent, always-on interface to Propeller hardware via Prope...</div><div class="ttdef"><b>Definition:</b> propellersession.h:27</div></div>
-<div class="ttc" id="class_propeller_terminal_html_a2d6d7b24f6d7143e54af2122be2e3008"><div class="ttname"><a href="class_propeller_terminal.html#a2d6d7b24f6d7143e54af2122be2e3008">PropellerTerminal::~PropellerTerminal</a></div><div class="ttdeci">~PropellerTerminal()</div><div class="ttdef"><b>Definition:</b> propellerterminal.cpp:15</div></div>
+<div class="ttc" id="class_propeller_manager_html"><div class="ttname"><a href="class_propeller_manager.html">PropellerManager</a></div><div class="ttdoc">The PropellerManager class provides an abstraction layer between PropellerSession and PropellerDevice...</div><div class="ttdef"><b>Definition:</b> propellermanager.h:76</div></div>
+<div class="ttc" id="class_propeller_session_html"><div class="ttname"><a href="class_propeller_session.html">PropellerSession</a></div><div class="ttdoc">The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager...</div><div class="ttdef"><b>Definition:</b> propellersession.h:31</div></div>
+<div class="ttc" id="class_propeller_terminal_html_a2d6d7b24f6d7143e54af2122be2e3008"><div class="ttname"><a href="class_propeller_terminal.html#a2d6d7b24f6d7143e54af2122be2e3008">PropellerTerminal::~PropellerTerminal</a></div><div class="ttdeci">~PropellerTerminal()</div><div class="ttdef"><b>Definition:</b> propellerterminal.cpp:23</div></div>
 <div class="ttc" id="input__console_8h_html"><div class="ttname"><a href="input__console_8h.html">input_console.h</a></div></div>
-<div class="ttc" id="class_propeller_terminal_html_a10f6c9d5f64fd236f67427af284b8a43"><div class="ttname"><a href="class_propeller_terminal.html#a10f6c9d5f64fd236f67427af284b8a43">PropellerTerminal::PropellerTerminal</a></div><div class="ttdeci">PropellerTerminal(PropellerSession *session, QObject *parent=0)</div><div class="ttdef"><b>Definition:</b> propellerterminal.cpp:5</div></div>
-<div class="ttc" id="class_propeller_terminal_html"><div class="ttname"><a href="class_propeller_terminal.html">PropellerTerminal</a></div><div class="ttdoc">a small reference implementation of a serial terminal with PropellerManager. </div><div class="ttdef"><b>Definition:</b> propellerterminal.h:14</div></div>
+<div class="ttc" id="class_propeller_terminal_html"><div class="ttname"><a href="class_propeller_terminal.html">PropellerTerminal</a></div><div class="ttdoc">The PropellerTerminal class implements a minimal reference implementation of a PropellerManager-based...</div><div class="ttdef"><b>Definition:</b> propellerterminal.h:20</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div>
 </div>
