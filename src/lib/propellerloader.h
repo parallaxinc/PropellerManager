@@ -10,7 +10,7 @@
 /**
 @class PropellerLoader 
 
-@brief The PropellerLoader class implements the Propeller download protocol.
+@brief The PropellerLoader class provides an implementation of the Propeller download protocol.
 
 PropellerLoader automatically selects the best download strategy based on the
 given image to download and the target device.
