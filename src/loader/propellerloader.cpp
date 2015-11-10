@@ -8,11 +8,6 @@
 
 #include <stdio.h>
 
-/**
-  \param session The PropellerSession instance to attach to.
-  \param parent The parent QObject.
-  */
-
 PropellerLoader::PropellerLoader(PropellerManager * manager,
                                  const QString & portname,
                                  QObject * parent)
@@ -140,18 +135,18 @@ int PropellerLoader::version()
   \param run Run the image after downloading.
   */
 
-int PropellerLoader::upload(PropellerImage image, bool write, bool run)
+bool PropellerLoader::upload(PropellerImage image, bool write, bool run)
 {
     if (!session->reserve())
     {
         error("Device is busy");
-        return 1;
+        return false;
     }
 
     if (!session->isOpen())
     {
         error("Device not open");
-        return 1;
+        return false;
     }
 
     session->setBaudRate(115200);
@@ -159,7 +154,7 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     if (!image.isValid())
     {
         error("Image is invalid");
-        return 1;
+        return false;
     }
 
     int command = 2*write + run;
@@ -187,7 +182,7 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     if (!sendPayload(payload))
     {
         session->release();
-        return 1;
+        return false;
     }
 
     message("Verifying RAM");
@@ -195,14 +190,14 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     {
         error("Verify RAM Failed");
         session->release();
-        return 1;
+        return false;
     }
 
     if (!write)
     {
         message("DOWNLOAD COMPLETE");
         session->release();
-        return 0;
+        return true;
     }
     
     message("Writing to EEPROM");
@@ -210,7 +205,7 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     {
         error("Write EEPROM Failed");
         session->release();
-        return 1;
+        return false;
     }
 
     message("Verifying EEPROM");
@@ -218,7 +213,7 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
     {
         error("Verify EEPROM Failed");
         session->release();
-        return 1;
+        return false;
     }
 
     if (run)
@@ -229,16 +224,16 @@ int PropellerLoader::upload(PropellerImage image, bool write, bool run)
 
     message("DOWNLOAD COMPLETE");
 
-    return 0;
+    return true;
 }
 
 
-int PropellerLoader::highSpeedUpload(PropellerImage image, bool write, bool run)
+bool PropellerLoader::highSpeedUpload(PropellerImage image, bool write, bool run)
 {
     QFile file("miniloaders/miniloader.binary");
 
     if (!file.open(QIODevice::ReadOnly))
-        return 1;
+        return false;
 
     PropellerImage loader(file.readAll());
 
@@ -448,7 +443,7 @@ int PropellerLoader::highSpeedUpload(PropellerImage image, bool write, bool run)
 
 //    upload(image, write, run);
 //
-    return 0;
+    return true;
 }
 
 

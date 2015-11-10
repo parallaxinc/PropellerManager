@@ -2,34 +2,35 @@
 #include <QDebug>
 #include <QFile>
 
+#include <PropellerManager>
 #include <PropellerLoader>
 #include <PropellerImage>
-#include <PropellerManager>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-
     PropellerManager manager;
-    QStringList device_list = manager.listPorts();
-    if (device_list.isEmpty())
+
+    QStringList devices = manager.listPorts();
+
+    if (devices.isEmpty())
     {
         qDebug() << "No device available for download!";
         return 1;
     }
 
-    PropellerLoader loader(&manager, device_list[0]);
+    PropellerLoader loader(&manager, devices[0]);
 
-    QString filename = "../../test/images/ls/ImAlive.binary";
-    QFile file(filename);
+    QFile file("../../test/images/ls/ImAlive.binary");
     if (!file.open(QIODevice::ReadOnly))
     {
         qDebug() << "Couldn't open file";
         return 1;
     }
 
-    PropellerImage image = PropellerImage(file.readAll(),filename);
-    loader.upload(image);
+    PropellerImage image = PropellerImage(file.readAll());
+    if (!loader.upload(image));
+        return 1;
 
     return 0;
 }

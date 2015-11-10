@@ -5,7 +5,7 @@
 #include <QHash>
 
 /**
-    @class PropellerDevice propellerdevice.h PropellerDevice
+    @class PropellerDevice device/propellerdevice.h PropellerDevice
   
     @brief The PropellerDevice class provides access to serial Propeller devices.
 

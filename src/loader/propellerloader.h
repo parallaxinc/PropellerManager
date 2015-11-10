@@ -8,7 +8,7 @@
 #include <QElapsedTimer>
 
 /**
-@class PropellerLoader propellerloader.h PropellerLoader
+@class PropellerLoader loader/propellerloader.h PropellerLoader
 
 @brief The PropellerLoader class provides an implementation of the Propeller download protocol.
 
@@ -82,7 +82,7 @@ public:
     ~PropellerLoader();
 
     int version();
-    int upload(PropellerImage image, bool write=false, bool run=true);
-    int highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
+    bool upload(PropellerImage image, bool write=false, bool run=true);
+    bool highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
 };
 

@@ -19,7 +19,7 @@
 #endif
 
 PropellerImage load_image(QCommandLineParser &parser);
-void open_loader(QCommandLineParser &parser, QStringList device_list);
+void open_loader(QCommandLineParser &parser, QStringList devices);
 void info(PropellerImage image);
 void list();
 void error(const QString & text);
@@ -28,7 +28,7 @@ void message(const QString & text);
 int reset_pin = -1;
 
 PropellerManager manager;
-QStringList device_list = manager.listPorts();
+QStringList devices = manager.listPorts();
 
 QCommandLineOption argList      (QStringList() << "l" << "list",    QObject::tr("List available devices"));
 QCommandLineOption argWrite     (QStringList() << "w" << "write",   QObject::tr("Write program to EEPROM"));
@@ -95,10 +95,10 @@ int main(int argc, char *argv[])
 
     if (parser.isSet(argIdentify))
     {
-        if (! device_list.length() > 0)
+        if (! devices.length() > 0)
             error("No devices attached!");
 
-        foreach (QString d, device_list)
+        foreach (QString d, devices)
         {
             PropellerLoader loader(&manager, d);
 
@@ -121,18 +121,18 @@ int main(int argc, char *argv[])
     }
     else
     {
-        open_loader(parser, device_list);
+        open_loader(parser, devices);
     }
 
     return 0;
 }
 
-void open_loader(QCommandLineParser &parser, QStringList device_list)
+void open_loader(QCommandLineParser &parser, QStringList devices)
 {
-    if (device_list.isEmpty())
+    if (devices.isEmpty())
         error("No device available for download!");
 
-    QString device = device_list[0];
+    QString device = devices[0];
     if (!parser.value(argDevice).isEmpty())
     {
         device = parser.value(argDevice);
@@ -180,12 +180,12 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
 
     if (parser.isSet(argHighSpeed))
     {
-        if (loader.highSpeedUpload(image, parser.isSet(argWrite)))
+        if (!loader.highSpeedUpload(image, parser.isSet(argWrite)))
             exit(1);
     }
     else
     {
-        if (loader.upload(image, parser.isSet(argWrite)))
+        if (!loader.upload(image, parser.isSet(argWrite)))
             exit(1);
     }
 
@@ -195,9 +195,9 @@ void open_loader(QCommandLineParser &parser, QStringList device_list)
 
 void list()
 {
-    for (int i = 0; i < device_list.size(); i++)
+    for (int i = 0; i < devices.size(); i++)
     {
-        printf("%s\n",qPrintable(device_list[i]));
+        printf("%s\n",qPrintable(devices[i]));
     }
 }
 

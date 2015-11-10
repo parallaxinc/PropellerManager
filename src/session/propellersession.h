@@ -6,7 +6,7 @@
 #include <QStringList>
 
 /**
-@class PropellerSession propellersession.h PropellerSession
+@class PropellerSession session/propellersession.h PropellerSession
   
 @brief The PropellerSession class provides a persistent interface to Propeller hardware via PropellerManager.
 

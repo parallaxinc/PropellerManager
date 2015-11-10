@@ -6,7 +6,7 @@
 #include <QHash>
 
 /**
-@class PropellerImage propellerimage.h PropellerImage
+@class PropellerImage image/propellerimage.h PropellerImage
 
 @brief The PropellerImage class encapsulates Propeller binary images.
 

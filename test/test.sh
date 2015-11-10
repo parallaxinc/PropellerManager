@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROPMAN=./src/propman/propman
+PROPMAN=./app/propman/propman
 
 TOTAL_FAILS=0
 TOTAL_TESTS=0

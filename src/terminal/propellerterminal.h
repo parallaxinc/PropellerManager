@@ -4,7 +4,7 @@
 #include "../session/propellersession.h"
 
 /**
-@class PropellerTerminal propellerterminal.h PropellerTerminal
+@class PropellerTerminal terminal/propellerterminal.h PropellerTerminal
 
 @brief The PropellerTerminal class provides a minimal implementation of a PropellerManager-based terminal.
 
