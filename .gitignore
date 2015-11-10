@@ -34,3 +34,5 @@ Makefile*
 *.swp
 *~
 *.exe
+
+/lib/
