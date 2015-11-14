@@ -36,7 +36,7 @@ void PropellerManager::endSession(PropellerSession * session)
 }
 
 
-PropellerDevice * PropellerManager::getDevice(const QString & port)
+PropellerDevice * PropellerManager::getDevice(const QString & port, bool open)
 {
     if (!_devices.contains(port))
     {
@@ -53,7 +53,7 @@ PropellerDevice * PropellerManager::getDevice(const QString & port)
         return _devices[port];
     }
 
-    if (!_devices[port]->isOpen())
+    if (!_devices[port]->isOpen() && open)
     {
         qCDebug(pmanager) << "Opening" << _devices[port];
         _devices[port]->open();
@@ -201,7 +201,7 @@ bool PropellerManager::portIsBusy(PropellerSession * session, const QString & na
 {
     if (isPaused(session)) return true;
 
-    PropellerDevice * device = getDevice(name);
+    PropellerDevice * device = getDevice(name, false);
     if (_busy.contains(device) && _busy[device] != session)
         return true;
 
@@ -283,7 +283,7 @@ bool PropellerManager::clear(PropellerSession * session, const QString & port)
 bool PropellerManager::isOpen(PropellerSession * session, const QString & port)
 {
     if (portIsBusy(session, port)) return false;
-    return getDevice(port)->isOpen();
+    return getDevice(port, false)->isOpen();
 }
 
 bool PropellerManager::setBaudRate(PropellerSession * session, const QString & port, quint32 baudRate)

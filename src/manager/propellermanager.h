@@ -106,7 +106,7 @@ private:
     void detach(PropellerSession * session, PropellerDevice * device);
     bool portIsBusy(PropellerSession * session, const QString & name);
 
-    PropellerDevice * getDevice(const QString & port);
+    PropellerDevice * getDevice(const QString & port, bool open = true);
     void deleteDevice(const QString & port);
 
 private slots:
