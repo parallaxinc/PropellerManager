@@ -48,7 +48,16 @@ PropellerDevice * PropellerManager::getDevice(const QString & port)
     }
 
     if (!_ports.contains(port))
+    {
         qCDebug(pmanager) << "ERROR: Device does not exist:" << port;
+        return _devices[port];
+    }
+
+    if (!_devices[port]->isOpen())
+    {
+        qCDebug(pmanager) << "Opening" << _devices[port];
+        _devices[port]->open();
+    }
 
     return _devices[port];
 }
@@ -85,12 +94,6 @@ void PropellerManager::readyBuffer()
 
 void PropellerManager::attach(PropellerSession * session, PropellerDevice * device)
 {
-    if (!device->isOpen())
-    {
-        qCDebug(pmanager) << "opening" << _devices.key(device);
-        device->open();
-    }
-
     _buffers[session] = new ReadBuffer();
 
     _connections[session] = device;

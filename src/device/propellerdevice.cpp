@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QThread>
 #include <QSerialPortInfo>
+#include <QTimer>
+#include <QEventLoop>
 
 #include "gpio.h"
 #include "../util/logging.h"
@@ -96,7 +98,20 @@ bool PropellerDevice::open()
 
     if (!QSerialPort::open(QSerialPort::ReadWrite))
     {
-        return false;
+        qCDebug(pdevice) << "Reattempting device open:" << portName();
+
+        QTimer wait;
+        QEventLoop loop;
+        connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+        wait.start(1000);
+        loop.exec();
+        disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+
+        if (!QSerialPort::open(QSerialPort::ReadWrite))
+        {
+            qCDebug(pdevice) << "Failed to open device:" << portName();
+            return false;
+        }
     }
 
     reset();

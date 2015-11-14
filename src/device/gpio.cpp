@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QThread>
 
+#include "../util/logging.h"
+
 Gpio::Gpio(int pin, Gpio::Direction dir)
 {
     this->pin = pin;
@@ -34,7 +36,7 @@ int Gpio::Export(int pin)
     QFile file("/sys/class/gpio/export");
     if (!file.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Failed to open export for writing.";
+        qCDebug(pgpio) << "Failed to open export for writing.";
         return -1;
     }
 
@@ -45,7 +47,7 @@ int Gpio::Export(int pin)
 
     if (stream.status() != 0)
     {
-        qDebug() << "Failed to write export";
+        qCDebug(pgpio) << "Failed to write export";
     }
     return 0;
 }
@@ -55,7 +57,7 @@ int Gpio::Unexport(int pin)
     QFile file("/sys/class/gpio/unexport");
     if (!file.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Failed to open unexport for writing.";
+        qCDebug(pgpio) << "Failed to open unexport for writing.";
         return -1;
     }
 
@@ -64,7 +66,7 @@ int Gpio::Unexport(int pin)
 
     if (stream.status() != 0)
     {
-        qDebug() << "Failed to write unexport";
+        qCDebug(pgpio) << "Failed to write unexport";
     }
     return 0;
 }
@@ -75,7 +77,7 @@ int Gpio::setDirection(int pin, Gpio::Direction dir)
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Failed to open" << filename << "for writing.";
+        qCDebug(pgpio) << "Failed to open" << filename << "for writing.";
         return -1;
     }
 
@@ -91,7 +93,7 @@ int Gpio::setDirection(int pin, Gpio::Direction dir)
 
     if (stream.status() != 0)
     {
-        qDebug() << "Failed to write GPIO direction";
+        qCDebug(pgpio) << "Failed to write GPIO direction";
     }
     return 0;
 }
@@ -102,7 +104,7 @@ int Gpio::Read(int pin)
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly))
     {
-        qDebug() << "Failed to open" << filename << "for reading.";
+        qCDebug(pgpio) << "Failed to open" << filename << "for reading.";
         return -1;
     }
 
@@ -112,7 +114,7 @@ int Gpio::Read(int pin)
 
     if (stream.status() != 0)
     {
-        qDebug() << "Failed to read GPIO value";
+        qCDebug(pgpio) << "Failed to read GPIO value";
         return -1;
     }
     return 0;
@@ -124,7 +126,7 @@ int Gpio::Write(int pin, int value)
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Failed to open" << filename << "for writing.";
+        qCDebug(pgpio) << "Failed to open" << filename << "for writing.";
         return -1;
     }
 
@@ -133,7 +135,7 @@ int Gpio::Write(int pin, int value)
 
     if (stream.status() != 0)
     {
-        qDebug() << "Failed to write GPIO value";
+        qCDebug(pgpio) << "Failed to write GPIO value";
         return -1;
     }
 

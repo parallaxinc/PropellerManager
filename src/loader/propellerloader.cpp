@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QElapsedTimer>
 
-#include <stdio.h>
+#include "../util/logging.h"
 
 PropellerLoader::PropellerLoader(PropellerManager * manager,
                                  const QString & portname,
@@ -43,9 +43,7 @@ PropellerLoader::~PropellerLoader()
 
 void PropellerLoader::message(QString text)
 {
-    text = "[PropellerManager] "+session->portName()+": "+text;
-    fprintf(stderr, "%s\n", qPrintable(text));
-    fflush(stderr);
+    qCDebug(ploader) << qPrintable(session->portName()) << qPrintable(text);
 }
 
 void PropellerLoader::error(QString text)
@@ -500,9 +498,6 @@ bool PropellerLoader::sendPayload(QByteArray payload)
 bool PropellerLoader::isUploadSuccessful()
 {
     timeoutAlarm.stop();
-//    qDebug() << "SUCCESS?"
-//        << handshakeTimeout.remainingTime()
-//        << totalTimeout.remainingTime();
     if (handshakeTimeout.remainingTime() == 0)
     {
         error("Device not found");
