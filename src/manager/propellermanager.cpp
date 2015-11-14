@@ -65,7 +65,7 @@ PropellerDevice * PropellerManager::getDevice(const QString & port, bool open)
 void PropellerManager::attachByName(PropellerSession * session, const QString & port)
 {
     PropellerDevice * olddevice = _connections[session];
-    PropellerDevice * newdevice = getDevice(port);
+    PropellerDevice * newdevice = getDevice(port, false);
 
     if (olddevice != NULL)
     {
