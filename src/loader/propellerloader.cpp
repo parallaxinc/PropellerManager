@@ -43,7 +43,7 @@ PropellerLoader::~PropellerLoader()
 
 void PropellerLoader::message(QString text)
 {
-    qCDebug(ploader) << qPrintable(session->portName()) << qPrintable(text);
+    qCDebug(ploader) << qPrintable("("+session->portName()+")") << qPrintable(text);
 }
 
 void PropellerLoader::error(QString text)
