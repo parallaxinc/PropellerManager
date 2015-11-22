@@ -111,16 +111,8 @@ signals:
     void        readyRead();
     void        baudRateChanged(qint32 baudRate);
     void        sendError(const QString & message);
-    void        finished();
     void        deviceFree();
     void        deviceBusy();
-
-    void        timeover();
-    void        allBytesWritten();
-
-public slots:
-    void        timeOver();
-    void        writeBufferEmpty();
 
 };
 

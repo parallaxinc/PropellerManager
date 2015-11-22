@@ -32,7 +32,6 @@ public:
     bool open();
 
     static QStringList list();
-    bool reset();
     void useReset(const QString & name, int pin = 17);
     void useDefaultReset();
     void setPortName(const QString & name);
@@ -43,8 +42,7 @@ public:
 
 public slots:
     void handleError(QSerialPort::SerialPortError e);
-    void writeBufferEmpty();
-    void timeOver();
+    bool reset();
 
 signals:
     void finished();

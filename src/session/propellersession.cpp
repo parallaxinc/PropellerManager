@@ -278,30 +278,6 @@ QString PropellerSession::errorString()
 }
 
 /**
-    This signal allows PropellerLoader to tell PropellerDevice
-    that it has timed out.
-
-    \deprecated the code will be restructured and this will be
-    changed or removed. Do not depend on it.
-  */
-
-
-void PropellerSession::timeOver()
-{
-    emit timeover();
-}
-
-/**
-    \deprecated the code will be restructured and this will be
-    changed or removed. Do not depend on it.
-  */
-
-void PropellerSession::writeBufferEmpty()
-{
-    emit allBytesWritten();
-}
-
-/**
     \fn void PropellerSession::bytesWritten(qint64 bytes)
 
     This signal is emitted once every time data has been
@@ -324,13 +300,6 @@ void PropellerSession::writeBufferEmpty()
     */
 
 /**
-    \fn void PropellerSession::finished()
-
-    This signal is emitted when the device has ceased all
-    activity, writing and reading.
-    */
-
-/**
     \fn void PropellerSession::deviceFree()
 
     This signal is emitted when the device becomes free for use again.
@@ -341,12 +310,6 @@ void PropellerSession::writeBufferEmpty()
 
     This signal is emitted when the device has been reserved by another
     session.
-    */
-
-/**
-    \fn void PropellerSession::timeover()
-
-    \deprecated This was a hack to get the loader to work and will be removed.
     */
 
 /**

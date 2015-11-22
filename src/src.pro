@@ -7,7 +7,6 @@ TARGET = propellermanager
 DESTDIR = ../lib/
 
 CONFIG -= debug_and_release
-CONFIG += debug
 
 SOURCES += \
     manager/propellermanager.cpp \

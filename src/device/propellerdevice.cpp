@@ -36,16 +36,6 @@ PropellerDevice::~PropellerDevice()
 }
 
 
-void PropellerDevice::writeBufferEmpty()
-{
-    if (!bytesToWrite())
-    {
-        if (!bytesAvailable())
-            emit finished();
-    }
-}
-
-
 void PropellerDevice::setPortName(const QString & name)
 {
     QSerialPort::setPortName(name);
@@ -260,10 +250,4 @@ QStringList PropellerDevice::list()
             result.append(port.portName());
     }
     return result;
-}
-
-
-void PropellerDevice::timeOver()
-{
-    emit error(QSerialPort::TimeoutError);
 }

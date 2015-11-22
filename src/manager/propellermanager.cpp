@@ -103,18 +103,12 @@ void PropellerManager::attach(PropellerSession * session, PropellerDevice * devi
     // signals
 
     // pass-through
-    connect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
     connect(device,  &PropellerDevice::sendError,       session,  &PropellerSession::sendError);
     connect(device,  &PropellerDevice::bytesWritten,    session,  &PropellerSession::bytesWritten);
     connect(device,  &PropellerDevice::baudRateChanged, session,  &PropellerSession::baudRateChanged);
 
     // buffered
     connect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
-
-    // slots
-    connect(session, &PropellerSession::timeover,        device,  &PropellerDevice::timeOver);
-    connect(session, &PropellerSession::allBytesWritten, device,  &PropellerDevice::writeBufferEmpty);
-
 }
 
 void PropellerManager::detach(PropellerSession * session, PropellerDevice * device)
@@ -123,17 +117,12 @@ void PropellerManager::detach(PropellerSession * session, PropellerDevice * devi
     // signals
 
     // pass-through
-    disconnect(device,  &PropellerDevice::finished,        session,  &PropellerSession::finished);
     disconnect(device,  &PropellerDevice::sendError,       session,  &PropellerSession::sendError);
     disconnect(device,  &PropellerDevice::bytesWritten,    session,  &PropellerSession::bytesWritten);
     disconnect(device,  &PropellerDevice::baudRateChanged, session,  &PropellerSession::baudRateChanged);
 
     // buffered
     disconnect(_buffers[session],  &ReadBuffer::readyRead,   session,  &PropellerSession::readyRead);
-
-    // slots
-    disconnect(session, &PropellerSession::timeover,        device,  &PropellerDevice::timeOver);
-    disconnect(session, &PropellerSession::allBytesWritten, device,  &PropellerDevice::writeBufferEmpty);
 
     _active_sessions[device]--;
     _connections.remove(session);

@@ -101,17 +101,7 @@ int main(int argc, char *argv[])
         foreach (QString d, devices)
         {
             PropellerLoader loader(&manager, d);
-
-            switch (loader.version())
-            {
-                case 1:
-                    printf("%s %s\n", qPrintable(d), "Propeller P8X32A");
-                    break;
-                case 0:
-                default:
-                    break;
-            }
-
+            printf("%s %s\n", qPrintable(d), qPrintable(loader.versionString(loader.version())));
             fflush(stdout);
         }
     }

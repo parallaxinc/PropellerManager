@@ -6,6 +6,9 @@
 
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QStateMachine>
+#include <QFinalState>
+#include <QState>
 
 /**
 @class PropellerLoader loader/propellerloader.h PropellerLoader
@@ -41,32 +44,89 @@ This example downloads a Propeller image to the first availabe device.
 class PropellerLoader : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString status MEMBER m_status NOTIFY statusChanged)
+    Q_PROPERTY(int stat MEMBER m_stat)
 
 private:
     PropellerSession * session;
     PropellerProtocol protocol;
+    PropellerImage _image;
+
+    int _completed;
+    QString m_status;
+    int m_stat;
+
+    QStateMachine machine;
+    QState * s_ver;
+    QState * s_up;
+
+    enum LoaderError
+    {
+        NoError,
+        DeviceBusyError,
+        DeviceNotOpenError,
+        DeviceNotFoundError,
+        DownloadInProgressError,
+        InvalidImageError,
+        VerifyRamError,
+        WriteEepromError,
+        VerifyEepromError,
+        TimeoutError,
+        HandshakeError,
+        InvalidHandshakeError,
+        UnknownError
+    };
+
+    LoaderError _error;
+    QHash<LoaderError, QString> _errorstrings;
 
     int _version;
+    QHash<int, QString> _versionstrings;
+
     int _ack;
+    int _write, _run;
 
     QTimer totalTimeout;
     QTimer handshakeTimeout;
-    QTimer timeoutAlarm;
     QTimer poll;
     QElapsedTimer elapsedTimer;
 
-    void writeByte(quint8  value);
     void writeLong(quint32 value);
-    bool sendPayload(QByteArray payload);
     int pollAcknowledge();
-    bool isUploadSuccessful();
 
 signals:
     void finished();
+    void success();
+    void failure();
+
+    void prepared();
+    void payload_sent();
+    void handshake_received();
+    void upload_completed();
+    void acknowledged();
+
+    void statusChanged(const QString & message);
 
 private slots:
-    void read_handshake();
-    void read_acknowledge();
+
+    void failure_entry();
+    void success_entry();
+
+    void prepare_entry();
+
+    void handshake_entry();
+    void handshake_exit();
+    void handshake_read();
+
+    void sendpayload_entry();
+    void sendpayload_exit();
+    void sendpayload_write();
+
+    void upload_status();
+
+    void acknowledge_entry();
+    void acknowledge_exit();
+    void acknowledge_read();
 
     void calibrate();
     void timeover();
@@ -77,11 +137,13 @@ private slots:
 
 public:
     PropellerLoader(PropellerManager * manager,
-                    const QString & portname,
+                    const QString & portname = QString(),
                     QObject * parent = 0);
     ~PropellerLoader();
 
     int version();
+    QString versionString(int version);
+
     bool upload(PropellerImage image, bool write=false, bool run=true);
     bool highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
 };
