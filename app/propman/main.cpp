@@ -170,8 +170,8 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
 
     if (parser.isSet(argHighSpeed))
     {
-        if (!loader.highSpeedUpload(image, parser.isSet(argWrite)))
-            exit(1);
+//        if (!loader.highSpeedUpload(image, parser.isSet(argWrite)))
+//            exit(1);
     }
     else
     {

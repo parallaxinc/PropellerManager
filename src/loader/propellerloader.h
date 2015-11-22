@@ -92,7 +92,6 @@ private:
     QElapsedTimer elapsedTimer;
 
     void writeLong(quint32 value);
-    int pollAcknowledge();
 
 signals:
     void finished();
@@ -145,6 +144,6 @@ public:
     QString versionString(int version);
 
     bool upload(PropellerImage image, bool write=false, bool run=true);
-    bool highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
+//    bool highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
 };
 
