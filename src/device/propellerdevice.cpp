@@ -1,7 +1,6 @@
 #include "propellerdevice.h"
 
 #include <QDebug>
-#include <QThread>
 #include <QSerialPortInfo>
 #include <QTimer>
 #include <QEventLoop>
@@ -225,8 +224,6 @@ bool PropellerDevice::reset()
         }
     }
 
-    QThread::msleep(80);
-
     clear(QSerialPort::Input);
 
     return true;
@@ -250,4 +247,9 @@ QStringList PropellerDevice::list()
             result.append(port.portName());
     }
     return result;
+}
+
+quint32 PropellerDevice::resetPeriod()
+{
+    return 80;
 }

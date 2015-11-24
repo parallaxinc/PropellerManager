@@ -3,6 +3,7 @@ QT -= gui
 
 TEMPLATE = app
 TARGET = propman
+DESTDIR = ../../bin/
 
 CONFIG += console
 CONFIG -= app_bundle debug_and_release

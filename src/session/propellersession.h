@@ -100,6 +100,7 @@ public:
     void        useReset(const QString & name, int pin);
     void        useDefaultReset();
     bool        reset();
+    quint32     resetPeriod();
 
     quint32     minimumTimeout();
     void        setMinimumTimeout(quint32 milliseconds);

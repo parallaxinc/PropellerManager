@@ -12,7 +12,7 @@ PropellerLoader::PropellerLoader(PropellerManager * manager,
                                  QObject * parent)
     : QObject(parent)
 {
-    _versionstrings[0] = tr("Unknown Device");
+    _versionstrings[0] = tr("");
     _versionstrings[1] = tr("Propeller P8X32A");
 
     _error = NoError;
@@ -38,9 +38,11 @@ PropellerLoader::PropellerLoader(PropellerManager * manager,
 
     totalTimeout.setSingleShot(true);
     handshakeTimeout.setSingleShot(true);
+    resetTimer.setSingleShot(true);
 
     connect(&totalTimeout,      SIGNAL(timeout()), this, SLOT(timeover()));
     connect(&handshakeTimeout,  SIGNAL(timeout()), this, SLOT(timeover()));
+    connect(&resetTimer,        SIGNAL(timeout()), this, SIGNAL(prepared()));
 
     connect(session,&PropellerSession::sendError,
             this,   &PropellerLoader::error);
@@ -51,87 +53,62 @@ PropellerLoader::PropellerLoader(PropellerManager * manager,
     connect(s_success,     SIGNAL(entered()), this, SLOT(success_entry()));
     connect(s_failure,     SIGNAL(entered()), this, SLOT(failure_entry()));
 
-    s_ver = new QState();
-    s_up  = new QState();
+    s_active  = new QState();
 
-    QState * s_ver_start            = new QState(s_ver);
-    QState * s_ver_prepare          = new QState(s_ver);
-    QState * s_ver_handshake        = new QState(s_ver);
+    QState * s_start             = new QState(s_active);
+    QState * s_prepare           = new QState(s_active);
+    QState * s_payload           = new QState(s_active);
+    QState * s_verify            = new QState(s_active);
+    QState * s_write             = new QState(s_active);
+    QState * s_verifywrite       = new QState(s_active);
 
-    QState * s_up_start             = new QState(s_up);
-    QState * s_up_prepare           = new QState(s_up);
-    QState * s_up_payload           = new QState(s_up);
-    QState * s_up_verify            = new QState(s_up);
-    QState * s_up_write             = new QState(s_up);
-    QState * s_up_verifywrite       = new QState(s_up);
+    s_prepare    ->assignProperty(this, "status", tr("Preparing image..."));
+    s_payload    ->assignProperty(this, "status", tr("Downloading to RAM..."));
+    s_verify     ->assignProperty(this, "status", tr("Verifying RAM..."));
+    s_write      ->assignProperty(this, "status", tr("Writing to EEPROM..."));
+    s_verifywrite->assignProperty(this, "status", tr("Verifying EEPROM..."));
 
-    s_ver_handshake ->assignProperty(this, "status", tr("Checking version..."));
-    s_up_payload    ->assignProperty(this, "status", tr("Downloading to RAM..."));
-    s_up_verify     ->assignProperty(this, "status", tr("Verifying RAM..."));
-    s_up_write      ->assignProperty(this, "status", tr("Writing to EEPROM..."));
-    s_up_verifywrite->assignProperty(this, "status", tr("Verifying EEPROM..."));
+    s_verify     ->assignProperty(this, "stat", 1);
+    s_write      ->assignProperty(this, "stat", 2);
+    s_verifywrite->assignProperty(this, "stat", 3);
 
-    s_up_verify     ->assignProperty(this, "stat", 1);
-    s_up_write      ->assignProperty(this, "stat", 2);
-    s_up_verifywrite->assignProperty(this, "stat", 3);
-
-    s_ver->setInitialState(s_ver_start);
-    s_up->setInitialState(s_up_start);
-
-    s_ver->addTransition(this, SIGNAL(failure()), s_failure);
-    s_up-> addTransition(this, SIGNAL(failure()), s_failure);
-
-    s_ver->addTransition(&machine,      SIGNAL(started()), s_ver_prepare);
-    s_up-> addTransition(&machine,      SIGNAL(started()), s_up_prepare);
+    s_active->setInitialState(s_start);
+    s_active-> addTransition(this, SIGNAL(failure()), s_failure);
+    s_active-> addTransition(&machine,      SIGNAL(started()), s_prepare);
 
     machine.addState(s_failure);
     machine.addState(s_success);
-    machine.addState(s_ver);
-    machine.addState(s_up);
-
-    // version connections
+    machine.addState(s_active);
 
     // prepare
-    connect(s_ver_prepare,      SIGNAL(entered()), this, SLOT(prepare_entry()));
+    connect(s_prepare,       SIGNAL(entered()), this, SLOT(prepare_entry()));
 
-    s_ver_prepare  ->addTransition(this,  SIGNAL(prepared()),s_ver_handshake);
+    s_prepare  ->addTransition(this,  SIGNAL(prepared()),s_payload);
 
-    // handshake 
-    connect(s_ver_handshake,    SIGNAL(entered()), this, SLOT(handshake_entry()));
-    connect(s_ver_handshake,    SIGNAL(exited()),  this, SLOT(handshake_exit()));
+    connect(s_payload,       SIGNAL(entered()), this, SLOT(sendpayload_entry()));
+    connect(s_payload,       SIGNAL(exited()),  this, SLOT(sendpayload_exit()));
 
-    s_ver_handshake->addTransition(this,  SIGNAL(handshake_received()),s_success);
-
-    // upload connections
-
-    // prepare
-    connect(s_up_prepare,       SIGNAL(entered()), this, SLOT(prepare_entry()));
-
-    s_up_prepare  ->addTransition(this,  SIGNAL(prepared()),s_up_payload);
-
-    connect(s_up_payload,       SIGNAL(entered()), this, SLOT(sendpayload_entry()));
-    connect(s_up_payload,       SIGNAL(exited()),  this, SLOT(sendpayload_exit()));
-
-    s_up_payload  ->addTransition(this,  SIGNAL(upload_completed()),  s_up_verify);
+    s_payload  ->addTransition(this,  SIGNAL(upload_completed()),  s_verify);
+    s_payload  ->addTransition(this,  SIGNAL(success()),           s_success);
 
     // verify
-    connect(s_up_verify,        SIGNAL(entered()), this, SLOT(acknowledge_entry()));
-    connect(s_up_verify,        SIGNAL(exited()),  this, SLOT(acknowledge_exit()));
+    connect(s_verify,        SIGNAL(entered()), this, SLOT(acknowledge_entry()));
+    connect(s_verify,        SIGNAL(exited()),  this, SLOT(acknowledge_exit()));
 
-    s_up_verify     ->addTransition(this,  SIGNAL(acknowledged()),  s_up_write);
-    s_up_verify     ->addTransition(this,  SIGNAL(success()),       s_success);
+    s_verify     ->addTransition(this,  SIGNAL(acknowledged()),  s_write);
+    s_verify     ->addTransition(this,  SIGNAL(success()),       s_success);
 
-    connect(s_up_write,         SIGNAL(entered()), this, SLOT(acknowledge_entry()));
-    connect(s_up_write,         SIGNAL(exited()),  this, SLOT(acknowledge_exit()));
+    connect(s_write,         SIGNAL(entered()), this, SLOT(acknowledge_entry()));
+    connect(s_write,         SIGNAL(exited()),  this, SLOT(acknowledge_exit()));
 
-    s_up_write      ->addTransition(this,  SIGNAL(acknowledged()),  s_up_verifywrite);
+    s_write      ->addTransition(this,  SIGNAL(acknowledged()),  s_verifywrite);
 
-    connect(s_up_verifywrite,   SIGNAL(entered()), this, SLOT(acknowledge_entry()));
-    connect(s_up_verifywrite,   SIGNAL(exited()),  this, SLOT(acknowledge_exit()));
+    connect(s_verifywrite,   SIGNAL(entered()), this, SLOT(acknowledge_entry()));
+    connect(s_verifywrite,   SIGNAL(exited()),  this, SLOT(acknowledge_exit()));
  
-    s_up_verifywrite->addTransition(this,  SIGNAL(success()),       s_success);
+    s_verifywrite->addTransition(this,  SIGNAL(success()),       s_success);
 
-    connect(this, SIGNAL(statusChanged(const QString &)), this, SLOT(message(const QString &)));
+//    connect(this, SIGNAL(statusChanged(const QString &)), this, SLOT(message(const QString &)));
 }
 
 PropellerLoader::~PropellerLoader()
@@ -140,12 +117,12 @@ PropellerLoader::~PropellerLoader()
 }
 
 
-void PropellerLoader::message(QString text)
+void PropellerLoader::message(const QString & text)
 {
-    qCDebug(ploader) << qPrintable("("+session->portName()+")") << qPrintable(text);
+    qCDebug(ploader) << qPrintable("["+session->portName()+"]") << qPrintable(text);
 }
 
-void PropellerLoader::error(QString text)
+void PropellerLoader::error(const QString & text)
 {
     message("ERROR: "+text);
 }
@@ -162,14 +139,18 @@ void PropellerLoader::writeLong(quint32 value)
 
 void PropellerLoader::failure_entry()
 {
-    error(_errorstrings[_error]);
+    setProperty("status", tr("ERROR: %1")
+            .arg(_errorstrings[_error]));
+    totalTimeout.stop();
     session->release();
-
     emit finished();
 }
 
 void PropellerLoader::success_entry()
 {
+    setProperty("status", tr("Success!"));
+    totalTimeout.stop();
+    session->release();
     emit finished();
 }
 
@@ -182,7 +163,7 @@ int PropellerLoader::version()
 {
     _write = 0;
     _run = 0;
-    machine.setInitialState(s_ver);
+    machine.setInitialState(s_active);
     machine.start();
 
     QEventLoop loop;
@@ -199,20 +180,19 @@ void PropellerLoader::prepare_entry()
     m_stat = 0;
     session->setBaudRate(115200);
 
-    int command = 2*_write + _run;
+    _command = 2*_write + _run;
 
-    QByteArray request = protocol.buildRequest((Command::Command) command);
+    QByteArray request = protocol.buildRequest((Command::Command) _command);
 
-    QByteArray payload;
-    payload.append(request);
+    _payload = request;
 
-    if (command > 0)
+    if (_command > 0)
     {
-        payload.append(protocol.encodeLong(_image.imageSize() / 4));
-        payload.append(protocol.encodeData(_image.data()));
+        _payload.append(protocol.encodeLong(_image.imageSize() / 4));
+        _payload.append(protocol.encodeData(_image.data()));
     }
 
-    int timeout_payload = session->calculateTimeout(payload.size());
+    int timeout_payload = session->calculateTimeout(_payload.size());
     if (_write)
         timeout_payload += 5000; // ms (EEPROM write speed is constant.
                                  // the Propeller firmware only does 32kB EEPROMs
@@ -221,26 +201,14 @@ void PropellerLoader::prepare_entry()
     totalTimeout.start(timeout_payload);
     handshakeTimeout.start(session->calculateTimeout(request.size()));
     elapsedTimer.start();
+    resetTimer.start(session->resetPeriod());
 
     session->reset();
-    session->write(payload);
-
-//    message(QString("Downloading image (%1 bytes, %2 ms)").arg(_image.imageSize()).arg(timeout_payload));
-    emit prepared();
-}
-
-void PropellerLoader::handshake_entry()
-{
-    connect(session,    SIGNAL(readyRead()),this,   SLOT(handshake_read()));
-}
-
-void PropellerLoader::handshake_exit()
-{
-    disconnect(session, SIGNAL(readyRead()), this, SLOT(handshake_read()));
 }
 
 void PropellerLoader::handshake_read()
 {
+//    message("BYTES "+QString::number(session->bytesAvailable()));
     if (session->bytesAvailable() == protocol.reply().size() + 4)
     {
         handshakeTimeout.stop();
@@ -265,8 +233,10 @@ void PropellerLoader::handshake_read()
             emit failure();
         }
 
-//            message(QString("Handshake received: hardware version %1").arg(_version));
-        emit handshake_received();
+        if (_command > 0)
+            emit handshake_received();
+        else
+            emit success();
     }
 }
 
@@ -276,6 +246,8 @@ void PropellerLoader::sendpayload_entry()
     connect(session,    SIGNAL(readyRead()),            this, SLOT(handshake_read()));
     connect(this,       SIGNAL(handshake_received()),   this, SLOT(upload_status()));
     connect(this,       SIGNAL(payload_sent()),         this, SLOT(upload_status()));
+
+    session->write(_payload);
 }
 
 void PropellerLoader::sendpayload_exit()
@@ -362,7 +334,7 @@ void PropellerLoader::acknowledge_read()
   \param run Run the image after downloading.
   */
 
-bool PropellerLoader::upload(PropellerImage image, bool write, bool run)
+bool PropellerLoader::upload(PropellerImage image, bool write, bool run, bool wait)
 {
     if (!session->reserve())
     {
@@ -392,13 +364,16 @@ bool PropellerLoader::upload(PropellerImage image, bool write, bool run)
     _write = write;
     _run = run;
 
-    machine.setInitialState(s_up);
+    machine.setInitialState(s_active);
     machine.start();
 
-//    QEventLoop loop;
-//    connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
-//    loop.exec();
-//
+    if (wait)
+    {
+        QEventLoop loop;
+        connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
+        loop.exec();
+    }
+
     return true;
 }
 

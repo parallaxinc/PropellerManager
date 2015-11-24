@@ -38,6 +38,7 @@ public:
 
     quint32 calculateTimeout(quint32 bytes, quint32 safety_factor = 15);
     quint32 minimumTimeout();
+    quint32 resetPeriod();
     void setMinimumTimeout(quint32 milliseconds);
 
 public slots:

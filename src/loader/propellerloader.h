@@ -47,19 +47,7 @@ class PropellerLoader : public QObject
     Q_PROPERTY(QString status MEMBER m_status NOTIFY statusChanged)
     Q_PROPERTY(int stat MEMBER m_stat)
 
-private:
-    PropellerSession * session;
-    PropellerProtocol protocol;
-    PropellerImage _image;
-
-    int _completed;
-    QString m_status;
-    int m_stat;
-
-    QStateMachine machine;
-    QState * s_ver;
-    QState * s_up;
-
+public:
     enum LoaderError
     {
         NoError,
@@ -77,6 +65,21 @@ private:
         UnknownError
     };
 
+private:
+    PropellerSession * session;
+    PropellerProtocol protocol;
+    PropellerImage _image;
+
+    int _command;
+    int _completed;
+    QString m_status;
+    int m_stat;
+    
+    QByteArray _payload;
+
+    QStateMachine machine;
+    QState * s_active;
+
     LoaderError _error;
     QHash<LoaderError, QString> _errorstrings;
 
@@ -88,6 +91,7 @@ private:
 
     QTimer totalTimeout;
     QTimer handshakeTimeout;
+    QTimer resetTimer;
     QTimer poll;
     QElapsedTimer elapsedTimer;
 
@@ -113,13 +117,11 @@ private slots:
 
     void prepare_entry();
 
-    void handshake_entry();
-    void handshake_exit();
-    void handshake_read();
-
     void sendpayload_entry();
     void sendpayload_exit();
+
     void sendpayload_write();
+    void handshake_read();
 
     void upload_status();
 
@@ -131,8 +133,8 @@ private slots:
     void timeover();
     void timestamp();
 
-    void message(QString text);
-    void error(QString text);
+    void message(const QString & text);
+    void error(const QString & text);
 
 public:
     PropellerLoader(PropellerManager * manager,
@@ -143,7 +145,7 @@ public:
     int version();
     QString versionString(int version);
 
-    bool upload(PropellerImage image, bool write=false, bool run=true);
+    bool upload(PropellerImage image, bool write=false, bool run=true, bool wait=false);
 //    bool highSpeedUpload(PropellerImage image, bool write=false, bool run=true);
 };
 

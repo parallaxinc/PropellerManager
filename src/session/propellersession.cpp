@@ -253,6 +253,11 @@ bool PropellerSession::reset()
     return manager->reset(this, port);
 }
 
+quint32 PropellerSession::resetPeriod()
+{
+    return manager->resetPeriod(this, port);
+}
+
 /**
     Returns the error of the device.
 

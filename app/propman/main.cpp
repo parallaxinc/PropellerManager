@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
         foreach (QString d, devices)
         {
             PropellerLoader loader(&manager, d);
-            printf("%s %s\n", qPrintable(d), qPrintable(loader.versionString(loader.version())));
+            printf("%s: %s\n", qPrintable(d), qPrintable(loader.versionString(loader.version())));
             fflush(stdout);
         }
     }
@@ -126,6 +126,8 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
     if (!parser.value(argDevice).isEmpty())
     {
         device = parser.value(argDevice);
+        if (!devices.contains(device))
+            error("Device does not exist!");
     }
 
     if (parser.positionalArguments().isEmpty())
@@ -175,8 +177,13 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
     }
     else
     {
-        if (!loader.upload(image, parser.isSet(argWrite)))
+        QObject::connect (&loader, SIGNAL(statusChanged(const QString &)),
+                          &loader, SLOT(message(const QString &)));
+
+        if (!loader.upload(image, parser.isSet(argWrite),true,true))
             exit(1);
+        QObject::disconnect (&loader, SIGNAL(statusChanged(const QString &)),
+                             &loader, SLOT(message(const QString &)));
     }
 
     if (parser.isSet(argTerm))

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROPMAN=./app/propman/propman
+PROPMAN=./bin/propman
 
 TOTAL_FAILS=0
 TOTAL_TESTS=0
@@ -13,7 +13,9 @@ test_header()
 test_download()
 {
     test_header "$2" "$1"
+    echo
     test_pass $PROPMAN $3 $1
+    echo
 
     sleep 6
 }

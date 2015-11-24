@@ -36,3 +36,4 @@ Makefile*
 *.exe
 
 /lib/
+/bin/

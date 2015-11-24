@@ -147,6 +147,7 @@ public:
     void        useReset(PropellerSession * session, const QString & port, const QString & name, int pin);
     void        useDefaultReset(PropellerSession * session, const QString & port);
     bool        reset(PropellerSession * session, const QString & port);
+    quint32     resetPeriod(PropellerSession * session, const QString & port);
 
     bool        reserve(PropellerSession * session, const QString & port);
     bool        isReserved(PropellerSession * session, const QString & port);
