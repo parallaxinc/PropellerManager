@@ -313,7 +313,7 @@ void PropellerLoader::acknowledge_read()
             if ((m_stat == 3 && _write) 
                     || (m_stat == 1 && !_write))
             {
-                if (_run)
+                if (_run && _write)
                     session->reset();
 
                 emit success();
