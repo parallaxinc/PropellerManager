@@ -7,15 +7,15 @@ environment:
 configuration: Release
 
 install:
-- set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin;C:\Qt\Tools\QtCreator\bin;
-- set PROJECTNAME=propellermanager-%APPVEYOR_REPO_TAG_NAME%-win
-- qmake -v
+    - set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin;C:\Qt\Tools\QtCreator\bin;
+    - set PROJECTNAME=propellermanager-%APPVEYOR_REPO_TAG_NAME%-win
+    - qmake -v
 
 build_script:
-- qmake PREFIX=%PROJECTNAME%
-- mingw32-make
-- mingw32-make install
-- jar -cMf %PROJECTNAME%.zip %PROJECTNAME%
+    - qmake PREFIX=%PROJECTNAME% -r
+    - mingw32-make
+    - mingw32-make install
+    - jar -cMf %PROJECTNAME%.zip %PROJECTNAME%
 
 artifacts:
   - path: propellermanager-*.zip
