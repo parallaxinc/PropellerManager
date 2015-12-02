@@ -15,8 +15,7 @@ build_script:
 - qmake PREFIX=%PROJECTNAME%
 - mingw32-make
 - mingw32-make install
-- "Add-Type -A System.IO.Compression.FileSystem"
-- "[IO.Compression.ZipFile]::CreateFromDirectory(%PROJECTNAME%, %PROJECTNAME.zip)"
+- jar -cMf %PROJECTNAME%.zip %PROJECTNAME%
 
 artifacts:
   - path: propellermanager-*.zip
