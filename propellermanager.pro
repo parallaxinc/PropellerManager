@@ -1,3 +1,9 @@
+VERSION = $$(VERSION)
+
+isEmpty(VERSION) {
+    VERSION = 0.0.0
+}
+
 TEMPLATE = subdirs
 SUBDIRS = \
     src \
