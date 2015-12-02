@@ -47,7 +47,7 @@ PropellerManager forms the basis for [PropellerIDE](https://github.com/parallaxi
 
 Learn more about PropellerManager at [developer.parallax.com](http://developer.parallax.com/projects/propellermanager/doc/html/).
 
-## Command-Line Usage
+### Command-Line Usage
 
 PropellerManager includes a small program called `propman` to use the library from the command-line.
 
@@ -66,15 +66,15 @@ For more complex use cases, get a list of available devices with `-l`. Then use 
 
 Get help with `-h` or the PropellerManager version with `-v`.
 
-## Bugs
+### Bugs
 
 Please report all bugs to the [PropellerManager issue tracker](https://lamestation.atlassian.net/projects/PROPMAN/issues).
 
-## License
+### License
 
 Copyright © 2015 Parallax Inc. PropellerManager is licensed under the GNU Public License v3.
 
-## Credits
+### Credits
 
 Propeller Manager is developed by LameStation LLC for Parallax Inc.
 
