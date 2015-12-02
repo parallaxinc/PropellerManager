@@ -1,5 +1,7 @@
 # PropellerManager
 
+![logo](gfx/PropellerManager.png)
+
 [![Build status](https://ci.appveyor.com/api/projects/status/8mwhkfrbnvuwlo1m?svg=true)](https://ci.appveyor.com/project/bweir/propellermanager) [![Build Status](https://travis-ci.org/parallaxinc/PropellerManager.svg)](https://travis-ci.org/parallaxinc/PropellerManager)
 
 PropellerManager is an event-driven Qt/C++ API for developing integrated Propeller applications.
