@@ -12,5 +12,5 @@ apptype: libraries
 links:
   Source Code: https://github.com/parallaxinc/PropellerManager
   Issue Tracker: https://lamestation.atlassian.net/projects/IDE
-  Documentation: doc/html/annotated.html
+  Documentation: doc/html/
 ---

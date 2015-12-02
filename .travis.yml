@@ -1,23 +1,36 @@
 sudo: required
-services: 
-    - docker
+dist: trusty
 cache: apt
 language: cpp
 addons:
   apt:
     packages:
-      - cppcheck
-      - libudev-dev
+    - cppcheck
+    - libudev-dev
+    - qt5-default
+    - libqt5serialport5-dev
 matrix:
   include:
   - os: linux
+    compiler: g++
+  - os: linux
     compiler: clang
     env: QMAKESPEC=linux-clang
-before_install:
-- sudo -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install qt5-default libqt5serialport5-dev
-- qmake -v
-script:
-- qmake
-- make -j4
+  - os: osx
+    compiler: clang
+    env: PLATFORM=osx PATH=/Users/travis/local/bin:$PATH
+install: "./.travis/install.sh"
+script: "./.travis/script.sh"
 after_script:
 - cppcheck --enable=all -q `git ls-files *.cpp *h`
+deploy:
+  provider: releases
+  api_key:
+    secure: P8fXvlfyRvFaump8GFGmbtVjiPulWaA7EaUW2+EfirN+jb9vA1T0g23Lzh5rj0ZyQjXtyPIH1dyLynCLFqigrq8yhEAbJfkeuqsDbdH6jnKSxl/cRDDtmpvQQKAbKdInNy4OE/8Pk0wu+qxbOYWwkw2EbReEORSkO98DpM7ygyk=
+  file_glob: true
+  file: propellermanager-*.tgz
+  skip_cleanup: true
+  on:
+    repo: parallaxinc/PropellerManager
+    tags: true
+    all_branches: true
