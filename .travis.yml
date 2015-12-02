@@ -18,7 +18,7 @@ matrix:
     env: QMAKESPEC=linux-clang
   - os: osx
     compiler: clang
-    env: PLATFORM=osx PATH=/Users/travis/local/bin:$PATH
+    env: PATH=/Users/travis/local/bin:$PATH
 install: "./.travis/install.sh"
 script: "./.travis/script.sh"
 after_script:

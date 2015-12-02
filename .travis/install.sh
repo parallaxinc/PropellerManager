@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-case "$PLATFORM" in
+case "$TRAVIS_OS_NAME" in
 "osx")
     wget -4 http://lamestation.net/downloads/travis/qt5.5.0-mac-clang.tgz
     tar xzf qt5.5.0-mac-clang.tgz
