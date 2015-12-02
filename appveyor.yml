@@ -1,0 +1,32 @@
+clone_depth: 200
+
+environment:
+    QTDIR: C:\Qt\5.4\mingw491_32
+    MINGW: C:\Qt\Tools\mingw491_32
+
+configuration: Release
+
+install:
+- set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin;C:\Qt\Tools\QtCreator\bin;
+- set PROJECTNAME=propellermanager-%APPVEYOR_REPO_TAG_NAME%
+- qmake -v
+
+build_script:
+- qmake PREFIX=%PROJECTNAME%
+- mingw32-make
+- mingw32-make install
+- Add-Type -A System.IO.Compression.FileSystem
+- [IO.Compression.ZipFile]::CreateFromDirectory(%PROJECTNAME%, %PROJECTNAME.zip)
+
+artifacts:
+  - path: propellermanager-*.zip
+    name: propellermanager
+
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: fZs/QHWXlkl+8isIViFQ9Oys8p1rumUWf+j9kDDE4mNlD2azbMG7IgJxHEMjV8QX
+  draft: false
+  prerelease: false
+  on:
+    appveyor_repo_tag: true

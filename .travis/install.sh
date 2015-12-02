@@ -7,6 +7,8 @@ case "$PLATFORM" in
     tar xzf qt5.5.0-mac-clang.tgz
     mv local/ /Users/travis/local/
     ;;
+"linux")
+    ;;
 *)
     echo "Invalid PLATFORM"
     exit 1
