@@ -29,7 +29,7 @@ platforms:
      version: '0.5.6'
 
   -  name: Linux
-     suffix: osx.tgz
+     suffix: linux.tgz
      version: '0.5.6'
 ---
 
