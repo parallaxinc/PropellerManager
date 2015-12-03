@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     }
 
     PropellerImage image = PropellerImage(file.readAll());
-    if (!loader.upload(image));
+    if (!loader.upload(image))
         return 1;
 
     return 0;
