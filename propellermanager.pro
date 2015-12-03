@@ -23,8 +23,8 @@ libs.path       = $$PREFIX/lib
 bins.path       = $$PREFIX/bin
 includes.path   = $$PREFIX/include
 
-libs.files      = $$PWD/lib/*
-bins.files      = $$PWD/bin/*
-includes.files  = $$PWD/include/*
+libs.files      = $$files(lib/*)
+bins.files      = $$files(bin/*)
+includes.files  = $$files(include/*)
 
 INSTALLS += libs includes bins
