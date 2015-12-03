@@ -19,12 +19,12 @@ isEmpty(PREFIX) {
     PREFIX = /usr/local
 }
 
-libs.path       = $$PREFIX/lib
-bins.path       = $$PREFIX/bin
-includes.path   = $$PREFIX/include
+install_libs.path       = $$PREFIX/lib
+install_bins.path       = $$PREFIX/bin
+install_includes.path   = $$PREFIX/include
 
-libs.files      = $$PWD/lib/*
-bins.files      = $$PWD/bin/*
-includes.files  = $$PWD/include/*
+install_libs.files      = $$PWD/lib/*
+install_bins.files      = $$PWD/bin/*
+install_includes.files  = $$PWD/include/*
 
-INSTALLS += libs includes bins
+INSTALLS += install_libs install_includes install_bins
