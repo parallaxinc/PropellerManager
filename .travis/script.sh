@@ -7,4 +7,9 @@ qmake PREFIX=$PROJECTNAME -r
 make -j4
 make install
 
+tree
+ls bin/
+ls lib/
+ls include/
+
 tar cvzf $PROJECTNAME.tgz $PROJECTNAME

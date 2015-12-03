@@ -9,6 +9,7 @@ addons:
     - libudev-dev
     - qt5-default
     - libqt5serialport5-dev
+    - tree
 matrix:
   include:
   - os: linux
