@@ -21,4 +21,4 @@ TOP_PWD = $$PWD
     error("PropellerIDE requires Qt5.2 or greater")
 }
 
-message(common.pri: $$TOP_PWD)
+#message(common.pri: $$TOP_PWD)

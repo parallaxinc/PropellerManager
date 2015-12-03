@@ -9,4 +9,4 @@ win32-msvc* {
 	PRE_TARGETDEPS += $$TOP_PWD/lib/libpropellermanager.a
 }
 
-message(include.pri: $$TOP_PWD)
+#message(include.pri: $$TOP_PWD)
