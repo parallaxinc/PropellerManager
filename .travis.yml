@@ -5,11 +5,9 @@ language: cpp
 addons:
   apt:
     packages:
-    - cppcheck
     - libudev-dev
     - qt5-default
     - libqt5serialport5-dev
-    - tree
 matrix:
   include:
   - os: linux
@@ -22,8 +20,6 @@ matrix:
     env: PATH=/Users/travis/local/bin:$PATH
 install: "./.travis/install.sh"
 script: "./.travis/script.sh"
-after_script:
-- cppcheck --enable=all -q `git ls-files *.cpp *h`
 deploy:
   provider: releases
   api_key:

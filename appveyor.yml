@@ -12,7 +12,7 @@ install:
     - qmake -v
 
 build_script:
-    - qmake PREFIX=%PROJECTNAME% -r
+    - qmake PREFIX=$(pwd)/%PROJECTNAME% -r
     - mingw32-make
     - mingw32-make install
     - jar -cMf %PROJECTNAME%.zip %PROJECTNAME%

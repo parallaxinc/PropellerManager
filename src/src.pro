@@ -1,12 +1,10 @@
-QT += serialport
-QT -= gui
-CONFIG += staticlib
+include(../common.pri)
 
 TEMPLATE = lib
 TARGET = propellermanager
-DESTDIR = ../lib/
+DESTDIR = $$TOP_PWD/lib/
 
-CONFIG -= debug_and_release
+CONFIG += staticlib
 
 SOURCES += \
     manager/propellermanager.cpp \
@@ -31,3 +29,6 @@ HEADERS += \
     device/propellerdevice.h \
     device/gpio.h \
     util/logging.h \
+
+target.path   = $$PREFIX/lib
+INSTALLS += target
