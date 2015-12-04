@@ -1,4 +1,4 @@
-![logo](gfx/PropellerManager.png)
+![logo](https://raw.githubusercontent.com/parallaxinc/PropellerManager/master/gfx/PropellerManager.png)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8mwhkfrbnvuwlo1m?svg=true)](https://ci.appveyor.com/project/bweir/propellermanager) [![Build Status](https://travis-ci.org/parallaxinc/PropellerManager.svg)](https://travis-ci.org/parallaxinc/PropellerManager)
 
