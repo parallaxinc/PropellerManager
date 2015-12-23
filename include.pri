@@ -1,3 +1,5 @@
+QT += serialport
+
 TOP_PWD = $$PWD
 
 INCLUDEPATH += $$TOP_PWD/include/
