@@ -93,7 +93,7 @@ quint32 PropellerImage::imageSize()
 }
 
 /**
-Size of the application code. This value will be larger than the total file size for PropellerImage::Binary images.
+Total size of application in memory. This value will be larger than the total file size for PropellerImage::Binary images.
 
 This value is equivalent to startOfStackSpace().
     */
@@ -101,6 +101,17 @@ This value is equivalent to startOfStackSpace().
 quint32 PropellerImage::programSize()
 {
     return startOfStackSpace();
+}
+
+/**
+Size of the application code.
+
+This value is equivalent to startOfVariables() + 8.
+    */
+
+quint32 PropellerImage::codeSize()
+{
+    return startOfVariables() + 8;
 }
 
 /**

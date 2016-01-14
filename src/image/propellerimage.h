@@ -113,6 +113,7 @@ public:
 
     quint32     imageSize();
     quint32     programSize();
+    quint32     codeSize();
     quint32     variableSize();
     quint32     stackSize();
 
