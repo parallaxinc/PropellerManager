@@ -77,7 +77,6 @@ public:
 
 private:
 
-    int EEPROM_SIZE;
     QByteArray  _image;
     QString     _filename;
     ImageType   _type;
@@ -111,7 +110,9 @@ public:
     QString     imageTypeText();
 
     quint32     imageSize();
+    quint32     eepromSize();
     quint32     programSize();
+
     quint32     codeSize();
     quint32     variableSize();
     quint32     stackSize();

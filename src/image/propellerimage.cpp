@@ -4,8 +4,6 @@
 
 PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
-    EEPROM_SIZE = 4096 * 8;
-
     _image  = image;
     _filename = filename;
     _clkmodesettings = initClockModeSettings();
@@ -105,6 +103,11 @@ quint32 PropellerImage::programSize()
     return startOfStackSpace();
 }
 
+quint32 PropellerImage::eepromSize()
+{
+    return 0x8000;
+}
+
 /**
 Size of the application code.
 
@@ -131,7 +134,7 @@ Size in bytes of portion of image data used for stack space, or otherwise free.
 
 quint32 PropellerImage::stackSize()
 {
-    return EEPROM_SIZE - startOfStackSpace();
+    return eepromSize() - startOfStackSpace();
 }
 
 /**
