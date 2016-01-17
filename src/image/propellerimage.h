@@ -3,6 +3,7 @@
 #include <QByteArray>
 #include <QString>
 #include <QHash>
+#include <QStringList>
 
 /**
 @class PropellerImage image/propellerimage.h PropellerImage
@@ -52,24 +53,29 @@ Here we extract various pieces of information from a Propeller binary image.
 
 class PropellerImage
 {
-    enum ImageFormat {
+    enum ImageFormat
+    {
         _long_clockfrequency = 0,
         _byte_clockmode = 4,
         _byte_checksum = 5,
         _word_code = 6,
         _word_variables = 8,
-        _word_stackspace = 10,
-        _size_eeprom = 32768
+        _word_stackspace = 10
     };
 
-
+    struct ClockMode
+    {
+        quint8 value;
+        QString name;
+    };
 
 public:
 
     /**
       An enumeration containing all Propeller image types that PropellerManager supports.
       */
-    enum ImageType {
+    enum ImageType
+    {
         Invalid,        ///< Not a valid image file
         Binary,         ///< Program data-only image files (usually have a `.binary` extension)
         Eeprom          ///< Complete EEPROM images        (usually have a `.eeprom` extension)
@@ -81,8 +87,11 @@ private:
     QString     _filename;
     ImageType   _type;
     QHash<ImageType, QString> _typenames;
-    QHash<quint8, QString> _clkmodesettings;
-    QHash<quint8, QString> initClockModeSettings();
+
+    QList<ClockMode> _clkmodesettings;
+    QStringList _clockmodes;
+    QList<ClockMode> initClockModeSettings();
+    ClockMode createClockMode(quint8 value, QString name);
 
 public:
 
@@ -152,7 +161,11 @@ public:
     quint8      clockMode();
     QString     clockModeText();
     QString     clockModeText(quint8 value);
+    quint8      clockModeValue(QString name);
     bool        setClockMode(quint8 value);
+    QStringList listClockModes();
+    ClockMode   clockModeExists(quint8 value);
+    ClockMode   clockModeExists(QString name);
 
     /**@}*/
 

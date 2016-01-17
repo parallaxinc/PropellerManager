@@ -6,7 +6,14 @@ PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
     _image  = image;
     _filename = filename;
+
     _clkmodesettings = initClockModeSettings();
+    for (int i = 0; i < _clkmodesettings.size(); i++)
+    {
+        _clockmodes.append(_clkmodesettings[i].name);
+    }
+    _clockmodes.removeAll("INVALID");
+
     _type = imageType();
 
     _typenames[Invalid] = "Invalid";
@@ -251,6 +258,7 @@ Sets a new clock frequency for the image.
 void PropellerImage::setClockFrequency(quint32 frequency)
 {
     writeLong(_long_clockfrequency, frequency);
+    recalculateChecksum();
 }
 
 /**
@@ -259,15 +267,16 @@ Sets a new clock mode for the image.
 
 bool PropellerImage::setClockMode(quint8 value)
 {
-    if (_clkmodesettings.contains(value))
+    ClockMode m = clockModeExists(value);
+    if (m.value != 0x80)
     {
         writeByte(_byte_clockmode, value);
+        recalculateChecksum();
         return true;
     }
     else
         return false;
 }
-
 
 /**
 Returns the current clock frequency of the image.
@@ -287,10 +296,7 @@ Get an 8-bit integer containing the current clock mode.
 quint8 PropellerImage::clockMode()
 {
     quint8 clkmode = readByte(_byte_clockmode);
-    if (_clkmodesettings.contains(clkmode))
-        return clkmode;
-    else
-        return 0x80;
+    return clockModeExists(clkmode).value;
 }
 
 /**
@@ -308,45 +314,88 @@ Get a human-readable string of any known clock mode.
 
 QString PropellerImage::clockModeText(quint8 value)
 {
-    return _clkmodesettings.value(value);
+    return clockModeExists(value).name;
 }
 
-QHash<quint8, QString> PropellerImage::initClockModeSettings()
+/**
+Get the clock mode value from the readable string.
+    */
+
+quint8 PropellerImage::clockModeValue(QString name)
 {
-    QHash<quint8, QString> clkmode;
+    return clockModeExists(name).value;
+}
 
-    clkmode[0x00] = "RCFAST";
-    clkmode[0x01] = "RCSLOW";
-    clkmode[0x22] = "XINPUT";
-    clkmode[0x2A] = "XTAL1";
-    clkmode[0x32] = "XTAL2";
-    clkmode[0x3A] = "XTAL3";
+PropellerImage::ClockMode PropellerImage::clockModeExists(quint8 value)
+{
+    foreach (ClockMode m, _clkmodesettings)
+    {
+        if (m.value == value)
+            return m;
+    }
+    return createClockMode(0x80, "INVALID");
+}
 
-    clkmode[0x63] = "XINPUT+PLL1X";
-    clkmode[0x64] = "XINPUT+PLL2X";
-    clkmode[0x65] = "XINPUT+PLL4X";
-    clkmode[0x66] = "XINPUT+PLL8X";
-    clkmode[0x67] = "XINPUT+PLL16X";
+PropellerImage::ClockMode PropellerImage::clockModeExists(QString name)
+{
+    foreach (ClockMode m, _clkmodesettings)
+    {
+        if (m.name == name)
+            return m;
+    }
+    return createClockMode(0x80, "INVALID");
+}
 
-    clkmode[0x6B] = "XTAL1+PLL1X";
-    clkmode[0x6C] = "XTAL1+PLL2X";
-    clkmode[0x6D] = "XTAL1+PLL4X";
-    clkmode[0x6E] = "XTAL1+PLL8X";
-    clkmode[0x6F] = "XTAL1+PLL16X";
+/**
+Get a list of all possible clock modes.
+    */
 
-    clkmode[0x73] = "XTAL2+PLL1X";
-    clkmode[0x74] = "XTAL2+PLL2X";
-    clkmode[0x75] = "XTAL2+PLL4X";
-    clkmode[0x76] = "XTAL2+PLL8X";
-    clkmode[0x77] = "XTAL2+PLL16X";
+QStringList PropellerImage::listClockModes()
+{
+    return _clockmodes;
+}
 
-    clkmode[0x7B] = "XTAL3+PLL1X";
-    clkmode[0x7C] = "XTAL3+PLL2X";
-    clkmode[0x7D] = "XTAL3+PLL4X";
-    clkmode[0x7E] = "XTAL3+PLL8X";
-    clkmode[0x7F] = "XTAL3+PLL16X";
+PropellerImage::ClockMode PropellerImage::createClockMode(quint8 value, QString name)
+{
+    ClockMode m = { value, name };
+    return m;
+}
 
-    clkmode[0x80] = "INVALID";
+QList<PropellerImage::ClockMode> PropellerImage::initClockModeSettings()
+{
+    QList<ClockMode> clkmode;
+
+    clkmode
+        << createClockMode(0x00, "RCFAST")
+        << createClockMode(0x01, "RCSLOW")
+        << createClockMode(0x22, "XINPUT")
+        << createClockMode(0x2A, "XTAL1")
+        << createClockMode(0x32, "XTAL2")
+        << createClockMode(0x3A, "XTAL3")
+
+        << createClockMode(0x63, "XINPUT + PLL1X")
+        << createClockMode(0x64, "XINPUT + PLL2X")
+        << createClockMode(0x65, "XINPUT + PLL4X")
+        << createClockMode(0x66, "XINPUT + PLL8X")
+        << createClockMode(0x67, "XINPUT + PLL16X")
+
+        << createClockMode(0x6B, "XTAL1 + PLL1X")
+        << createClockMode(0x6C, "XTAL1 + PLL2X")
+        << createClockMode(0x6D, "XTAL1 + PLL4X")
+        << createClockMode(0x6E, "XTAL1 + PLL8X")
+        << createClockMode(0x6F, "XTAL1 + PLL16X")
+
+        << createClockMode(0x73, "XTAL2 + PLL1X")
+        << createClockMode(0x74, "XTAL2 + PLL2X")
+        << createClockMode(0x75, "XTAL2 + PLL4X")
+        << createClockMode(0x76, "XTAL2 + PLL8X")
+        << createClockMode(0x77, "XTAL2 + PLL16X")
+
+        << createClockMode(0x7B, "XTAL3 + PLL1X")
+        << createClockMode(0x7C, "XTAL3 + PLL2X")
+        << createClockMode(0x7D, "XTAL3 + PLL4X")
+        << createClockMode(0x7E, "XTAL3 + PLL8X")
+        << createClockMode(0x7F, "XTAL3 + PLL16X");
 
     return clkmode;
 }
@@ -374,7 +423,7 @@ PropellerImage::ImageType PropellerImage::imageType()
     {
         _type = Invalid;
     }
-    else if (_image.size() > _size_eeprom)
+    else if ((quint32) _image.size() > eepromSize())
     {
         _type = Invalid;
     }

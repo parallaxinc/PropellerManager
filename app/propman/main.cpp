@@ -154,7 +154,6 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
             error("Invalid clock frequency: "+parser.value(argClkFreq));
 
         image.setClockFrequency(freq);
-        image.recalculateChecksum();
     }
 
     if (parser.isSet(argClkMode))
@@ -163,7 +162,6 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
         int mode = parser.value(argClkMode).toUInt(&ok, 16);
         if (!image.setClockMode(mode) || !ok)
             error("Clock mode setting "+QString::number(mode, 16)+"is invalid!");
-        image.recalculateChecksum();
     }
 
     if (!image.isValid())
