@@ -1,5 +1,7 @@
 #include "propellerimage.h"
 
+#include "../util/logging.h"
+
 PropellerImage::PropellerImage(QByteArray image, QString filename)
 {
     EEPROM_SIZE = 4096 * 8;
@@ -111,7 +113,7 @@ This value is equivalent to startOfVariables() + 8.
 
 quint32 PropellerImage::codeSize()
 {
-    return startOfVariables() + 8;
+    return startOfVariables() - startOfCode();
 }
 
 /**
@@ -120,7 +122,7 @@ Returns the size in bytes of image data used for variables.
 
 quint32 PropellerImage::variableSize()
 {
-    return startOfStackSpace() - 8 - startOfVariables();
+    return startOfStackSpace() - startOfVariables();
 }
 
 /**
@@ -141,7 +143,7 @@ quint16 PropellerImage::startOfCode()
     int start = readWord(_word_code);
 
     if (start != 0x0010)
-        qDebug() << "Code start is invalid!";
+        qCDebug(pimage) << "Code start is invalid!";
 
     return start;
 }
@@ -161,7 +163,7 @@ Start of Stack Space pointer (address 0x0A). Otherwise known as DBase.
 
 quint16 PropellerImage::startOfStackSpace()
 {
-    return readWord(_word_stackspace);
+    return readWord(_word_stackspace) - 8; // subtract the initial stack frame
 }
 
 /**

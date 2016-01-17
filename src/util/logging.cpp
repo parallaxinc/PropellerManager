@@ -8,3 +8,4 @@ Q_LOGGING_CATEGORY(pdevice,  "pm.device")
 Q_LOGGING_CATEGORY(pgpio,    "pm.device.gpio")
 
 Q_LOGGING_CATEGORY(psession, "pm.session")
+Q_LOGGING_CATEGORY(pimage,   "pm.image")
