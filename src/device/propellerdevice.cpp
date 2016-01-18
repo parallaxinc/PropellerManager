@@ -198,8 +198,6 @@ void PropellerDevice::useDefaultReset()
 
 bool PropellerDevice::reset()
 {
-    clear(QSerialPort::Output);
-
     if (_reset == "gpio")
     {
         Gpio gpio(_reset_gpio, Gpio::Out);
@@ -224,7 +222,8 @@ bool PropellerDevice::reset()
         }
     }
 
-    clear(QSerialPort::Input);
+    clear();
+    readAll();      // clear doesn't appear to actually do anything
 
     return true;
 }

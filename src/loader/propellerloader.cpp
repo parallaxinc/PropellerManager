@@ -247,6 +247,7 @@ void PropellerLoader::sendpayload_entry()
     connect(this,       SIGNAL(handshake_received()),   this, SLOT(upload_status()));
     connect(this,       SIGNAL(payload_sent()),         this, SLOT(upload_status()));
 
+    session->readAll();         // clear mysterious junk data that arrives just before this write().
     session->write(_payload);
 }
 
