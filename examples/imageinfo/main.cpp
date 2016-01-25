@@ -1,6 +1,5 @@
 #include <PropellerImage>
 
-#include <QDebug>
 #include <QFile>
 #include <stdio.h>
 
@@ -15,24 +14,29 @@ int main(int argc, char *argv[])
 
     PropellerImage image = PropellerImage(file.readAll(),filename);
 
-    printf("             Image: %s\n",qPrintable(image.fileName()));
-    printf("              Type: %s\n",qPrintable(image.imageTypeText()));
-    printf("          Checksum: %u (%s)\n\n",image.checksum(), image.checksumIsValid() ? "VALID" : "INVALID");
+    printf("             Image: %s\n",          qPrintable(image.fileName()));
+    printf("              Type: %s\n",          qPrintable(image.imageTypeText()));
 
-    printf("        Image size: %d\n",image.imageSize());
-    printf("      Program size: %d\n\n",image.programSize());
+    printf("          Checksum: %u (%s)\n\n",   image.checksum(),
+                                                image.checksumIsValid() ? "VALID" : "INVALID");
 
-    printf("     Start of code: %04X\n",image.startOfCode());
-    printf("Start of variables: %04X\n",image.startOfVariables());
-    printf("    Start of stack: %04X\n\n",image.startOfStackSpace());
+    printf("        Image size: %d\n",          image.imageSize());
+    printf("      Program size: %d\n\n",        image.programSize());
 
-    printf("         Code size: %04X\n",image.codeSize());
-    printf("     Variable size: %04X\n",image.variableSize());
-    printf("   Free/stack size: %04X\n\n",image.stackSize());
+    printf("     Start of code: %04X\n",        image.startOfCode());
+    printf("Start of variables: %04X\n",        image.startOfVariables());
+    printf("    Start of stack: %04X\n\n",      image.startOfStackSpace());
 
-    printf("        Clock mode: %s\n",qPrintable(image.clockModeText()));
-    if (image.clockMode() != 0x00 && image.clockMode() != 0x01)
-        printf(" Clock frequency: %i\n",image.clockFrequency());
+    printf("         Code size: %04X\n",        image.codeSize());
+    printf("     Variable size: %04X\n",        image.variableSize());
+    printf("   Free/stack size: %04X\n\n",      image.stackSize());
+
+    printf("        Clock mode: %s\n",          qPrintable(image.clockModeText()));
+
+    if (image.clockMode() != 0x00 && 
+        image.clockMode() != 0x01)
+
+        printf(" Clock frequency: %i\n",        image.clockFrequency());
 
     return 0;
 }

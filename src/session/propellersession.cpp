@@ -260,9 +260,6 @@ quint32 PropellerSession::resetPeriod()
 
 /**
     Returns the error of the device.
-
-    \deprecated Errors are currently handled by PropellerDevice so
-          this function is unlikely to return anything useful.
   */
 
 int PropellerSession::error()
@@ -272,9 +269,6 @@ int PropellerSession::error()
 
 /**
     Returns the error string of the device.
-
-    \deprecated Errors are currently handled by PropellerDevice so
-          this function is unlikely to return anything useful.
   */
 
 QString PropellerSession::errorString()
@@ -315,10 +309,4 @@ QString PropellerSession::errorString()
 
     This signal is emitted when the device has been reserved by another
     session.
-    */
-
-/**
-    \fn void PropellerSession::allBytesWritten()
-
-    \deprecated This was a hack to get the loader to work and will be removed.
     */

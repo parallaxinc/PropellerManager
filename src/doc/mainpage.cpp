@@ -1,5 +1,8 @@
 /**
-\mainpage About PropellerManager
+@mainpage Overview
+
+- @subpage tutorials
+- @subpage faq
 
 PropellerManager works by acting as a signal router between PropellerSession and PropellerDevice instances,
 and prevents these classes from interacting with each other directly.
