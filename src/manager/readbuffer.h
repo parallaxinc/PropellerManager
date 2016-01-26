@@ -18,7 +18,7 @@ public:
     }
 
 
-    QByteArray & append(const QByteArray & ba)
+    QByteArray & append(QByteArray ba)
     {
         array.append(ba);
         emit readyRead();

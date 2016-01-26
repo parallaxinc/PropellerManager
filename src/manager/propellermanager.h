@@ -1,12 +1,12 @@
 #pragma once
 
-#include <QTimer>
 #include <QStringList>
 #include <QHash>
 
+#include "portmonitor.h"
 #include "../device/propellerdevice.h"
 #include "../session/propellersession.h"
-#include "../session/readbuffer.h"
+#include "readbuffer.h"
 
 /**
 @class PropellerManager manager/propellermanager.h PropellerManager
@@ -87,9 +87,9 @@ class PropellerManager : public QObject
 {
     Q_OBJECT
 
+    PortMonitor monitor;
+
 private:
-    QTimer portMonitor;
-    QStringList _ports;
     QHash<QString, PropellerDevice *> _devices;
     QHash<PropellerDevice *, quint32> _active_sessions;
     QHash<PropellerDevice *, PropellerSession *> _busy;
@@ -100,58 +100,62 @@ private:
     QHash<PropellerSession *, PropellerDevice *> _saved_connections;
 
     QHash<PropellerSession *, ReadBuffer *> _buffers;
-    
-    void attach(PropellerSession * session, PropellerDevice * device);
-    void attachByName(PropellerSession * session, const QString & port);
-    void detach(PropellerSession * session, PropellerDevice * device);
-    bool portIsBusy(PropellerSession * session, const QString & name);
 
-    PropellerDevice * getDevice(const QString & port, bool open = true);
-    void deleteDevice(const QString & port);
+    PropellerDevice * addDevice(QString port);
+    void removeDevice(QString port);
+    
+    void addConnection (PropellerSession * session, PropellerDevice * device);
+    void addConnectionByName (PropellerSession * session, QString port);
+    void removeConnection (PropellerSession * session, PropellerDevice * device);
+    bool portIsBusy (PropellerSession * session, const QString & name);
+
+    void saveConnections (PropellerDevice * device);
+    void restoreConnections (PropellerDevice * device);
+
+    PropellerDevice * getDevice(QString port, bool open = true);
 
 private slots:
     void readyBuffer();
-    void checkPorts();
 
 public:
     PropellerManager(QObject *parent = 0);
     ~PropellerManager();
 
-    const QStringList & listPorts();
-    void enablePortMonitor(bool enabled);
+    QStringList listPorts();
+    void enablePortMonitor(bool enabled, int timeout = 200);
 
 /// @cond
 
     bool        beginSession(PropellerSession * session);
     void        endSession(PropellerSession * session);
 
-    bool        isOpen(PropellerSession * session, const QString & port);
-    bool        clear(PropellerSession * session, const QString & port);
+    bool        isOpen(PropellerSession * session, QString port);
+    bool        clear(PropellerSession * session, QString port);
 
-    bool        setBaudRate(PropellerSession * session, const QString & port, quint32 baudRate);
+    bool        setBaudRate(PropellerSession * session, QString port, quint32 baudRate);
 
-    qint64      bytesToWrite(PropellerSession * session, const QString & port);
-    qint64      bytesAvailable(PropellerSession * session, const QString & port);
+    qint64      bytesToWrite(PropellerSession * session, QString port);
+    qint64      bytesAvailable(PropellerSession * session, QString port);
 
-    QByteArray  read(PropellerSession * session, const QString & port, qint64 maxSize);
-    QByteArray  readAll(PropellerSession * session, const QString & port);
+    QByteArray  read(PropellerSession * session, QString port, qint64 maxSize);
+    QByteArray  readAll(PropellerSession * session, QString port);
 
-    bool        putChar(PropellerSession * session, const QString & port, char c);
-    qint64      write(PropellerSession * session, const QString & port, const QByteArray & byteArray);
-    QString     errorString(PropellerSession * session, const QString & port);
-    int         error(PropellerSession * session, const QString & port);
+    bool        putChar(PropellerSession * session, QString port, char c);
+    qint64      write(PropellerSession * session, QString port, const QByteArray & byteArray);
+    QString     errorString(PropellerSession * session, QString port);
+    int         error(PropellerSession * session, QString port);
 
-    quint32     minimumTimeout(PropellerSession * session, const QString & port);
-    void        setMinimumTimeout(PropellerSession * session, const QString & port, quint32 milliseconds);
-    quint32     calculateTimeout(PropellerSession * session, const QString & port, quint32 bytes);
-    void        useReset(PropellerSession * session, const QString & port, const QString & name, int pin);
-    void        useDefaultReset(PropellerSession * session, const QString & port);
-    bool        reset(PropellerSession * session, const QString & port);
-    quint32     resetPeriod(PropellerSession * session, const QString & port);
+    quint32     minimumTimeout(PropellerSession * session, QString port);
+    void        setMinimumTimeout(PropellerSession * session, QString port, quint32 milliseconds);
+    quint32     calculateTimeout(PropellerSession * session, QString port, quint32 bytes);
+    void        useReset(PropellerSession * session, QString port, QString name, int pin);
+    void        useDefaultReset(PropellerSession * session, QString port);
+    bool        reset(PropellerSession * session, QString port);
+    quint32     resetPeriod(PropellerSession * session, QString port);
 
-    bool        reserve(PropellerSession * session, const QString & port);
-    bool        isReserved(PropellerSession * session, const QString & port);
-    void        release(PropellerSession * session, const QString & port);
+    bool        reserve(PropellerSession * session, QString port);
+    bool        isReserved(PropellerSession * session, QString port);
+    void        release(PropellerSession * session, QString port);
 
     void        pause(PropellerSession * session);
     bool        isPaused(PropellerSession * session);

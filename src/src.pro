@@ -8,6 +8,7 @@ CONFIG += staticlib
 
 SOURCES += \
     manager/propellermanager.cpp \
+    manager/portmonitor.cpp \
     session/propellersession.cpp \
     loader/propellerloader.cpp \
     loader/protocol.cpp \
@@ -19,8 +20,9 @@ SOURCES += \
 
 HEADERS += \
     manager/propellermanager.h \
+    manager/portmonitor.h \
+    manager/readbuffer.h \
     session/propellersession.h \
-    session/readbuffer.h \
     loader/propellerloader.h \
     loader/protocol.h \
     terminal/propellerterminal.h \
