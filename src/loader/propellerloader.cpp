@@ -7,8 +7,7 @@
 
 #include "../util/logging.h"
 
-PropellerLoader::PropellerLoader(PropellerManager * manager,
-                                 const QString & portname,
+PropellerLoader::PropellerLoader(PropellerManager * manager, const QString & portname,
                                  QObject * parent)
     : QObject(parent)
 {
@@ -113,6 +112,7 @@ PropellerLoader::PropellerLoader(PropellerManager * manager,
 
 PropellerLoader::~PropellerLoader()
 {
+    session->release();
     delete session;
 }
 

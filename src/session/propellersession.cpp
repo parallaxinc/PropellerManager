@@ -1,4 +1,4 @@
-#include "../session/propellersession.h"
+#include "propellersession.h"
 
 #include <QDebug>
 
@@ -44,7 +44,7 @@ void PropellerSession::setPortName(const QString & name)
   */
 bool PropellerSession::isOpen()
 {
-    return manager->isOpen(this, port);
+    return manager->isOpen(this);
 }
 
 /**
@@ -54,7 +54,7 @@ bool PropellerSession::isOpen()
   */
 bool PropellerSession::reserve()
 {
-    return manager->reserve(this, port);
+    return manager->reserve(this);
 }
 
 /**
@@ -62,7 +62,7 @@ bool PropellerSession::reserve()
   */
 bool PropellerSession::isReserved()
 {
-    return manager->isReserved(this, port);
+    return manager->isReserved(this);
 }
 
 /**
@@ -70,7 +70,7 @@ bool PropellerSession::isReserved()
   */
 void PropellerSession::release()
 {
-    manager->release(this, port);
+    manager->release(this);
 }
 
 /**
@@ -103,7 +103,7 @@ void PropellerSession::unpause()
 
 bool PropellerSession::clear()
 {
-    return manager->clear(this, port);
+    return manager->clear(this);
 }
 
 /**
@@ -115,7 +115,7 @@ bool PropellerSession::clear()
 
 bool PropellerSession::setBaudRate(quint32 baudRate)
 {
-    return manager->setBaudRate(this, port, baudRate);
+    return manager->setBaudRate(this, baudRate);
 }
 
 /**
@@ -126,7 +126,7 @@ bool PropellerSession::setBaudRate(quint32 baudRate)
 
 qint64 PropellerSession::bytesToWrite()
 {
-    return manager->bytesToWrite(this, port);
+    return manager->bytesToWrite(this);
 }
 
 /**
@@ -137,7 +137,7 @@ qint64 PropellerSession::bytesToWrite()
 
 qint64 PropellerSession::bytesAvailable()
 {
-    return manager->bytesAvailable(this, port);
+    return manager->bytesAvailable(this);
 }
 
 /**
@@ -149,7 +149,7 @@ qint64 PropellerSession::bytesAvailable()
 
 QByteArray PropellerSession::read(qint64 maxSize)
 {
-    return manager->read(this, port, maxSize);
+    return manager->read(this, maxSize);
 }
 
 /**
@@ -161,7 +161,7 @@ QByteArray PropellerSession::read(qint64 maxSize)
 
 QByteArray PropellerSession::readAll()
 {
-    return manager->readAll(this, port);
+    return manager->readAll(this);
 }
 
 /**
@@ -173,7 +173,7 @@ QByteArray PropellerSession::readAll()
 
 bool PropellerSession::putChar(char c)
 {
-    return manager->putChar(this, port, c);
+    return manager->putChar(this, c);
 }
 
 /**
@@ -185,7 +185,7 @@ bool PropellerSession::putChar(char c)
 
 qint64 PropellerSession::write(const QByteArray & byteArray)
 {
-    return manager->write(this, port, byteArray);
+    return manager->write(this, byteArray);
 }
 
 /**
@@ -194,7 +194,7 @@ qint64 PropellerSession::write(const QByteArray & byteArray)
 
 quint32 PropellerSession::minimumTimeout()
 {
-    return manager->minimumTimeout(this, port);
+    return manager->minimumTimeout(this);
 }
 
 /**
@@ -203,7 +203,7 @@ quint32 PropellerSession::minimumTimeout()
 
 void PropellerSession::setMinimumTimeout(quint32 milliseconds)
 {
-    manager->setMinimumTimeout(this, port, milliseconds);
+    manager->setMinimumTimeout(this, milliseconds);
 }
 
 /**
@@ -214,7 +214,7 @@ void PropellerSession::setMinimumTimeout(quint32 milliseconds)
 
 quint32 PropellerSession::calculateTimeout(quint32 bytes)
 {
-    return manager->calculateTimeout(this, port, bytes);
+    return manager->calculateTimeout(this, bytes);
 }
 
 /**
@@ -227,7 +227,7 @@ quint32 PropellerSession::calculateTimeout(quint32 bytes)
 
 void PropellerSession::useReset(const QString & name, int pin)
 {
-    manager->useReset(this, port, name, pin);
+    manager->useReset(this, name, pin);
 }
 
 /**
@@ -239,7 +239,7 @@ void PropellerSession::useReset(const QString & name, int pin)
 
 void PropellerSession::useDefaultReset()
 {
-    manager->useDefaultReset(this, port);
+    manager->useDefaultReset(this);
 }
 
 /**
@@ -250,12 +250,12 @@ void PropellerSession::useDefaultReset()
 
 bool PropellerSession::reset()
 {
-    return manager->reset(this, port);
+    return manager->reset(this);
 }
 
 quint32 PropellerSession::resetPeriod()
 {
-    return manager->resetPeriod(this, port);
+    return manager->resetPeriod(this);
 }
 
 /**
@@ -264,7 +264,7 @@ quint32 PropellerSession::resetPeriod()
 
 int PropellerSession::error()
 {
-    return manager->error(this, port);
+    return manager->error(this);
 }
 
 /**
@@ -273,7 +273,7 @@ int PropellerSession::error()
 
 QString PropellerSession::errorString()
 {
-    return manager->errorString(this, port);
+    return manager->errorString(this);
 }
 
 /**

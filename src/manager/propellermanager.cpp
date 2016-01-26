@@ -141,7 +141,6 @@ void PropellerManager::removeConnection(PropellerSession * session, PropellerDev
 
     if (!_active_sessions[device])
     {
-//        qCDebug(pmanager) << "closing" << _devices.key(device);
         device->close();
     }
 }
@@ -159,18 +158,18 @@ void PropellerManager::removeDevice(QString port)
     _devices.remove(port);
 }
 
-bool PropellerManager::portIsBusy(PropellerSession * session, const QString & name)
+bool PropellerManager::portIsBusy(PropellerSession * session)
 {
+    QString port = session->portName();
+
     if (isPaused(session)) return true;
 
-    PropellerDevice * device = getDevice(name, false);
-    if (!_connections.contains(session) || _connections[session] != device) return true;
+    PropellerDevice * device = getDevice(port, false);
 
-//    qDebug() << "CONNECTION" << session << name << device << _connections[session];
-
+    if (!_connections.contains(session)) return true;
     if (_busy.contains(device) && _busy[device] != session) return true;
 
-    addConnectionByName(session, name);
+    addConnectionByName(session, port);
     return false;
 }
 
@@ -195,10 +194,10 @@ void PropellerManager::restoreConnections(PropellerDevice * device)
     }
 }
 
-bool PropellerManager::reserve(PropellerSession * session, QString port)
+bool PropellerManager::reserve(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return false;
-    PropellerDevice * device = getDevice(port);
+    if (portIsBusy(session)) return false;
+    PropellerDevice * device = getDevice(session->portName());
     _active_sessions[device]++; // prevent port from closing while reserving device
 
     saveConnections(device);
@@ -210,11 +209,11 @@ bool PropellerManager::reserve(PropellerSession * session, QString port)
     return true;
 }
 
-bool PropellerManager::isReserved(PropellerSession * session, QString port)
+bool PropellerManager::isReserved(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return false;
+    if (portIsBusy(session)) return false;
 
-    PropellerDevice * device = getDevice(port);
+    PropellerDevice * device = getDevice(session->portName());
     if (!_busy.contains(device) || _busy[device] != session)
         return false;
 
@@ -222,11 +221,11 @@ bool PropellerManager::isReserved(PropellerSession * session, QString port)
 }
 
 
-void PropellerManager::release(PropellerSession * session, QString port)
+void PropellerManager::release(PropellerSession * session)
 {
-    if (!isReserved(session, port)) return;
+    if (!isReserved(session)) return;
 
-    PropellerDevice * device = getDevice(port);
+    PropellerDevice * device = getDevice(session->portName());
     _active_sessions[device]++;                 // prevent port from closing while releasing device
 
     removeConnection(session, device);
@@ -251,112 +250,112 @@ void PropellerManager::unpause(PropellerSession * session)
     _paused.remove(session);
 }
 
-bool PropellerManager::clear(PropellerSession * session, QString port)
+bool PropellerManager::clear(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return false;
-    return getDevice(port)->clear();
+    if (portIsBusy(session)) return false;
+    return getDevice(session->portName())->clear();
 }
 
-bool PropellerManager::isOpen(PropellerSession * session, QString port)
+bool PropellerManager::isOpen(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return false;
-    return getDevice(port, false)->isOpen();
+    if (portIsBusy(session)) return false;
+    return getDevice(session->portName(), false)->isOpen();
 }
 
-bool PropellerManager::setBaudRate(PropellerSession * session, QString port, quint32 baudRate)
+bool PropellerManager::setBaudRate(PropellerSession * session, quint32 baudRate)
 {
-    if (portIsBusy(session, port)) return false;
-    return getDevice(port)->setBaudRate(baudRate);
+    if (portIsBusy(session)) return false;
+    return getDevice(session->portName())->setBaudRate(baudRate);
 }
 
-qint64 PropellerManager::bytesToWrite(PropellerSession * session, QString port)
+qint64 PropellerManager::bytesToWrite(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return 0;
-    return getDevice(port)->bytesToWrite();
+    if (portIsBusy(session)) return 0;
+    return getDevice(session->portName())->bytesToWrite();
 }
 
-qint64 PropellerManager::bytesAvailable(PropellerSession * session, QString port)
+qint64 PropellerManager::bytesAvailable(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return 0;
+    if (portIsBusy(session)) return 0;
     return _buffers[session]->bytesAvailable();
 }
 
-QByteArray PropellerManager::read(PropellerSession * session, QString port, qint64 maxSize)
+QByteArray PropellerManager::read(PropellerSession * session, qint64 maxSize)
 {
-    if (portIsBusy(session, port)) return QByteArray();
+    if (portIsBusy(session)) return QByteArray();
     return _buffers[session]->read(maxSize);
 }
 
-QByteArray PropellerManager::readAll(PropellerSession * session, QString port)
+QByteArray PropellerManager::readAll(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return QByteArray();
+    if (portIsBusy(session)) return QByteArray();
     return _buffers[session]->readAll();
 }
 
-bool PropellerManager::putChar(PropellerSession * session, QString port, char c)
+bool PropellerManager::putChar(PropellerSession * session, char c)
 {
-    if (portIsBusy(session, port)) return false;
-    return getDevice(port)->putChar(c);
+    if (portIsBusy(session)) return false;
+    return getDevice(session->portName())->putChar(c);
 }
 
-qint64 PropellerManager::write(PropellerSession * session, QString port, const QByteArray & byteArray)
+qint64 PropellerManager::write(PropellerSession * session, const QByteArray & byteArray)
 {
-    if (portIsBusy(session, port)) return -1;
-    return getDevice(port)->write(byteArray);
+    if (portIsBusy(session)) return -1;
+    return getDevice(session->portName())->write(byteArray);
 }
 
-quint32 PropellerManager::minimumTimeout(PropellerSession * session, QString port)
+quint32 PropellerManager::minimumTimeout(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return 0;
-    return getDevice(port)->minimumTimeout();
+    if (portIsBusy(session)) return 0;
+    return getDevice(session->portName())->minimumTimeout();
 }
 
-void PropellerManager::setMinimumTimeout(PropellerSession * session, QString port, quint32 milliseconds)
+void PropellerManager::setMinimumTimeout(PropellerSession * session, quint32 milliseconds)
 {
-    if (portIsBusy(session, port)) return;
-    getDevice(port)->setMinimumTimeout(milliseconds);
+    if (portIsBusy(session)) return;
+    getDevice(session->portName())->setMinimumTimeout(milliseconds);
 }
 
-quint32 PropellerManager::calculateTimeout(PropellerSession * session, QString port, quint32 bytes)
+quint32 PropellerManager::calculateTimeout(PropellerSession * session, quint32 bytes)
 {
-    if (portIsBusy(session, port)) return 0;
-    return getDevice(port)->calculateTimeout(bytes);
+    if (portIsBusy(session)) return 0;
+    return getDevice(session->portName())->calculateTimeout(bytes);
 }
 
-void PropellerManager::useReset(PropellerSession * session, QString port, QString name, int pin)
+void PropellerManager::useReset(PropellerSession * session, QString name, int pin)
 {
-    if (portIsBusy(session, port)) return;
-    getDevice(port)->useReset(name, pin);
+    if (portIsBusy(session)) return;
+    getDevice(session->portName())->useReset(name, pin);
 }
 
-void PropellerManager::useDefaultReset(PropellerSession * session, QString port)
+void PropellerManager::useDefaultReset(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return;
-    return getDevice(port)->useDefaultReset();
+    if (portIsBusy(session)) return;
+    return getDevice(session->portName())->useDefaultReset();
 }
 
-bool PropellerManager::reset(PropellerSession * session, QString port)
+bool PropellerManager::reset(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return false;
-    return getDevice(port)->reset();
+    if (portIsBusy(session)) return false;
+    return getDevice(session->portName())->reset();
 }
 
-quint32 PropellerManager::resetPeriod(PropellerSession * session, QString port)
+quint32 PropellerManager::resetPeriod(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return 0;
-    return getDevice(port)->resetPeriod();
+    if (portIsBusy(session)) return 0;
+    return getDevice(session->portName())->resetPeriod();
 }
 
-int PropellerManager::error(PropellerSession * session, QString port)
+int PropellerManager::error(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return 0;
-    return getDevice(port)->error();
+    if (portIsBusy(session)) return 0;
+    return getDevice(session->portName())->error();
 }
 
-QString PropellerManager::errorString(PropellerSession * session, QString port)
+QString PropellerManager::errorString(PropellerSession * session)
 {
-    if (portIsBusy(session, port)) return QString();
-    return getDevice(port)->errorString();
+    if (portIsBusy(session)) return QString();
+    return getDevice(session->portName())->errorString();
 }
 
 QStringList PropellerManager::listPorts()

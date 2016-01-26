@@ -107,7 +107,7 @@ private:
     void addConnection (PropellerSession * session, PropellerDevice * device);
     void addConnectionByName (PropellerSession * session, QString port);
     void removeConnection (PropellerSession * session, PropellerDevice * device);
-    bool portIsBusy (PropellerSession * session, const QString & name);
+    bool portIsBusy (PropellerSession * session);
 
     void saveConnections (PropellerDevice * device);
     void restoreConnections (PropellerDevice * device);
@@ -129,33 +129,33 @@ public:
     bool        beginSession(PropellerSession * session);
     void        endSession(PropellerSession * session);
 
-    bool        isOpen(PropellerSession * session, QString port);
-    bool        clear(PropellerSession * session, QString port);
+    bool        isOpen(PropellerSession * session);
+    bool        clear(PropellerSession * session);
 
-    bool        setBaudRate(PropellerSession * session, QString port, quint32 baudRate);
+    bool        setBaudRate(PropellerSession * session, quint32 baudRate);
 
-    qint64      bytesToWrite(PropellerSession * session, QString port);
-    qint64      bytesAvailable(PropellerSession * session, QString port);
+    qint64      bytesToWrite(PropellerSession * session);
+    qint64      bytesAvailable(PropellerSession * session);
 
-    QByteArray  read(PropellerSession * session, QString port, qint64 maxSize);
-    QByteArray  readAll(PropellerSession * session, QString port);
+    QByteArray  read(PropellerSession * session, qint64 maxSize);
+    QByteArray  readAll(PropellerSession * session);
 
-    bool        putChar(PropellerSession * session, QString port, char c);
-    qint64      write(PropellerSession * session, QString port, const QByteArray & byteArray);
-    QString     errorString(PropellerSession * session, QString port);
-    int         error(PropellerSession * session, QString port);
+    bool        putChar(PropellerSession * session, char c);
+    qint64      write(PropellerSession * session, const QByteArray & byteArray);
+    QString     errorString(PropellerSession * session);
+    int         error(PropellerSession * session);
 
-    quint32     minimumTimeout(PropellerSession * session, QString port);
-    void        setMinimumTimeout(PropellerSession * session, QString port, quint32 milliseconds);
-    quint32     calculateTimeout(PropellerSession * session, QString port, quint32 bytes);
-    void        useReset(PropellerSession * session, QString port, QString name, int pin);
-    void        useDefaultReset(PropellerSession * session, QString port);
-    bool        reset(PropellerSession * session, QString port);
-    quint32     resetPeriod(PropellerSession * session, QString port);
+    quint32     minimumTimeout(PropellerSession * session);
+    void        setMinimumTimeout(PropellerSession * session, quint32 milliseconds);
+    quint32     calculateTimeout(PropellerSession * session, quint32 bytes);
+    void        useReset(PropellerSession * session, QString name, int pin);
+    void        useDefaultReset(PropellerSession * session);
+    bool        reset(PropellerSession * session);
+    quint32     resetPeriod(PropellerSession * session);
 
-    bool        reserve(PropellerSession * session, QString port);
-    bool        isReserved(PropellerSession * session, QString port);
-    void        release(PropellerSession * session, QString port);
+    bool        reserve(PropellerSession * session);
+    bool        isReserved(PropellerSession * session);
+    void        release(PropellerSession * session);
 
     void        pause(PropellerSession * session);
     bool        isPaused(PropellerSession * session);
