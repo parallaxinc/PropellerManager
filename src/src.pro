@@ -21,6 +21,7 @@ SOURCES += \
 HEADERS += \
     manager/propellermanager.h \
     manager/portmonitor.h \
+    manager/connector.h \
     manager/readbuffer.h \
     session/propellersession.h \
     loader/propellerloader.h \

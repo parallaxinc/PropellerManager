@@ -1,9 +1,8 @@
 #pragma once
 
+#include "../manager/connector.h"
+#include "../manager/sessioninterface.h"
 #include "../manager/propellermanager.h"
-
-#include <QTimer>
-#include <QStringList>
 
 /**
 @class PropellerSession session/propellersession.h PropellerSession
@@ -40,7 +39,7 @@ isn't needed, and it's easy to make sure your connected devices don't end up in 
 
 class PropellerManager;
 
-class PropellerSession : public QObject
+class PropellerSession : public Connector<SessionInterface *>
 {
     Q_OBJECT
 
@@ -56,8 +55,7 @@ public:
     ~PropellerSession();
 
     const QString & portName();
-    void        setPortName(const QString & name);
-    bool        isOpen();
+    void  setPortName(const QString & name);
 
 /**
     @name Access Control
@@ -66,54 +64,7 @@ public:
     bool        reserve();
     bool        isReserved();
     void        release();
-
-    void        pause();
-    bool        isPaused();
-    void        unpause();
 /**@}*/
-
-/**
-    @name Device I/O
-  */
-
-/**@{*/
-    bool        clear();
-    bool        setBaudRate(quint32 baudRate);
-
-    qint64      bytesToWrite();
-    qint64      bytesAvailable();
-
-    QByteArray  read(qint64 maxSize);
-    QByteArray  readAll();
-
-    bool        putChar(char c);
-    qint64      write(const QByteArray & byteArray);
-    int         error();
-    QString     errorString();
-/**@}*/
-
-/**
-    @name Download-Related
-  */
-
-/**@{*/
-    void        useReset(const QString & name, int pin);
-    void        useDefaultReset();
-    bool        reset();
-    quint32     resetPeriod();
-
-    quint32     minimumTimeout();
-    void        setMinimumTimeout(quint32 milliseconds);
-    quint32     calculateTimeout(quint32 bytes);
-/**@}*/
-
-signals:
-    void        bytesWritten(qint64 bytes);
-    void        readyRead();
-    void        baudRateChanged(qint32 baudRate);
-    void        sendError(const QString & message);
-    void        deviceFree();
-    void        deviceBusy();
 
 };
 

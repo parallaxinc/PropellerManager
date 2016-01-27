@@ -91,17 +91,18 @@ class PropellerManager : public QObject
 
 private:
     QHash<QString, PropellerDevice *> _devices;
+    QHash<PropellerSession *, PropellerSession *> _sessions;
+
     QHash<PropellerDevice *, quint32> _active_sessions;
     QHash<PropellerDevice *, PropellerSession *> _busy;
     QHash<PropellerSession *, PropellerSession *> _paused;
-    QHash<PropellerSession *, PropellerSession *> _sessions;
 
     QHash<PropellerSession *, PropellerDevice *> _connections;
     QHash<PropellerSession *, PropellerDevice *> _saved_connections;
 
     QHash<PropellerSession *, ReadBuffer *> _buffers;
 
-    PropellerDevice * addDevice(QString port);
+    PropellerDevice * createDevice(QString port);
     void removeDevice(QString port);
     
     void addConnection (PropellerSession * session, PropellerDevice * device);
@@ -129,37 +130,11 @@ public:
     bool        beginSession(PropellerSession * session);
     void        endSession(PropellerSession * session);
 
-    bool        isOpen(PropellerSession * session);
-    bool        clear(PropellerSession * session);
-
-    bool        setBaudRate(PropellerSession * session, quint32 baudRate);
-
-    qint64      bytesToWrite(PropellerSession * session);
-    qint64      bytesAvailable(PropellerSession * session);
-
-    QByteArray  read(PropellerSession * session, qint64 maxSize);
-    QByteArray  readAll(PropellerSession * session);
-
-    bool        putChar(PropellerSession * session, char c);
-    qint64      write(PropellerSession * session, const QByteArray & byteArray);
-    QString     errorString(PropellerSession * session);
-    int         error(PropellerSession * session);
-
-    quint32     minimumTimeout(PropellerSession * session);
-    void        setMinimumTimeout(PropellerSession * session, quint32 milliseconds);
-    quint32     calculateTimeout(PropellerSession * session, quint32 bytes);
-    void        useReset(PropellerSession * session, QString name, int pin);
-    void        useDefaultReset(PropellerSession * session);
-    bool        reset(PropellerSession * session);
-    quint32     resetPeriod(PropellerSession * session);
+    void        setPortName(PropellerSession * session);
 
     bool        reserve(PropellerSession * session);
     bool        isReserved(PropellerSession * session);
     void        release(PropellerSession * session);
-
-    void        pause(PropellerSession * session);
-    bool        isPaused(PropellerSession * session);
-    void        unpause(PropellerSession * session);
 
 /// @endcond
 
