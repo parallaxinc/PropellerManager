@@ -42,6 +42,10 @@ public:
         return data;
     }
 
+    void clear()
+    {
+        array.clear();
+    }
 
     quint64 bytesAvailable()
     {

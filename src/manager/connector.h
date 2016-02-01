@@ -1,32 +1,11 @@
 #pragma once
 
-#include <QObject>
-#include <QByteArray>
-#include <QString>
+#include "interface.h"
+
 #include <QDebug>
 
-
-class ConnectorSignals : public QObject
-{
-    Q_OBJECT
-
-public:
-    ConnectorSignals(QObject * parent = 0)
-        : QObject(parent)
-    {
-    }
-
-signals:
-    void bytesWritten(qint64 bytes);
-    void readyRead();
-    void baudRateChanged(qint32 baudRate);
-    void sendError(const QString & message);
-    void deviceFree();
-    void deviceBusy();
-};
-
 template <class Target>
-class Connector : public ConnectorSignals
+class Connector : public Interface 
 {
     bool        _attached;
     bool        _paused;
@@ -34,25 +13,27 @@ class Connector : public ConnectorSignals
 protected:
     Target      _target;
 
-    void attachSignals()
+    virtual void attachSignals()
     {
         connect(_target,    SIGNAL(sendError(const QString &)), this,   SIGNAL(sendError(const QString &)));
-        connect(_target,    SIGNAL(bytesWritten()),             this,   SIGNAL(bytesWritten()));
-        connect(_target,    SIGNAL(baudRateChanged()),          this,   SIGNAL(baudRateChanged()));
+        connect(_target,    SIGNAL(bytesWritten(qint64)),       this,   SIGNAL(bytesWritten(qint64)));
+        connect(_target,    SIGNAL(baudRateChanged(qint32)),    this,   SIGNAL(baudRateChanged(qint32)));
         connect(_target,    SIGNAL(readyRead()),                this,   SIGNAL(readyRead()));
     }
 
-    void detachSignals()
+    virtual void detachSignals()
     {
         disconnect(_target,    SIGNAL(sendError(const QString &)), this,   SIGNAL(sendError(const QString &)));
-        disconnect(_target,    SIGNAL(bytesWritten()),             this,   SIGNAL(bytesWritten()));
-        disconnect(_target,    SIGNAL(baudRateChanged()),          this,   SIGNAL(baudRateChanged()));
+        disconnect(_target,    SIGNAL(bytesWritten(qint64)),       this,   SIGNAL(bytesWritten(qint64)));
+        disconnect(_target,    SIGNAL(baudRateChanged(qint32)),    this,   SIGNAL(baudRateChanged(qint32)));
         disconnect(_target,    SIGNAL(readyRead()),                this,   SIGNAL(readyRead()));
     }
 
 public:
-    Connector() : ConnectorSignals()
+    Connector() : Interface()
     {
+        _attached = false;
+        _paused = false;
     }
 
     Target target()
@@ -72,21 +53,23 @@ public:
 
     bool isAttached()
     {
+        if (_target == NULL) return false;
         return _attached;
     }
 
     bool isActive()
     {
-        return (!_paused && _attached);
+        return (!isPaused() && isAttached());
     }
 
     bool attach(Target target)
     {
         if (isAttached()) return false;
+        if (target == NULL) return false;
     
         _target = target;
-    
-        qDebug() << "connecting" << this << "to" << _target;
+
+//        qDebug() << "connecting" << this << "to" << _target;
 
         attachSignals();
     
@@ -99,7 +82,7 @@ public:
     {
         if (!isAttached()) return;
     
-        qDebug() << "removing" << this << "from" << _target;
+//        qDebug() << "removing" << this << "from" << _target;
 
         detachSignals();
     
@@ -118,15 +101,15 @@ public:
         return _target->clear();
     }
 
-    void setPortName(const QString & name)
-    {
-        _target->setPortName(name);
-    }
-
     bool setBaudRate(quint32 baudRate)
     {
         if (!isActive()) return false;
         return _target->setBaudRate(baudRate);
+    }
+
+    QString portName()
+    {
+        return _target->portName();
     }
 
     quint32 baudRate()

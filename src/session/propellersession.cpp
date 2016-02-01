@@ -1,67 +1,39 @@
 #include "propellersession.h"
 
-#include <QDebug>
-
-#include "../device/propellerdevice.h"
-
-class PropellerManager;
-
 PropellerSession::PropellerSession(
         PropellerManager * manager,
-        const QString & portname, 
-        QObject * parent)
+        const QString & portname)
     : Connector<SessionInterface *>()
 {
-//    attach(manager);
-    setPortName(portname);
+    this->manager = manager;
 
-//    manager->beginSession(this);
+    manager->beginSession(this);
+    setPortName(portname);
 }
 
 PropellerSession::~PropellerSession()
 {
-//    manager->endSession(this);
+    manager->endSession(this);
 }
 
-/**
-    Returns the name of the current device.
-  */
-const QString & PropellerSession::portName()
-{
-    return port;
-}
-
-/**
-    Sets the name of the current device.
-  */
 void PropellerSession::setPortName(const QString & name)
 {
-    port = name;
-//    target()->setPortName(this);
+    manager->setPortName(this, name);
 }
 
-///**
-//    Reserve the device for exclusive access.
-//
-//    \returns true if successfully reserved, otherwise false.
-//  */
-//bool PropellerSession::reserve()
-//{
+bool PropellerSession::reserve()
+{
+    return true;
 //    return manager->reserve(this);
-//}
-//
-///**
-//    Returns true if this session has reserved the device, otherwise false.
-//  */
-//bool PropellerSession::isReserved()
-//{
+}
+
+bool PropellerSession::isReserved()
+{
+    return true;
 //    return manager->isReserved(this);
-//}
-//
-///**
-//    Releases the device so that other sessions can use it.
-//  */
-//void PropellerSession::release()
-//{
+}
+
+void PropellerSession::release()
+{
 //    manager->release(this);
-//}
+}

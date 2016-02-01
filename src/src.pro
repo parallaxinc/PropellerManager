@@ -20,9 +20,15 @@ SOURCES += \
 
 HEADERS += \
     manager/propellermanager.h \
+    manager/manager.h \
+    manager/sessionmanager.h \
+    manager/devicemanager.h \
     manager/portmonitor.h \
     manager/connector.h \
     manager/readbuffer.h \
+    manager/sessioninterface.h \
+    manager/deviceinterface.h \
+    manager/interface.h \
     session/propellersession.h \
     loader/propellerloader.h \
     loader/protocol.h \

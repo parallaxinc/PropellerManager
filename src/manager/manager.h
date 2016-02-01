@@ -1,20 +1,50 @@
+#pragma once
 
-template <class Key, class Value>
+#include "interface.h"
+
+#include <QHash>
+
+template <class Key, class Interface>
 class Manager
 {
-    QHash Key      _target;
+
+protected:
+    QHash<Key, Interface> _interfaces;
 
 public:
-    Manager() 
+    Manager()
+    {
+    }
+    
+    virtual ~Manager()
     {
     }
 
-    QHash<QString, PropellerDevice *> _devices;
-
-    Key add(Key component)
+    bool exists(Key key)
     {
-        return _target;
+        return (_interfaces.contains(key) && _interfaces[key] != NULL);
+    }
+
+    bool enabled(Key key)
+    {
+        return interface(key)->isPaused();
+    }
+
+    void setEnabled(Key key, bool paused)
+    {
+        interface(key)->setPaused(paused);
+    }
+
+    virtual Interface interface(Key key) = 0;
+
+    void remove(Key key)
+    {
+        if (exists(key))
+        {
+            interface(key)->detach();
+            delete _interfaces[key];
+            _interfaces.remove(key);
+        }
     }
 
 };
-

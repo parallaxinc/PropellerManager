@@ -39,32 +39,24 @@ isn't needed, and it's easy to make sure your connected devices don't end up in 
 
 class PropellerManager;
 
-class PropellerSession : public Connector<SessionInterface *>
+class PropellerSession
+    : public Connector<SessionInterface *>
 {
     Q_OBJECT
 
 private:
-    QString port;
     PropellerManager * manager;
 
 public:
     PropellerSession(
             PropellerManager * manager,
-            const QString & portname = QString(), 
-            QObject * parent = 0);
+            const QString & portname = QString());
     ~PropellerSession();
 
-    const QString & portName();
-    void  setPortName(const QString & name);
-
-/**
-    @name Access Control
-  */
-/**@{*/
-    bool        reserve();
-    bool        isReserved();
-    void        release();
-/**@}*/
+    void    setPortName(const QString & name);
+    bool    reserve();
+    bool    isReserved();
+    void    release();
 
 };
 

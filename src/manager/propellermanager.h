@@ -1,12 +1,11 @@
 #pragma once
 
-#include <QStringList>
-#include <QHash>
-
+#include <QObject>
 #include "portmonitor.h"
-#include "../device/propellerdevice.h"
+#include "devicemanager.h"
+#include "sessionmanager.h"
+
 #include "../session/propellersession.h"
-#include "readbuffer.h"
 
 /**
 @class PropellerManager manager/propellermanager.h PropellerManager
@@ -80,43 +79,16 @@ First, we implement a class to listen to the port monitor.
 Then initialize the class and run.
 */
 
+class SessionManager;
 class PropellerSession;
-
 
 class PropellerManager : public QObject
 {
     Q_OBJECT
 
     PortMonitor monitor;
-
-private:
-    QHash<QString, PropellerDevice *> _devices;
-    QHash<PropellerSession *, PropellerSession *> _sessions;
-
-    QHash<PropellerDevice *, quint32> _active_sessions;
-    QHash<PropellerDevice *, PropellerSession *> _busy;
-    QHash<PropellerSession *, PropellerSession *> _paused;
-
-    QHash<PropellerSession *, PropellerDevice *> _connections;
-    QHash<PropellerSession *, PropellerDevice *> _saved_connections;
-
-    QHash<PropellerSession *, ReadBuffer *> _buffers;
-
-    PropellerDevice * createDevice(QString port);
-    void removeDevice(QString port);
-    
-    void addConnection (PropellerSession * session, PropellerDevice * device);
-    void addConnectionByName (PropellerSession * session, QString port);
-    void removeConnection (PropellerSession * session, PropellerDevice * device);
-    bool portIsBusy (PropellerSession * session);
-
-    void saveConnections (PropellerDevice * device);
-    void restoreConnections (PropellerDevice * device);
-
-    PropellerDevice * getDevice(QString port, bool open = true);
-
-private slots:
-    void readyBuffer();
+    DeviceManager * devices;
+    SessionManager * sessions;
 
 public:
     PropellerManager(QObject *parent = 0);
@@ -130,11 +102,7 @@ public:
     bool        beginSession(PropellerSession * session);
     void        endSession(PropellerSession * session);
 
-    void        setPortName(PropellerSession * session);
-
-    bool        reserve(PropellerSession * session);
-    bool        isReserved(PropellerSession * session);
-    void        release(PropellerSession * session);
+    void        setPortName(PropellerSession * session, const QString & name);
 
 /// @endcond
 
