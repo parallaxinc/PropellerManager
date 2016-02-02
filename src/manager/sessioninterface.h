@@ -11,12 +11,14 @@ class SessionInterface : public Connector<DeviceInterface *>
     Q_OBJECT
 
     ReadBuffer * _buffer;
+    bool _reserved;
 
 public:
     SessionInterface ()
         : Connector<DeviceInterface *>()
     {
         _buffer = new ReadBuffer();
+        _reserved = false;
     }
 
     ~SessionInterface()
@@ -50,6 +52,16 @@ public:
     qint64 bytesAvailable()
     {
         return _buffer->bytesAvailable();
+    }
+
+    void setReserved(bool reserved)
+    {
+        _reserved = reserved;
+    }
+
+    bool isReserved()
+    {
+        return _reserved;
     }
 
 protected:

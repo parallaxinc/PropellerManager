@@ -23,17 +23,15 @@ void PropellerSession::setPortName(const QString & name)
 
 bool PropellerSession::reserve()
 {
-    return true;
-//    return manager->reserve(this);
+    return manager->reserve(this);
 }
 
 bool PropellerSession::isReserved()
 {
-    return true;
-//    return manager->isReserved(this);
+    return manager->isReserved(this);
 }
 
 void PropellerSession::release()
 {
-//    manager->release(this);
+    manager->release(this);
 }

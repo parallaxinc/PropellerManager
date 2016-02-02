@@ -36,6 +36,51 @@ void PropellerManager::endSession(PropellerSession * session)
     sessions->remove(session);
 }
 
+bool PropellerManager::reserve(PropellerSession * session)
+{
+    SessionInterface * interface = sessions->interface(session);
+
+    if (interface->isPaused()) return false;
+    if (interface->isReserved()) return true;
+
+//    qCDebug(pmanager) << "reserving" << session->portName() << "for" << session;
+
+    foreach (SessionInterface * interface, sessions->list())
+    {
+        if (interface->portName() == session->portName())
+            interface->setPaused(true);
+    }
+
+    interface->setPaused(false);
+    interface->setReserved(true);
+
+    return true;
+}
+
+bool PropellerManager::isReserved(PropellerSession * session)
+{
+    SessionInterface * interface = sessions->interface(session);
+    return interface->isReserved();
+}
+
+void PropellerManager::release(PropellerSession * session)
+{
+    SessionInterface * interface = sessions->interface(session);
+
+    if (interface->isPaused()) return;
+    if (!interface->isReserved()) return;
+
+//    qCDebug(pmanager) << "releasing" << session->portName() << "from" << session;
+
+    foreach (SessionInterface * interface, sessions->list())
+    {
+        if (interface->portName() == session->portName())
+            interface->setPaused(false);
+    }
+
+    interface->setReserved(false);
+}
+
 void PropellerManager::setPortName(PropellerSession * session, const QString & name)
 {
     if (name.isEmpty()) return;

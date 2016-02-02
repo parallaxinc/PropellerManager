@@ -30,6 +30,11 @@ public:
         return interface(key)->isPaused();
     }
 
+    QList<Interface> list()
+    {
+        return _interfaces.values();
+    }
+
     void setEnabled(Key key, bool paused)
     {
         interface(key)->setPaused(paused);

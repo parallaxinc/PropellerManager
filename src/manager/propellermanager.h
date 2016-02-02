@@ -4,8 +4,9 @@
 #include "portmonitor.h"
 #include "devicemanager.h"
 #include "sessionmanager.h"
-
 #include "../session/propellersession.h"
+
+class SessionManager;
 
 /**
 @class PropellerManager manager/propellermanager.h PropellerManager
@@ -79,9 +80,6 @@ First, we implement a class to listen to the port monitor.
 Then initialize the class and run.
 */
 
-class SessionManager;
-class PropellerSession;
-
 class PropellerManager : public QObject
 {
     Q_OBJECT
@@ -99,10 +97,14 @@ public:
 
 /// @cond
 
-    bool        beginSession(PropellerSession * session);
-    void        endSession(PropellerSession * session);
+    bool beginSession(PropellerSession * session);
+    void endSession(PropellerSession * session);
 
-    void        setPortName(PropellerSession * session, const QString & name);
+    bool reserve(PropellerSession * session);
+    bool isReserved(PropellerSession * session);
+    void release(PropellerSession * session);
+
+    void setPortName(PropellerSession * session, const QString & name);
 
 /// @endcond
 
