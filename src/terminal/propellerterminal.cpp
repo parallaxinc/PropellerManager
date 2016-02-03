@@ -4,12 +4,22 @@
 
 PropellerTerminal::PropellerTerminal(PropellerManager * manager,
                                     const QString & portname,
+                                    qint32 baudrate,
                                     QObject * parent)
     : QObject(parent)
 {
-    this->session = new PropellerSession(manager, portname);
+    session = new PropellerSession(manager, portname);
+    session->setBaudRate(baudrate);
+}
 
-    printf("Entering terminal on %s\n",qPrintable(portname));
+PropellerTerminal::~PropellerTerminal()
+{
+    delete session;
+}
+
+void PropellerTerminal::exec()
+{
+    printf("Entering terminal on %s\n",qPrintable(session->portName()));
     printf("Press Ctrl+C to exit\n");
     printf("--------------------------------------\n");
 
@@ -18,14 +28,9 @@ PropellerTerminal::PropellerTerminal(PropellerManager * manager,
 
     QEventLoop loop;
     loop.exec();
-}
 
-PropellerTerminal::~PropellerTerminal()
-{
     disconnect(&console, SIGNAL(textReceived(const QString &)),this, SLOT(write(const QString &)));
     disconnect(session, SIGNAL(readyRead()), this, SLOT(read()));
-
-    delete session;
 }
 
 void PropellerTerminal::write(const QString & text)

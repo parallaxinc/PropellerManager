@@ -1,6 +1,5 @@
 #include "propellerdevice.h"
 
-#include <QDebug>
 #include <QSerialPortInfo>
 #include <QTimer>
 #include <QEventLoop>
@@ -8,13 +7,14 @@
 #include "gpio.h"
 #include "../util/logging.h"
 
-PropellerDevice::PropellerDevice(QObject * parent)
- : QSerialPort(parent)
+PropellerDevice::PropellerDevice()
+ : Interface()
 {
-    resource_error_count = 0;
+    _resource_error_count = 0;
     _minimum_timeout = 400;
 
-    setSettingsRestoredOnClose(false);
+    device.setSettingsRestoredOnClose(false);
+    device.setBaudRate(115200);
 
     _reset_defaults["ttyAMA"]   = "gpio";
     _reset_defaults["ttyS"]     = "dtr";
@@ -24,23 +24,35 @@ PropellerDevice::PropellerDevice(QObject * parent)
 
     useDefaultReset();
 
-    connect(this,SIGNAL(error(QSerialPort::SerialPortError)),
-            this,  SLOT(handleError(QSerialPort::SerialPortError))); 
+    connect(&device,    SIGNAL(error(QSerialPort::SerialPortError)),
+            this,       SLOT(handleError(QSerialPort::SerialPortError))); 
+
+    connect(&device,    SIGNAL(bytesWritten(qint64)),       this,   SIGNAL(bytesWritten(qint64)));
+    connect(&device,    SIGNAL(readyRead()),                this,   SIGNAL(readyRead()));
+
+    connect(&device,    SIGNAL(baudRateChanged(qint32, QSerialPort::Directions)),
+            this,       SIGNAL(baudRateChanged(qint32)));
 }
     
-
 PropellerDevice::~PropellerDevice()
 {
     close();
-}
 
+    disconnect(&device,    SIGNAL(error(QSerialPort::SerialPortError)),
+               this,       SLOT(handleError(QSerialPort::SerialPortError))); 
+
+    disconnect(&device,    SIGNAL(bytesWritten(qint64)),   this,   SIGNAL(bytesWritten(qint64)));
+    disconnect(&device,    SIGNAL(readyRead()),            this,   SIGNAL(readyRead()));
+
+    disconnect(&device,    SIGNAL(baudRateChanged(qint32, QSerialPort::Directions)),
+               this,       SIGNAL(baudRateChanged(qint32)));
+}
 
 void PropellerDevice::setPortName(const QString & name)
 {
-    QSerialPort::setPortName(name);
+    device.setPortName(name);
     useDefaultReset();
 }
-
 
 void PropellerDevice::handleError(QSerialPort::SerialPortError e)
 {
@@ -53,10 +65,9 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
         case QSerialPort::PermissionError:                      // 2
         case QSerialPort::NotOpenError:                         // 13
         case QSerialPort::UnsupportedOperationError:            // 10
-            clearError();
+            device.clearError();
             break;
         case QSerialPort::TimeoutError:                         // 12
-            emit finished();
             break;
         case QSerialPort::ParityError:                          // 4
         case QSerialPort::FramingError:                         // 5
@@ -65,12 +76,11 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
         case QSerialPort::ReadError:                            // 8
         case QSerialPort::UnknownError:                         // 11
         case QSerialPort::ResourceError: // SUPER IMPORTANT     // 9
-            resource_error_count++;
-            if (resource_error_count > 1)
+            _resource_error_count++;
+            if (_resource_error_count > 1)
             {
                 close();
-                emit finished();
-                sendError(QString("'%1' (error %2)").arg(errorString()).arg(e));
+                emit sendError(QString("'%1' (error %2)").arg(device.errorString()).arg(e));
             }
             break;
         default:
@@ -83,20 +93,12 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
   */
 bool PropellerDevice::open()
 {
-    resource_error_count = 0;
+    _resource_error_count = 0;
 
-    if (!QSerialPort::open(QSerialPort::ReadWrite))
+    if (!device.open(QSerialPort::ReadWrite))
     {
-        qCDebug(pdevice) << "Reattempting device open:" << portName();
-
-        QTimer wait;
-        QEventLoop loop;
-        connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-        wait.start(1000);
-        loop.exec();
-        disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-
-        if (!QSerialPort::open(QSerialPort::ReadWrite))
+        close();
+        if (!device.open(QSerialPort::ReadWrite))
         {
             qCDebug(pdevice) << "Failed to open device:" << portName();
             return false;
@@ -104,9 +106,13 @@ bool PropellerDevice::open()
     }
 
     reset();
-    setBaudRate(115200);
 
     return true;
+}
+
+void PropellerDevice::close()
+{
+    device.close();
 }
 
 /**
@@ -141,9 +147,9 @@ void PropellerDevice::setMinimumTimeout(quint32 milliseconds)
     safety_factor defaults to 10, and is divided by 10, allowing <1 safety factors.
   */
 
-quint32 PropellerDevice::calculateTimeout(quint32 bytes, quint32 safety_factor)
+quint32 PropellerDevice::calculateTimeout(quint32 bytes)
 {
-    return bytes * (dataBits() + stopBits()) * safety_factor / 10
+    return bytes * (device.dataBits() + device.stopBits()) * 25 / 10
                  * 1000 / baudRate() + minimumTimeout();
 }
 
@@ -151,7 +157,7 @@ quint32 PropellerDevice::calculateTimeout(quint32 bytes, quint32 safety_factor)
     Set the reset strategy for your device.
     */
 
-void PropellerDevice::useReset(const QString & name, int pin)
+void PropellerDevice::useReset(QString name, int pin)
 {
     if (_reset_defaults.contains(name))
     {
@@ -208,13 +214,29 @@ bool PropellerDevice::reset()
     {
         if (_reset == "rts")
         {
-            setRequestToSend(true);
-            setRequestToSend(false);
+            device.setRequestToSend(true);
+
+            QTimer wait;
+            QEventLoop loop;
+            connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+            wait.start(20);
+            loop.exec();
+            disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+
+            device.setRequestToSend(false);
         }
         else if (_reset == "dtr")
         {
-            setDataTerminalReady(true);
-            setDataTerminalReady(false);
+            device.setDataTerminalReady(true);
+
+            QTimer wait;
+            QEventLoop loop;
+            connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+            wait.start(20);
+            loop.exec();
+            disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+
+            device.setDataTerminalReady(false);
         } 
         else
         {
@@ -223,7 +245,6 @@ bool PropellerDevice::reset()
     }
 
     clear();
-    readAll();      // clear doesn't appear to actually do anything
 
     return true;
 }
@@ -252,3 +273,69 @@ quint32 PropellerDevice::resetPeriod()
 {
     return 80;
 }
+
+
+bool PropellerDevice::isOpen()
+{
+    if (!device.isOpen())
+    {
+        if (!open())
+        {
+            close();
+            return open();
+        }
+    }
+    return true;
+}
+
+bool PropellerDevice::clear()
+{
+    device.clear();
+    device.readAll();      // clear doesn't appear to actually do anything
+    return true;
+}
+
+bool PropellerDevice::setBaudRate(quint32 baudRate)
+{
+    return device.setBaudRate(baudRate);
+}
+
+QString PropellerDevice::portName()
+{
+    return device.portName();
+}
+
+quint32 PropellerDevice::baudRate()
+{
+    return device.baudRate();
+}
+
+qint64 PropellerDevice::bytesToWrite()
+{
+    return device.bytesToWrite();
+}
+
+qint64 PropellerDevice::bytesAvailable()
+{
+    return device.bytesAvailable();
+}
+
+QByteArray PropellerDevice::read(qint64 maxSize)
+{
+    return device.read(maxSize);
+}
+
+QByteArray PropellerDevice::readAll()
+{
+    return device.readAll();
+}
+
+bool PropellerDevice::putChar(char c)
+{
+    return device.putChar(c);
+}
+qint64 PropellerDevice::write(QByteArray ba)
+{
+    return device.write(ba);
+}
+

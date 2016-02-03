@@ -33,6 +33,7 @@ QStringList devices = manager.listPorts();
 QCommandLineOption argList      (QStringList() << "l" << "list",    QObject::tr("List available devices"));
 QCommandLineOption argWrite     (QStringList() << "w" << "write",   QObject::tr("Write program to EEPROM"));
 QCommandLineOption argDevice    (QStringList() << "d" << "device",  QObject::tr("Device to program (default: first system device)"), "DEV");
+QCommandLineOption argBaud      (QStringList() << "b" << "baud",    QObject::tr("Baud rate for terminal (default: 115200)"), "BAUD");
 QCommandLineOption argPin       (QStringList() << "p" << "pin",     QObject::tr("Pin for GPIO reset"), "PIN");
 QCommandLineOption argTerm      (QStringList() << "t" << "terminal",QObject::tr("Drop into terminal after download"));
 QCommandLineOption argIdentify  (QStringList() << "i" << "identify",QObject::tr("Identify device connected at port"));
@@ -40,7 +41,6 @@ QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr(
 QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download"), "MODE");
 QCommandLineOption argClkFreq   (QStringList() << "clkfreq",        QObject::tr("Change clock frequency before download"), "FREQ");
 QCommandLineOption argHighSpeed (QStringList() << "ultrafast",      QObject::tr("Enable two-stage high-speed mode (experimental)"));
-
 
 int main(int argc, char *argv[])
 {
@@ -61,13 +61,14 @@ int main(int argc, char *argv[])
     parser.addOption(argList);
     parser.addOption(argWrite);
     parser.addOption(argDevice);
+    parser.addOption(argBaud);
     parser.addOption(argPin);
     parser.addOption(argTerm);
     parser.addOption(argIdentify);
     parser.addOption(argInfo);
     parser.addOption(argClkMode);
     parser.addOption(argClkFreq);
-    parser.addOption(argHighSpeed);
+//    parser.addOption(argHighSpeed);
 
     parser.addPositionalArgument("file",  QObject::tr("Binary file to download"), "FILE");
 
@@ -130,6 +131,15 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
             error("Device does not exist!");
     }
 
+    qint32 baudrate = 115200;
+    if (!parser.value(argBaud).isEmpty())
+    {
+        bool ok;
+        baudrate = parser.value(argBaud).toInt(&ok);
+        if (baudrate <= 0 || baudrate > 1000000 || !ok)
+            error(QString("Baud rate %1 is invalid!").arg(baudrate));
+    }
+
     if (parser.positionalArguments().isEmpty())
     {
         if (parser.isSet(argTerm))
@@ -168,6 +178,8 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
         error("Image is invalid!");
 
 
+    PropellerTerminal terminal(&manager, device, baudrate);
+
     if (parser.isSet(argHighSpeed))
     {
 //        if (!loader.highSpeedUpload(image, parser.isSet(argWrite)))
@@ -178,14 +190,15 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
         QObject::connect (&loader, SIGNAL(statusChanged(const QString &)),
                           &loader, SLOT(message(const QString &)));
 
-        if (!loader.upload(image, parser.isSet(argWrite),true,true))
+        if (!loader.upload(image, parser.isSet(argWrite), true, true))
             exit(1);
+
         QObject::disconnect (&loader, SIGNAL(statusChanged(const QString &)),
                              &loader, SLOT(message(const QString &)));
     }
 
     if (parser.isSet(argTerm))
-        PropellerTerminal terminal(&manager, device);
+        terminal.exec();
 }
 
 void list()

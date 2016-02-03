@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QByteArray>
 #include <QObject>
 
@@ -40,6 +42,10 @@ public:
         return data;
     }
 
+    void clear()
+    {
+        array.clear();
+    }
 
     quint64 bytesAvailable()
     {

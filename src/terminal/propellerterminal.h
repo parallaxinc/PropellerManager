@@ -34,7 +34,9 @@ private slots:
 public:
     PropellerTerminal(PropellerManager * manager,
                       const QString & portname,
+                      qint32 baudrate = 115200,
                       QObject * parent = 0);
     ~PropellerTerminal();
+    void exec();
 };
 

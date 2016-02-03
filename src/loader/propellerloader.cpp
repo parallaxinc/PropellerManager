@@ -33,7 +33,6 @@ PropellerLoader::PropellerLoader(PropellerManager * manager, const QString & por
     _ack     = 0;
 
     this->session = new PropellerSession(manager, portname);
-    session->setBaudRate(115200);
 
     totalTimeout.setSingleShot(true);
     handshakeTimeout.setSingleShot(true);
@@ -46,20 +45,20 @@ PropellerLoader::PropellerLoader(PropellerManager * manager, const QString & por
     connect(session,&PropellerSession::sendError,
             this,   &PropellerLoader::error);
 
-    QFinalState * s_failure         = new QFinalState();
-    QFinalState * s_success         = new QFinalState();
+    QFinalState * s_failure = new QFinalState();
+    QFinalState * s_success = new QFinalState();
 
     connect(s_success,     SIGNAL(entered()), this, SLOT(success_entry()));
     connect(s_failure,     SIGNAL(entered()), this, SLOT(failure_entry()));
 
-    s_active  = new QState();
+    s_active                = new QState();
 
-    QState * s_start             = new QState(s_active);
-    QState * s_prepare           = new QState(s_active);
-    QState * s_payload           = new QState(s_active);
-    QState * s_verify            = new QState(s_active);
-    QState * s_write             = new QState(s_active);
-    QState * s_verifywrite       = new QState(s_active);
+    QState * s_start        = new QState(s_active);
+    QState * s_prepare      = new QState(s_active);
+    QState * s_payload      = new QState(s_active);
+    QState * s_verify       = new QState(s_active);
+    QState * s_write        = new QState(s_active);
+    QState * s_verifywrite  = new QState(s_active);
 
     s_prepare    ->assignProperty(this, "status", tr("Preparing image..."));
     s_payload    ->assignProperty(this, "status", tr("Downloading to RAM..."));
@@ -72,8 +71,8 @@ PropellerLoader::PropellerLoader(PropellerManager * manager, const QString & por
     s_verifywrite->assignProperty(this, "stat", 3);
 
     s_active->setInitialState(s_start);
-    s_active-> addTransition(this, SIGNAL(failure()), s_failure);
-    s_active-> addTransition(&machine,      SIGNAL(started()), s_prepare);
+    s_active-> addTransition(this,      SIGNAL(failure()), s_failure);
+    s_active-> addTransition(&machine,  SIGNAL(started()), s_prepare);
 
     machine.addState(s_failure);
     machine.addState(s_success);
@@ -106,8 +105,6 @@ PropellerLoader::PropellerLoader(PropellerManager * manager, const QString & por
     connect(s_verifywrite,   SIGNAL(exited()),  this, SLOT(acknowledge_exit()));
  
     s_verifywrite->addTransition(this,  SIGNAL(success()),       s_success);
-
-//    connect(this, SIGNAL(statusChanged(const QString &)), this, SLOT(message(const QString &)));
 }
 
 PropellerLoader::~PropellerLoader()
@@ -115,7 +112,6 @@ PropellerLoader::~PropellerLoader()
     session->release();
     delete session;
 }
-
 
 void PropellerLoader::message(const QString & text)
 {
@@ -178,7 +174,6 @@ void PropellerLoader::prepare_entry()
     _error = NoError;
     _completed = 0;
     m_stat = 0;
-    session->setBaudRate(115200);
 
     _command = 2*_write + _run;
 
@@ -208,7 +203,7 @@ void PropellerLoader::prepare_entry()
 
 void PropellerLoader::handshake_read()
 {
-//    message("BYTES "+QString::number(session->bytesAvailable()));
+//    qDebug() << "BYTES" << session->bytesAvailable();
     if (session->bytesAvailable() == protocol.reply().size() + 4)
     {
         handshakeTimeout.stop();
@@ -247,7 +242,7 @@ void PropellerLoader::sendpayload_entry()
     connect(this,       SIGNAL(handshake_received()),   this, SLOT(upload_status()));
     connect(this,       SIGNAL(payload_sent()),         this, SLOT(upload_status()));
 
-    session->readAll();         // clear mysterious junk data that arrives just before this write().
+    session->clear();         // clear mysterious junk data that arrives just before this write().
     session->write(_payload);
 }
 
@@ -358,6 +353,12 @@ bool PropellerLoader::upload(PropellerImage image, bool write, bool run, bool wa
     if (!image.isValid())
     {
         error("Image is invalid");
+        return false;
+    }
+
+    if (!session->setBaudRate(115200))
+    {
+        error("Couldn't set baud rate");
         return false;
     }
 

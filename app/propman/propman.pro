@@ -6,6 +6,7 @@ TARGET = propman
 DESTDIR = $$TOP_PWD/bin/
 
 CONFIG += console
+CONFIG += debug
 
 SOURCES += \
     main.cpp

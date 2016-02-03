@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../manager/interface.h"
+
 #include <QSerialPort>
 #include <QStringList>
 #include <QHash>
@@ -14,38 +16,54 @@
     timeouts.
   */
 
-class PropellerDevice
-    : public QSerialPort
+class PropellerDevice : public Interface
 {
     Q_OBJECT
+    
+    QSerialPort device;
 
-    int resource_error_count;
-    quint32 _minimum_timeout;
-
-    QString _reset;
     QHash<QString, QString> _reset_defaults;
-    int _reset_gpio;
+
+    int         _resource_error_count;
+    quint32     _minimum_timeout;
+
+    QString     _reset;
+    int         _reset_gpio;
+
+private slots:
+    void        handleError(QSerialPort::SerialPortError e);
 
 public:
-    PropellerDevice(QObject * parent = 0);
+    PropellerDevice();
     ~PropellerDevice();
-    bool open();
 
-    static QStringList list();
-    void useReset(const QString & name, int pin = 17);
-    void useDefaultReset();
-    void setPortName(const QString & name);
+    static      QStringList list();
 
-    quint32 calculateTimeout(quint32 bytes, quint32 safety_factor = 15);
-    quint32 minimumTimeout();
-    quint32 resetPeriod();
-    void setMinimumTimeout(quint32 milliseconds);
+    bool        open();
+    void        close();
 
-public slots:
-    void handleError(QSerialPort::SerialPortError e);
-    bool reset();
+    void        setPortName(const QString & name);
 
-signals:
-    void finished();
-    void sendError(const QString &);
+    bool        isOpen();
+    bool        clear();
+    bool        setBaudRate(quint32 baudRate);
+
+    QString     portName();
+    quint32     baudRate();
+    qint64      bytesToWrite();
+    qint64      bytesAvailable();
+    QByteArray  read(qint64 maxSize);
+    QByteArray  readAll();
+    bool        putChar(char c);
+    qint64      write(QByteArray ba);
+
+    quint32     minimumTimeout();
+    void        setMinimumTimeout(quint32 milliseconds);
+    quint32     calculateTimeout(quint32 bytes);
+
+    void        useReset(QString name, int pin = 17);
+    void        useDefaultReset();
+    bool        reset();
+    quint32     resetPeriod();
+
 };
