@@ -14,6 +14,7 @@ PropellerDevice::PropellerDevice()
     _minimum_timeout = 400;
 
     device.setSettingsRestoredOnClose(false);
+    device.setBaudRate(115200);
 
     _reset_defaults["ttyAMA"]   = "gpio";
     _reset_defaults["ttyS"]     = "dtr";
@@ -96,15 +97,7 @@ bool PropellerDevice::open()
 
     if (!device.open(QSerialPort::ReadWrite))
     {
-        qCDebug(pdevice) << "Reattempting device open:" << portName();
-
-        QTimer wait;
-        QEventLoop loop;
-        connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-        wait.start(1000);
-        loop.exec();
-        disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-
+        close();
         if (!device.open(QSerialPort::ReadWrite))
         {
             qCDebug(pdevice) << "Failed to open device:" << portName();
@@ -113,7 +106,6 @@ bool PropellerDevice::open()
     }
 
     reset();
-    setBaudRate(115200);
 
     return true;
 }
@@ -223,11 +215,27 @@ bool PropellerDevice::reset()
         if (_reset == "rts")
         {
             device.setRequestToSend(true);
+
+            QTimer wait;
+            QEventLoop loop;
+            connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+            wait.start(20);
+            loop.exec();
+            disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+
             device.setRequestToSend(false);
         }
         else if (_reset == "dtr")
         {
             device.setDataTerminalReady(true);
+
+            QTimer wait;
+            QEventLoop loop;
+            connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+            wait.start(20);
+            loop.exec();
+            disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
+
             device.setDataTerminalReady(false);
         } 
         else
@@ -269,7 +277,15 @@ quint32 PropellerDevice::resetPeriod()
 
 bool PropellerDevice::isOpen()
 {
-    return device.isOpen();
+    if (!device.isOpen())
+    {
+        if (!open())
+        {
+            close();
+            return open();
+        }
+    }
+    return true;
 }
 
 bool PropellerDevice::clear()

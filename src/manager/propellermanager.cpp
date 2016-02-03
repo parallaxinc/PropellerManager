@@ -21,6 +21,7 @@ PropellerManager::~PropellerManager()
 bool PropellerManager::beginSession(PropellerSession * session)
 {
     if (!session) return false;
+//    qCDebug(pmanager) << "beginning" << session;
 
     SessionInterface * interface = sessions->interface(session);
     session->attach(interface);
@@ -31,6 +32,7 @@ bool PropellerManager::beginSession(PropellerSession * session)
 void PropellerManager::endSession(PropellerSession * session)
 {
     if (!session) return;
+//    qCDebug(pmanager) << "ending" << session;
 
     session->detach();
     sessions->remove(session);
@@ -83,12 +85,14 @@ void PropellerManager::release(PropellerSession * session)
 
 void PropellerManager::setPortName(PropellerSession * session, const QString & name)
 {
-    if (name.isEmpty()) return;
-
     SessionInterface * sessionInterface = sessions->interface(session);
 
+
+    bool exists = devices->exists(name);
     DeviceInterface * deviceInterface = devices->interface(name);
-    connect(deviceInterface,    SIGNAL(readyRead()),    sessions,   SLOT(readyBuffer()));
+
+    if(!exists)
+        connect(deviceInterface,    SIGNAL(readyRead()),    sessions,   SLOT(readyBuffer()));
 
     sessionInterface->detach();
     sessionInterface->attach(deviceInterface);

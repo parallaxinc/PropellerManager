@@ -1,6 +1,7 @@
 #include "portmonitor.h"
 
 #include "../device/propellerdevice.h"
+#include "../util/logging.h"
     
 PortMonitor::PortMonitor(QObject * parent)
     : QObject(parent)
@@ -34,6 +35,7 @@ void PortMonitor::check()
     if(_ports != newports)
     {
         _ports = newports;
+//        qCDebug(pmanager) << "devices changed:" << _ports;
         emit listChanged();
     }
 }

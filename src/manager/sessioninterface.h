@@ -12,6 +12,7 @@ class SessionInterface : public Connector<DeviceInterface *>
 
     ReadBuffer * _buffer;
     bool _reserved;
+    qint32 _oldbaudrate;
 
 public:
     SessionInterface ()
@@ -19,6 +20,7 @@ public:
     {
         _buffer = new ReadBuffer();
         _reserved = false;
+        _oldbaudrate = 115200;
     }
 
     ~SessionInterface()
@@ -57,6 +59,16 @@ public:
     void setReserved(bool reserved)
     {
         _reserved = reserved;
+
+        if (_reserved)
+        {
+            _oldbaudrate = _target->baudRate();
+        }
+        else
+        {
+//            qDebug() << "restoring baud rate to" << _oldbaudrate << "on" << _target->portName();
+            _target->setBaudRate(_oldbaudrate);
+        }
     }
 
     bool isReserved()

@@ -69,11 +69,11 @@ public:
     
         _target = target;
 
-//        qDebug() << "connecting" << this << "to" << _target;
-
         attachSignals();
     
         _attached = true;
+
+//        qDebug() << "attached" << this << "to" << _target;
 
         return true;
     }
@@ -82,11 +82,11 @@ public:
     {
         if (!isAttached()) return;
     
-//        qDebug() << "removing" << this << "from" << _target;
-
         detachSignals();
     
         _attached = false;
+
+//        qDebug() << "detached" << this;
     }
 
     bool isOpen()
