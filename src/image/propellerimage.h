@@ -95,8 +95,8 @@ private:
 
 public:
 
-    PropellerImage( QByteArray image = QByteArray(),
-                    QString filename = "");
+    PropellerImage( const QByteArray & image = QByteArray(),
+                    const QString & filename = "");
 
     /**
         @name Image Validation

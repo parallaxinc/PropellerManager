@@ -2,7 +2,7 @@
 
 #include "../util/logging.h"
 
-PropellerImage::PropellerImage(QByteArray image, QString filename)
+PropellerImage::PropellerImage(const QByteArray & image, const QString & filename)
 {
     _image  = image;
     _filename = filename;
@@ -31,9 +31,11 @@ quint8 PropellerImage::checksum()
 {
     quint8 sum = 0;
     foreach (quint8 c, _image)
+    {
         sum += c;
+    }
 
-    if (_type == Binary)
+    if (imageSize() <= programSize())
         sum += 2 * (0xff + 0xff + 0xff + 0xf9);
 
     return sum;
@@ -75,8 +77,10 @@ QByteArray PropellerImage::data()
     Sets the raw binary data of the image.
     */
 
-void PropellerImage::setData(QByteArray data) {
+void PropellerImage::setData(QByteArray data)
+{
     _image = data;
+    _image.detach();
 }
 
 /**
