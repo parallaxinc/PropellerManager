@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../manager/interface.h"
+#include "../common/interface.h"
 
 #include <QSerialPort>
 #include <QStringList>

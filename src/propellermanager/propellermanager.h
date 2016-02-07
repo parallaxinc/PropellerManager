@@ -4,9 +4,12 @@
 #include "portmonitor.h"
 #include "devicemanager.h"
 #include "sessionmanager.h"
-#include "../session/propellersession.h"
+#include "../propellersession/propellersession.h"
 
-class SessionManager;
+namespace PM
+{
+    class SessionManager;
+}
 
 /**
 @class PropellerManager manager/propellermanager.h PropellerManager
@@ -84,9 +87,9 @@ class PropellerManager : public QObject
 {
     Q_OBJECT
 
-    PortMonitor monitor;
-    DeviceManager * devices;
-    SessionManager * sessions;
+    PM::PortMonitor monitor;
+    PM::DeviceManager * devices;
+    PM::SessionManager * sessions;
 
 public:
     PropellerManager(QObject *parent = 0);

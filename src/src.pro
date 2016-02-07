@@ -6,18 +6,13 @@ DESTDIR = $$TOP_PWD/lib/
 
 CONFIG += staticlib
 
-include("manager/include.pri")
-include("session/include.pri")
-include("device/include.pri")
-include("loader/include.pri")
-include("terminal/include.pri")
-include("image/include.pri")
-
-SOURCES += \
-    util/logging.cpp \
-
-HEADERS += \
-    util/logging.h \
+include("common/include.pri")
+include("propellermanager/include.pri")
+include("propellersession/include.pri")
+include("propellerdevice/include.pri")
+include("propellerloader/include.pri")
+include("propellerterminal/include.pri")
+include("propellerimage/include.pri")
 
 target.path   = $$PREFIX/lib
 INSTALLS += target

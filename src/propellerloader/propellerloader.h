@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../image/propellerimage.h"
-#include "../session/propellersession.h"
+#include "../propellerimage/propellerimage.h"
+#include "../propellersession/propellersession.h"
 #include "protocol.h"
 
 #include <QTimer>

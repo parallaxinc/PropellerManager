@@ -3,7 +3,7 @@
 PropellerSession::PropellerSession(
         PropellerManager * manager,
         const QString & portname)
-    : Connector<SessionInterface *>()
+    : Connector<PM::SessionInterface *>()
 {
     this->manager = manager;
 

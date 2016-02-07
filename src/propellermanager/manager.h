@@ -1,6 +1,6 @@
 #pragma once
 
-#include "interface.h"
+#include "../common/interface.h"
 
 #include <QHash>
 

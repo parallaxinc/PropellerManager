@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../manager/connector.h"
-#include "../manager/sessioninterface.h"
-#include "../manager/propellermanager.h"
+#include "../common/connector.h"
+#include "../propellermanager/sessioninterface.h"
+#include "../propellermanager/propellermanager.h"
 
 class PropellerManager;
 
@@ -40,7 +40,7 @@ isn't needed, and it's easy to make sure your connected devices don't end up in 
     */
 
 class PropellerSession
-    : public Connector<SessionInterface *>
+    : public Connector<PM::SessionInterface *>
 {
     Q_OBJECT
 

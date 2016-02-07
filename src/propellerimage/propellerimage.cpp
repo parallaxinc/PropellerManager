@@ -1,6 +1,6 @@
 #include "propellerimage.h"
 
-#include "../util/logging.h"
+#include "../common/logging.h"
 
 PropellerImage::PropellerImage(const QByteArray & image, const QString & filename)
 {

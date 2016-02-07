@@ -1,2 +1,2 @@
 #pragma once
-#include "../src/manager/propellermanager.h"
+#include "../src/propellermanager/propellermanager.h"

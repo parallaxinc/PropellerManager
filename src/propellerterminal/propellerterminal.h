@@ -1,7 +1,7 @@
 #pragma once
 
 #include "console.h"
-#include "../session/propellersession.h"
+#include "../propellersession/propellersession.h"
 
 /**
 @class PropellerTerminal terminal/propellerterminal.h PropellerTerminal

@@ -5,7 +5,7 @@
 #include <QEventLoop>
 
 #include "gpio.h"
-#include "../util/logging.h"
+#include "../common/logging.h"
 
 PropellerDevice::PropellerDevice()
  : Interface()
