@@ -271,7 +271,7 @@ QStringList PropellerDevice::list()
 
 quint32 PropellerDevice::resetPeriod()
 {
-    return 80;
+    return 95;
 }
 
 
