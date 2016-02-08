@@ -193,12 +193,12 @@ void PropellerLoader::prepare_entry()
                                  // the Propeller firmware only does 32kB EEPROMs
                                  // and this transaction is handled entirely by the firmware.
 
+    session->reset();
+
     totalTimeout.start(timeout_payload);
     handshakeTimeout.start(session->calculateTimeout(request.size()));
-    elapsedTimer.start();
     resetTimer.start(session->resetPeriod());
-
-    session->reset();
+    elapsedTimer.start();
 }
 
 void PropellerLoader::handshake_read()
