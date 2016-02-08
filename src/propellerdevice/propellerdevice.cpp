@@ -65,6 +65,7 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
         case QSerialPort::PermissionError:                      // 2
         case QSerialPort::NotOpenError:                         // 13
         case QSerialPort::UnsupportedOperationError:            // 10
+        case QSerialPort::UnknownError:                         // 11
             device.clearError();
             break;
         case QSerialPort::TimeoutError:                         // 12
@@ -74,7 +75,6 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
         case QSerialPort::BreakConditionError:                  // 6
         case QSerialPort::WriteError:                           // 7
         case QSerialPort::ReadError:                            // 8
-        case QSerialPort::UnknownError:                         // 11
         case QSerialPort::ResourceError: // SUPER IMPORTANT     // 9
             _resource_error_count++;
             if (_resource_error_count > 1)
