@@ -196,9 +196,9 @@ void PropellerLoader::prepare_entry()
     totalTimeout.start(timeout_payload);
     handshakeTimeout.start(session->calculateTimeout(request.size()));
     elapsedTimer.start();
-    resetTimer.start(session->resetPeriod());
 
     session->reset();
+    resetTimer.start(session->resetPeriod());
 }
 
 void PropellerLoader::handshake_read()

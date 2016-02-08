@@ -215,27 +215,11 @@ bool PropellerDevice::reset()
         if (_reset == "rts")
         {
             device.setRequestToSend(true);
-
-            QTimer wait;
-            QEventLoop loop;
-            connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-            wait.start(20);
-            loop.exec();
-            disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-
             device.setRequestToSend(false);
         }
         else if (_reset == "dtr")
         {
             device.setDataTerminalReady(true);
-
-            QTimer wait;
-            QEventLoop loop;
-            connect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-            wait.start(20);
-            loop.exec();
-            disconnect(&wait, SIGNAL(timeout()), &loop, SLOT(quit()));
-
             device.setDataTerminalReady(false);
         } 
         else
@@ -271,7 +255,7 @@ QStringList PropellerDevice::list()
 
 quint32 PropellerDevice::resetPeriod()
 {
-    return 80;
+    return 95;
 }
 
 
