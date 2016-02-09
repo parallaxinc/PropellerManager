@@ -82,20 +82,26 @@ namespace PM
     protected:
         void attachSignals()
         {
-            connect(_target,    SIGNAL(sendError(const QString &)), this,   SIGNAL(sendError(const QString &)));
-            connect(_target,    SIGNAL(bytesWritten(qint64)),       this,   SIGNAL(bytesWritten(qint64)));
-            connect(_target,    SIGNAL(baudRateChanged(qint32)),    this,   SIGNAL(baudRateChanged(qint32)));
+            connect(_target,    SIGNAL(sendError(const QString &)),     this,   SIGNAL(sendError(const QString &)));
+            connect(_target,    SIGNAL(bytesWritten(qint64)),           this,   SIGNAL(bytesWritten(qint64)));
+            connect(_target,    SIGNAL(baudRateChanged(qint32)),        this,   SIGNAL(baudRateChanged(qint32)));
     
-            connect(_buffer,    SIGNAL(readyRead()),                this,   SIGNAL(readyRead()));
+            connect(_buffer,    SIGNAL(readyRead()),                    this,   SIGNAL(readyRead()));
+
+            connect(_target,    SIGNAL(deviceStateChanged(bool)),       this,   SIGNAL(deviceStateChanged(bool)));
+            connect(_target,    SIGNAL(deviceAvailableChanged(bool)),   this,   SIGNAL(deviceAvailableChanged(bool)));
         }
     
         void detachSignals()
         {
-            disconnect(_target,    SIGNAL(sendError(const QString &)), this,   SIGNAL(sendError(const QString &)));
-            disconnect(_target,    SIGNAL(bytesWritten(qint64)),       this,   SIGNAL(bytesWritten(qint64)));
-            disconnect(_target,    SIGNAL(baudRateChanged(qint32)),    this,   SIGNAL(baudRateChanged(qint32)));
+            disconnect(_target,    SIGNAL(sendError(const QString &)),     this,   SIGNAL(sendError(const QString &)));
+            disconnect(_target,    SIGNAL(bytesWritten(qint64)),           this,   SIGNAL(bytesWritten(qint64)));
+            disconnect(_target,    SIGNAL(baudRateChanged(qint32)),        this,   SIGNAL(baudRateChanged(qint32)));
     
-            disconnect(_buffer,    SIGNAL(readyRead()),                this,   SIGNAL(readyRead()));
+            disconnect(_buffer,    SIGNAL(readyRead()),                    this,   SIGNAL(readyRead()));
+
+            disconnect(_target,    SIGNAL(deviceStateChanged(bool)),       this,   SIGNAL(deviceStateChanged(bool)));
+            disconnect(_target,    SIGNAL(deviceAvailableChanged(bool)),   this,   SIGNAL(deviceAvailableChanged(bool)));
         }
     };
 

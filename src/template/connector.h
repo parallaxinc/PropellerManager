@@ -15,18 +15,24 @@ protected:
 
     virtual void attachSignals()
     {
-        connect(_target,    SIGNAL(sendError(const QString &)), this,   SIGNAL(sendError(const QString &)));
-        connect(_target,    SIGNAL(bytesWritten(qint64)),       this,   SIGNAL(bytesWritten(qint64)));
-        connect(_target,    SIGNAL(baudRateChanged(qint32)),    this,   SIGNAL(baudRateChanged(qint32)));
-        connect(_target,    SIGNAL(readyRead()),                this,   SIGNAL(readyRead()));
+        connect(_target,    SIGNAL(sendError(const QString &)),     this,   SIGNAL(sendError(const QString &)));
+        connect(_target,    SIGNAL(bytesWritten(qint64)),           this,   SIGNAL(bytesWritten(qint64)));
+        connect(_target,    SIGNAL(baudRateChanged(qint32)),        this,   SIGNAL(baudRateChanged(qint32)));
+        connect(_target,    SIGNAL(readyRead()),                    this,   SIGNAL(readyRead()));
+
+        connect(_target,    SIGNAL(deviceStateChanged(bool)),       this,   SIGNAL(deviceStateChanged(bool)));
+        connect(_target,    SIGNAL(deviceAvailableChanged(bool)),   this,   SIGNAL(deviceAvailableChanged(bool)));
     }
 
     virtual void detachSignals()
     {
-        disconnect(_target,    SIGNAL(sendError(const QString &)), this,   SIGNAL(sendError(const QString &)));
-        disconnect(_target,    SIGNAL(bytesWritten(qint64)),       this,   SIGNAL(bytesWritten(qint64)));
-        disconnect(_target,    SIGNAL(baudRateChanged(qint32)),    this,   SIGNAL(baudRateChanged(qint32)));
-        disconnect(_target,    SIGNAL(readyRead()),                this,   SIGNAL(readyRead()));
+        disconnect(_target,    SIGNAL(sendError(const QString &)),     this,   SIGNAL(sendError(const QString &)));
+        disconnect(_target,    SIGNAL(bytesWritten(qint64)),           this,   SIGNAL(bytesWritten(qint64)));
+        disconnect(_target,    SIGNAL(baudRateChanged(qint32)),        this,   SIGNAL(baudRateChanged(qint32)));
+        disconnect(_target,    SIGNAL(readyRead()),                    this,   SIGNAL(readyRead()));
+
+        disconnect(_target,    SIGNAL(deviceStateChanged(bool)),       this,   SIGNAL(deviceStateChanged(bool)));
+        disconnect(_target,    SIGNAL(deviceAvailableChanged(bool)),   this,   SIGNAL(deviceAvailableChanged(bool)));
     }
 
 public:
@@ -39,6 +45,16 @@ public:
     Target target()
     {
         return _target;
+    }
+
+    bool setTarget(Target target)
+    {
+        if (isAttached()) return false;
+        if (target == NULL) return false;
+
+        _target = target;
+
+        return true;
     }
 
     bool isPaused()
@@ -59,18 +75,16 @@ public:
 
     bool isActive()
     {
-        return (!isPaused() && isAttached());
+        return (!isPaused() 
+                && isAttached() 
+                && _target->isOpen());
     }
 
-    bool attach(Target target)
+    bool attach()
     {
         if (isAttached()) return false;
-        if (target == NULL) return false;
-    
-        _target = target;
 
         attachSignals();
-    
         _attached = true;
 
 //        qDebug() << "attached" << this << "to" << _target;
@@ -78,12 +92,20 @@ public:
         return true;
     }
 
+    bool attach(Target target)
+    {
+        if (!setTarget(target)) return false;
+
+        attach();
+
+        return attach();
+    }
+
     void detach()
     {
         if (!isAttached()) return;
     
         detachSignals();
-    
         _attached = false;
 
 //        qDebug() << "detached" << this;
@@ -109,11 +131,13 @@ public:
 
     QString portName()
     {
+        if (!isAttached()) return QString();
         return _target->portName();
     }
 
     quint32 baudRate()
     {
+        if (!isAttached()) return 0;
         return _target->baudRate();
     }
 

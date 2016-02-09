@@ -1,5 +1,7 @@
 #include "portmonitor.h"
 
+#include <QSet>
+
 #include "logging.h"
 #include "propellerdevice.h"
 
@@ -33,12 +35,24 @@ namespace PM
     void PortMonitor::check()
     {
         QStringList newports = PropellerDevice::list();
+        newports.sort();
     
         if(_ports != newports)
         {
+            QSet<QString> set = QSet<QString>::fromList(_ports);
+            QSet<QString> newset = QSet<QString>::fromList(newports);
+            newset = newset.subtract(set);
+
+            _latest = QStringList::fromSet(newset);
+            _latest.sort();
+
             _ports = newports;
-    //        qCDebug(pmanager) << "devices changed:" << _ports;
+            _ports.sort();
+
             emit listChanged();
+
+            qCDebug(pmanager) << "devices:" << _ports;
+            qCDebug(pmanager) << "new devices:" << _latest;
         }
     }
     
@@ -46,5 +60,10 @@ namespace PM
     QStringList PortMonitor::list()
     {
         return _ports;
+    }
+
+    QStringList PortMonitor::latest()
+    {
+        return _latest;
     }
 }

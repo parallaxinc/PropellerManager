@@ -10,6 +10,9 @@ PropellerManager::PropellerManager(QObject * parent)
 
     connect(&monitor,   SIGNAL(listChanged()),
             this,       SIGNAL(portListChanged()));
+
+    connect(&monitor,   SIGNAL(listChanged()),
+            this,       SLOT(openNewPorts()));
 }
 
 PropellerManager::~PropellerManager()
@@ -50,11 +53,21 @@ bool PropellerManager::reserve(PropellerSession * session)
     foreach (PM::SessionInterface * interface, sessions->list())
     {
         if (interface->portName() == session->portName())
+        {
             interface->setPaused(true);
+        }
     }
 
     interface->setPaused(false);
     interface->setReserved(true);
+
+    foreach (PM::SessionInterface * interface, sessions->list())
+    {
+        if (interface->portName() == session->portName())
+        {
+            emit interface->deviceAvailableChanged(!interface->isPaused());
+        }
+    }
 
     return true;
 }
@@ -81,21 +94,40 @@ void PropellerManager::release(PropellerSession * session)
     }
 
     interface->setReserved(false);
+
+    foreach (PM::SessionInterface * interface, sessions->list())
+    {
+        if (interface->portName() == session->portName())
+        {
+            emit interface->deviceAvailableChanged(!interface->isPaused());
+        }
+    }
 }
 
 void PropellerManager::setPortName(PropellerSession * session, const QString & name)
 {
     PM::SessionInterface * sessionInterface = sessions->interface(session);
+    PM::PropellerDevice * deviceInterface = getDevice(name);
 
-
-    bool exists = devices->exists(name);
-    PM::PropellerDevice * deviceInterface = devices->interface(name);
-
-    if(!exists)
-        connect(deviceInterface,    SIGNAL(readyRead()),    sessions,   SLOT(readyBuffer()));
+    QString oldname = sessionInterface->portName();
 
     sessionInterface->detach();
     sessionInterface->attach(deviceInterface);
+
+    if (name != oldname)
+        emit deviceInterface->deviceStateChanged(deviceInterface->isOpen());
+}
+
+void PropellerManager::closePort(const QString & name)
+{
+    if (devices->exists(name))
+        devices->interface(name)->setEnabled(false);
+}
+
+void PropellerManager::openPort(const QString & name)
+{
+    if (devices->exists(name))
+        devices->interface(name)->setEnabled(true);
 }
 
 QStringList PropellerManager::listPorts()
@@ -103,8 +135,32 @@ QStringList PropellerManager::listPorts()
     return monitor.list();
 }
 
+QStringList PropellerManager::latestPorts()
+{
+    return monitor.latest();
+}
+
 void PropellerManager::enablePortMonitor(bool enabled, int timeout)
 {
     monitor.toggle(enabled, timeout);
+}
+
+void PropellerManager::openNewPorts()
+{
+    foreach (QString s, monitor.latest())
+    {
+        getDevice(s)->open();
+    }
+}
+
+PM::PropellerDevice * PropellerManager::getDevice(const QString & name)
+{
+    bool exists = devices->exists(name);
+    PM::PropellerDevice * device = devices->interface(name);
+
+    if(!exists)
+        connect(device, SIGNAL(readyRead()),    sessions,   SLOT(readyBuffer()));
+
+    return device;
 }
 

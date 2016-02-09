@@ -91,11 +91,19 @@ class PropellerManager : public QObject
     PM::DeviceManager * devices;
     PM::SessionManager * sessions;
 
+    PM::PropellerDevice * getDevice(const QString & name);
+
+private slots:
+    void openNewPorts();
+
 public:
     PropellerManager(QObject *parent = 0);
     ~PropellerManager();
 
+    void closePort(const QString & name);
+    void openPort(const QString & name);
     QStringList listPorts();
+    QStringList latestPorts();
     void enablePortMonitor(bool enabled, int timeout = 200);
 
 /// @cond

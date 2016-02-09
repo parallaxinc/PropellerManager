@@ -33,6 +33,8 @@ class PropellerDevice : public Interface
     QString     _reset;
     int         _reset_gpio;
 
+    bool        _enabled;
+
 private slots:
     void        handleError(QSerialPort::SerialPortError e);
 
@@ -42,13 +44,13 @@ public:
 
     static      QStringList list();
 
+    void        setEnabled(bool enabled);
+    bool        enabled();
+
     bool        open();
     void        close();
-
-    void        setPortName(const QString & name);
-
-    bool        isActive();
     bool        isOpen();
+
     bool        clear();
     bool        setBaudRate(quint32 baudRate);
 

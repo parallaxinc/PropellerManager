@@ -36,9 +36,11 @@ public:
     virtual quint32     resetPeriod() = 0;
 
 signals:
-    void bytesWritten(qint64 bytes);
-    void readyRead();
-    void baudRateChanged(qint32 baudRate);
     void sendError(const QString & message);
+    void bytesWritten(qint64 bytes);
+    void baudRateChanged(qint32 baudRate);
+    void readyRead();
+    void deviceStateChanged(bool enabled);
+    void deviceAvailableChanged(bool available);
 };
 

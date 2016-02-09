@@ -9,7 +9,7 @@ namespace PM
     {
         Q_OBJECT
     
-        QStringList _ports;
+        QStringList _ports, _latest;
         QTimer timer;
     
     private slots:
@@ -20,6 +20,7 @@ namespace PM
         ~PortMonitor();
     
         QStringList list();
+        QStringList latest();
         void toggle(bool enabled, int timeout = 200);
     
     signals:
