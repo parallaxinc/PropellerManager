@@ -56,23 +56,26 @@ void PropellerDevice::setPortName(const QString & name)
 
 void PropellerDevice::handleError(QSerialPort::SerialPortError e)
 {
+//    qCDebug(pdevice) << "error:" << e;
     switch (e)
     {
         case QSerialPort::NoError:                              // 0
+        case QSerialPort::OpenError:                            // 3
+        case QSerialPort::TimeoutError:                         // 12
             break;
 
         case QSerialPort::DeviceNotFoundError:                  // 1
         case QSerialPort::PermissionError:                      // 2
+        case QSerialPort::BreakConditionError:                  // 6 (receiver time held longer than charact time, could
+                                                                //    be an error, but can also be used for signaling)
         case QSerialPort::NotOpenError:                         // 13
         case QSerialPort::UnsupportedOperationError:            // 10
         case QSerialPort::UnknownError:                         // 11
             device.clearError();
             break;
-        case QSerialPort::TimeoutError:                         // 12
-            break;
+
         case QSerialPort::ParityError:                          // 4
         case QSerialPort::FramingError:                         // 5
-        case QSerialPort::BreakConditionError:                  // 6
         case QSerialPort::WriteError:                           // 7
         case QSerialPort::ReadError:                            // 8
         case QSerialPort::ResourceError: // SUPER IMPORTANT     // 9
@@ -83,6 +86,7 @@ void PropellerDevice::handleError(QSerialPort::SerialPortError e)
                 emit sendError(QString("'%1' (error %2)").arg(device.errorString()).arg(e));
             }
             break;
+
         default:
             break;
     }
