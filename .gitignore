@@ -37,3 +37,5 @@ Makefile*
 
 /lib/
 /bin/
+
+object_script.*
