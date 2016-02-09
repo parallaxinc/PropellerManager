@@ -4,7 +4,7 @@
 #include "portmonitor.h"
 #include "devicemanager.h"
 #include "sessionmanager.h"
-#include "../propellersession/propellersession.h"
+#include "propellersession.h"
 
 namespace PM
 {

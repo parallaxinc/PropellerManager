@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/interface.h"
+#include "interface.h"
 
 #include <QHash>
 
@@ -35,9 +35,9 @@ public:
         return _interfaces.values();
     }
 
-    void setEnabled(Key key, bool paused)
+    void setEnabled(Key key, bool enabled)
     {
-        interface(key)->setPaused(paused);
+        interface(key)->setPaused(!enabled);
     }
 
     virtual Interface interface(Key key) = 0;

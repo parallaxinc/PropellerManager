@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QElapsedTimer>
 
-#include "../common/logging.h"
+#include "logging.h"
 
 PropellerLoader::PropellerLoader(PropellerManager * manager, const QString & portname,
                                  QObject * parent)

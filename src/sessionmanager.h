@@ -1,6 +1,6 @@
 #pragma once
 
-#include "manager.h"
+#include "template/manager.h"
 #include "sessioninterface.h"
 
 class PropellerSession;

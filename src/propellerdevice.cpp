@@ -5,15 +5,19 @@
 #include <QEventLoop>
 
 #include "gpio.h"
-#include "../common/logging.h"
+#include "logging.h"
 
-PropellerDevice::PropellerDevice()
+namespace PM
+{
+
+PropellerDevice::PropellerDevice(QString devicename)
  : Interface()
 {
     _resource_error_count = 0;
     _minimum_timeout = 400;
 
     device.setSettingsRestoredOnClose(false);
+    device.setPortName(devicename);
     device.setBaudRate(115200);
 
     _reset_defaults["ttyAMA"]   = "gpio";
@@ -32,6 +36,8 @@ PropellerDevice::PropellerDevice()
 
     connect(&device,    SIGNAL(baudRateChanged(qint32, QSerialPort::Directions)),
             this,       SIGNAL(baudRateChanged(qint32)));
+
+    open();
 }
     
 PropellerDevice::~PropellerDevice()
@@ -274,7 +280,6 @@ quint32 PropellerDevice::resetPeriod()
     return 95;
 }
 
-
 bool PropellerDevice::isOpen()
 {
     if (!device.isOpen())
@@ -339,3 +344,4 @@ qint64 PropellerDevice::write(QByteArray ba)
     return device.write(ba);
 }
 
+}

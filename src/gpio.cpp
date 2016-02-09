@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QThread>
 
-#include "../common/logging.h"
+#include "logging.h"
 
 Gpio::Gpio(int pin, Gpio::Direction dir)
 {

@@ -40,7 +40,6 @@ QCommandLineOption argIdentify  (QStringList() << "i" << "identify",QObject::tr(
 QCommandLineOption argInfo      (QStringList() << "image",          QObject::tr("Print info about downloadable image"));
 QCommandLineOption argClkMode   (QStringList() << "clkmode",        QObject::tr("Change clock mode before download"), "MODE");
 QCommandLineOption argClkFreq   (QStringList() << "clkfreq",        QObject::tr("Change clock frequency before download"), "FREQ");
-QCommandLineOption argHighSpeed (QStringList() << "ultrafast",      QObject::tr("Enable two-stage high-speed mode (experimental)"));
 
 int main(int argc, char *argv[])
 {
@@ -68,7 +67,6 @@ int main(int argc, char *argv[])
     parser.addOption(argInfo);
     parser.addOption(argClkMode);
     parser.addOption(argClkFreq);
-//    parser.addOption(argHighSpeed);
 
     parser.addPositionalArgument("file",  QObject::tr("Binary file to download"), "FILE");
 
@@ -180,22 +178,14 @@ void open_loader(QCommandLineParser &parser, QStringList devices)
 
     PropellerTerminal terminal(&manager, device, baudrate);
 
-    if (parser.isSet(argHighSpeed))
-    {
-//        if (!loader.highSpeedUpload(image, parser.isSet(argWrite)))
-//            exit(1);
-    }
-    else
-    {
-        QObject::connect (&loader, SIGNAL(statusChanged(const QString &)),
-                          &loader, SLOT(message(const QString &)));
+    QObject::connect (&loader, SIGNAL(statusChanged(const QString &)),
+                      &loader, SLOT(message(const QString &)));
 
-        if (!loader.upload(image, parser.isSet(argWrite), true, true))
-            exit(1);
+    if (!loader.upload(image, parser.isSet(argWrite), true, true))
+        exit(1);
 
-        QObject::disconnect (&loader, SIGNAL(statusChanged(const QString &)),
-                             &loader, SLOT(message(const QString &)));
-    }
+    QObject::disconnect (&loader, SIGNAL(statusChanged(const QString &)),
+                         &loader, SLOT(message(const QString &)));
 
     if (parser.isSet(argTerm))
         terminal.exec();

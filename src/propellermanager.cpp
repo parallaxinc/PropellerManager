@@ -1,6 +1,6 @@
 #include "propellermanager.h"
 
-#include "../common/logging.h"
+#include "logging.h"
 
 PropellerManager::PropellerManager(QObject * parent)
     : QObject(parent)
@@ -89,7 +89,7 @@ void PropellerManager::setPortName(PropellerSession * session, const QString & n
 
 
     bool exists = devices->exists(name);
-    PM::DeviceInterface * deviceInterface = devices->interface(name);
+    PM::PropellerDevice * deviceInterface = devices->interface(name);
 
     if(!exists)
         connect(deviceInterface,    SIGNAL(readyRead()),    sessions,   SLOT(readyBuffer()));

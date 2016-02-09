@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../common/connector.h"
-#include "../propellermanager/sessioninterface.h"
-#include "../propellermanager/propellermanager.h"
+#include "template/connector.h"
+#include "sessioninterface.h"
+#include "propellermanager.h"
 
 class PropellerManager;
 

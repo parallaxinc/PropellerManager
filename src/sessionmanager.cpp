@@ -3,8 +3,8 @@
 #include <QByteArray>
 
 #include "sessioninterface.h"
-#include "deviceinterface.h"
-#include "../propellersession/propellersession.h"
+#include "propellerdevice.h"
+#include "propellersession.h"
 
 namespace PM
 {
@@ -32,7 +32,7 @@ namespace PM
     
     void SessionManager::readyBuffer()
     {
-        DeviceInterface * device = (DeviceInterface *) sender();
+        PropellerDevice * device = (PropellerDevice *) sender();
         QByteArray newdata = device->readAll();
     
         foreach (SessionInterface * interface, _interfaces.values())

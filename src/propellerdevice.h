@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/interface.h"
+#include "template/interface.h"
 
 #include <QSerialPort>
 #include <QStringList>
@@ -15,6 +15,9 @@
     specific functionality such as hardware reset and download
     timeouts.
   */
+
+namespace PM
+{
 
 class PropellerDevice : public Interface
 {
@@ -34,7 +37,7 @@ private slots:
     void        handleError(QSerialPort::SerialPortError e);
 
 public:
-    PropellerDevice();
+    PropellerDevice(QString devicename = QString());
     ~PropellerDevice();
 
     static      QStringList list();
@@ -44,6 +47,7 @@ public:
 
     void        setPortName(const QString & name);
 
+    bool        isActive();
     bool        isOpen();
     bool        clear();
     bool        setBaudRate(quint32 baudRate);
@@ -67,3 +71,5 @@ public:
     quint32     resetPeriod();
 
 };
+
+}

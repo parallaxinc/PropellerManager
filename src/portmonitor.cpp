@@ -1,7 +1,7 @@
 #include "portmonitor.h"
 
-#include "../common/logging.h"
-#include "../propellerdevice/propellerdevice.h"
+#include "logging.h"
+#include "propellerdevice.h"
 
 namespace PM
 {

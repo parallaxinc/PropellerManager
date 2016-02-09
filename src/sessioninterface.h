@@ -2,14 +2,14 @@
 
 #include <QObject>
 
-#include "../common/connector.h"
+#include "template/connector.h"
 #include "readbuffer.h"
-#include "deviceinterface.h"
+#include "propellerdevice.h"
 
 namespace PM
 {
 
-    class SessionInterface : public Connector<DeviceInterface *>
+    class SessionInterface : public Connector<PropellerDevice *>
     {
         Q_OBJECT
     
@@ -19,7 +19,7 @@ namespace PM
     
     public:
         SessionInterface ()
-            : Connector<DeviceInterface *>()
+            : Connector<PropellerDevice *>()
         {
             _buffer = new ReadBuffer();
             _reserved = false;
@@ -35,7 +35,7 @@ namespace PM
         {
             if (!isActive()) return false;
             _buffer->clear();
-            Connector<DeviceInterface *>::clear();
+            Connector<PropellerDevice *>::clear();
             return true;
         }
     

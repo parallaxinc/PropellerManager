@@ -1,2 +1,2 @@
 #pragma once
-#include "../src/propellerterminal/propellerterminal.h"
+#include "../src/propellerterminal.h"
