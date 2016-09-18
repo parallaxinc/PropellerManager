@@ -12,6 +12,7 @@ PropellerManager forms the basis for [PropellerIDE](https://github.com/parallaxi
 
 Learn more about PropellerManager at [developer.parallax.com](http://developer.parallax.com/projects/propellermanager/doc/html/).
 
+
 ## Command-Line Usage
 
 PropellerManager includes a small program called `propman` to use the library from the command-line.
