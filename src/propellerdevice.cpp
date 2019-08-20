@@ -302,8 +302,7 @@ namespace PM
 
         foreach (QSerialPortInfo port, ports)
         {
-            if (!port.systemLocation().contains("ttyS") &&
-                    !port.systemLocation().contains("Bluetooth"))
+            if (!port.systemLocation().contains("Bluetooth"))
                 result.append(port.portName());
         }
         return result;
